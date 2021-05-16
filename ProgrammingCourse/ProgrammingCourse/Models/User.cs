@@ -19,5 +19,7 @@ namespace ProgrammingCourse.Models
         public virtual IList<StudentCourse> StudentCourses { get; set; }
 
         public virtual IList<Feedback> Feedbacks { get; set; }
+
+        public virtual IList<RefreshToken> RefreshTokens { get; set; }
     }
 }

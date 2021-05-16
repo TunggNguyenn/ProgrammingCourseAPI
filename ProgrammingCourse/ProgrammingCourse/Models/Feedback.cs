@@ -17,16 +17,17 @@ namespace ProgrammingCourse.Models
 
         public string Review { get; set; }
 
-        [Required]
-        public int CourseId { get; set; }
+        //[Required]
+        public int? CourseId { get; set; }
 
         [ForeignKey("CourseId")]
         public Course Course { get; set; }
 
-        [Required]
-        public int StudentId { get; set; }
+        //[Required]
+        public string UserId { get; set; }
 
-        [ForeignKey("StudentId")]
+        [ForeignKey("UserId")]
         public User User { get; set; }
+
     }
 }

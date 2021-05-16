@@ -4,17 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProgrammingCourse.Models
+namespace ProgrammingCourse.Models.ViewModels
 {
-    public class Status
+    public class StatusViewModel
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
         public string Name { get; set; }
-
-        public IList<Course> Courses { get; set; }
-
     }
 }

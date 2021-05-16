@@ -15,12 +15,13 @@ namespace ProgrammingCourse.Models
         [Required]
         public string Name { get; set; }
 
-        [Required]
-        public int CategoryTypeId { get; set; }
+        //[Required]
+        public int? CategoryTypeId { get; set; }
 
         [ForeignKey("CategoryTypeId")]
         public CategoryType CategoryType { get; set; }
 
         public IList<Course> Courses { get; set; }
+
     }
 }

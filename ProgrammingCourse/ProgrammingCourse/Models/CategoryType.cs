@@ -15,5 +15,6 @@ namespace ProgrammingCourse.Models
         public string Name { get; set; }
 
         public IList<Category> Categories { get; set; }
+
     }
 }

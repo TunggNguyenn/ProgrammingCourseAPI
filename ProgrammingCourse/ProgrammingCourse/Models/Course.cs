@@ -15,17 +15,17 @@ namespace ProgrammingCourse.Models
         [Required]
         public string Name { get; set; }
 
-        [Required]
-        public int CategoryId { get; set; }
+        //[Required]
+        public int? CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
 
-        [Required]
-        public int LectureId { get; set; }
+        //[Required]
+        public string LecturerId { get; set; }
 
-        [ForeignKey("LectureId")]
-        public Lecture Lecture { get; set; }
+        [ForeignKey("LecturerId")]
+        public User Lecturer { get; set; }
 
         [Required]
         public string ImageUrl { get; set; }
@@ -46,8 +46,8 @@ namespace ProgrammingCourse.Models
 
         public DateTime LastUpdated { get; set; }
 
-        [Required]
-        public int StatusId { get; set; }
+        //[Required]
+        public int? StatusId { get; set; }
 
         [ForeignKey("StatusId")]
         public Status Status { get; set; }

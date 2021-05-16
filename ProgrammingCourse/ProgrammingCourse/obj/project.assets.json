@@ -6482,11 +6482,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourse\\ProgrammingCourse\\ProgrammingCourse.csproj",
+      "projectUniqueName": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourseAPI\\ProgrammingCourse\\ProgrammingCourse\\ProgrammingCourse.csproj",
       "projectName": "ProgrammingCourse",
-      "projectPath": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourse\\ProgrammingCourse\\ProgrammingCourse.csproj",
+      "projectPath": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourseAPI\\ProgrammingCourse\\ProgrammingCourse\\ProgrammingCourse.csproj",
       "packagesPath": "C:\\Users\\Tung Nguyen\\.nuget\\packages\\",
-      "outputPath": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourse\\ProgrammingCourse\\obj\\",
+      "outputPath": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourseAPI\\ProgrammingCourse\\ProgrammingCourse\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Tung Nguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",

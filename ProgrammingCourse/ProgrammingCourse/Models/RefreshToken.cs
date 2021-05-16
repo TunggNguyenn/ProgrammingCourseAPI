@@ -7,25 +7,27 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Models
 {
-    public class Lecture
+    public class RefreshToken
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public int Section { get; set; }
+        public string Token { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public DateTime ExpiryOn { get; set; }
 
         [Required]
-        public string VideoUrl { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         //[Required]
-        public int? CourseId { get; set; }
+        public DateTime? RevokedOn { get; set; }
 
-        [ForeignKey("CourseId")]
-        public Course Course { get; set; }
+        //[Required]
+        public string UserId { get; set; }
 
+        [ForeignKey("UserId")]
+        public User User { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "gu3lLkC8CqQCQGg/zm3SAQNlCPVu+g34ta/9+I5woKAQfquZtkuS6wsHx4T2fof3gTfgMcJ0vMs2EssuMJDu/g==",
+  "dgSpecHash": "xo41WVdZMddfeqdK1PcyiRlGmRzRWnzcVr5gqU1yok2SMu9+kW9ElP2UPq/dMBoWsVs6GgnZs2/pCz2A27cEZQ==",
   "success": true,
-  "projectFilePath": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourse\\ProgrammingCourse\\ProgrammingCourse.csproj",
+  "projectFilePath": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourseAPI\\ProgrammingCourse\\ProgrammingCourse\\ProgrammingCourse.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Tung Nguyen\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Tung Nguyen\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",

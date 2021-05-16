@@ -12,16 +12,17 @@ namespace ProgrammingCourse.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public int StudentId { get; set; }
+        //[Required]
+        public string StudentId { get; set; }
 
         [ForeignKey("StudentId")]
-        public User User { get; set; }
+        public User Student { get; set; }
 
-        [Required]
-        public int CourseId { get; set; }
+        //[Required]
+        public int? CourseId { get; set; }
 
         [ForeignKey("CourseId")]
         public Course Course { get; set; }
+
     }
 }
