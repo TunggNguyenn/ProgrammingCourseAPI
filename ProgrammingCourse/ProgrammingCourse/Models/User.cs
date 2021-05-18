@@ -21,5 +21,11 @@ namespace ProgrammingCourse.Models
         public virtual IList<Feedback> Feedbacks { get; set; }
 
         public virtual IList<RefreshToken> RefreshTokens { get; set; }
+
+        [Required]
+        public bool IsTwoStepConfirmation { get; set; }
+
+        [Required]
+        public int OTPCode { get; set; }
     }
 }

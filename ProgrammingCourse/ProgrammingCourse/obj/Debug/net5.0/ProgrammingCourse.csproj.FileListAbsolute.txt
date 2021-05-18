@@ -134,3 +134,6 @@ D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse
 D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\obj\Debug\net5.0\ref\ProgrammingCourse.dll
 D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\obj\Debug\net5.0\ProgrammingCourse.pdb
 D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\obj\Debug\net5.0\ProgrammingCourse.genruntimeconfig.cache
+D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\bin\Debug\net5.0\MailKit.dll
+D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\bin\Debug\net5.0\MimeKit.dll
+D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\bin\Debug\net5.0\BouncyCastle.Crypto.dll

@@ -8,6 +8,7 @@ using ProgrammingCourse.Configurations;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -50,6 +51,16 @@ namespace ProgrammingCourse.Controllers
                 });
             }
 
+
+            bool isExisted = await EmailChecker.Check(userViewModel.Email);
+            if (isExisted == false)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid email address!"
+                }); ;
+            }
+
             //Check IsRole existed
             IdentityRole isRoleExisted = await roleManager.FindByNameAsync(userViewModel.Role);
 
@@ -71,7 +82,10 @@ namespace ProgrammingCourse.Controllers
                 });
             }
 
-            var identityUser = new User() { UserName = userViewModel.UserName, Email = userViewModel.Email, AvatarUrl = "https://picsum.photos/200" };
+            var random = new Random();
+            var OTPCOde = random.Next(100000, 999999);
+
+            var identityUser = new User() { UserName = userViewModel.UserName, Email = userViewModel.Email, AvatarUrl = "https://picsum.photos/200", IsTwoStepConfirmation = false, OTPCode = OTPCOde };
 
             IdentityResult result1 = await userManager.CreateAsync(identityUser, userViewModel.Password);
 
@@ -80,6 +94,7 @@ namespace ProgrammingCourse.Controllers
                 IdentityResult result2 = await userManager.AddToRoleAsync(identityUser, "Student");
                 if (result2.Succeeded)
                 {
+                    Email.SendEmailOTP(identityUser.Email, OTPCOde);
                     return Ok(
                         new
                         {
@@ -114,6 +129,15 @@ namespace ProgrammingCourse.Controllers
 
             if (identityUser != null)
             {
+                if (identityUser.IsTwoStepConfirmation == false)
+                {
+                    return BadRequest(
+                        new
+                        {
+                            Message = "This account is not verified!"
+                        });
+                }
+
                 var token = await GenerateTokens(identityUser);
                 return Ok(new { Token = token, Message = "Login Successful" });
             }
@@ -124,21 +148,116 @@ namespace ProgrammingCourse.Controllers
                 });
         }
 
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("ResendOTP")]
+        public async Task<IActionResult> ResendOTP([FromForm] string email)
+        {
+            var identityUser = await userManager.FindByEmailAsync(email);
+            if (identityUser != null)
+            {
+                var random = new Random();
+                var OTPCOde = random.Next(100000, 999999);
+
+                identityUser.OTPCode = OTPCOde;
+
+                IdentityResult result = await userManager.UpdateAsync(identityUser);
+
+                if (result.Succeeded)
+                {
+                    Email.SendEmailOTP(email, OTPCOde);
+
+                    return Ok(new {
+                        Message = "Resend OTP Code successfully!"
+                    });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Message = "Resend OTP Code unsuccessfully!"
+                    });
+                }
+            }
+            else
+            {
+                return BadRequest(
+                    new
+                    {
+                        Message = "Invalid Email!"
+                    });
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("VerifyTwoStepVerification")]
+        public async Task<IActionResult> VerifyTwoStepVerification([FromForm] string email, [FromForm] int OTPCode)
+        {
+            var identityUser = await userManager.FindByEmailAsync(email);
+            if (identityUser != null)
+            {
+                if(identityUser.OTPCode == OTPCode)
+                {
+                    identityUser.IsTwoStepConfirmation = true;
+
+                    IdentityResult result = await userManager.UpdateAsync(identityUser);
+
+                    if (result.Succeeded)
+                    {
+                        Email.SendEmailSuccessfulVerification(email);
+
+                        return Ok(new
+                        {
+                            Message = "Verify OTP Code successfully!"
+                        });
+                    }
+                    else
+                    {
+                        return BadRequest(new
+                        {
+                            Message = "Verify OTP Code unsuccessfully!"
+                        });
+                    }
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Message = "Invalid OTP Code!"
+                    });
+                }
+               
+            }
+            else
+            {
+                return BadRequest(
+                    new
+                    {
+                        Message = "Invalid Email!"
+                    });
+            }
+        }
+
+
         private async Task<User> ValidateUser(string userName, string email, string password)
         {
-            var identityUser = await userManager.FindByNameAsync(userName);
+            var identityUser = await userManager.FindByEmailAsync(email);
             if (identityUser != null)
             {
                 var result = userManager.PasswordHasher.VerifyHashedPassword(identityUser, identityUser.PasswordHash, password);
                 return result == PasswordVerificationResult.Failed ? null : identityUser;
             }
 
-            identityUser = await userManager.FindByEmailAsync(email);
+            identityUser = await userManager.FindByNameAsync(userName);
             if (identityUser != null)
             {
                 var result = userManager.PasswordHasher.VerifyHashedPassword(identityUser, identityUser.PasswordHash, password);
                 return result == PasswordVerificationResult.Failed ? null : identityUser;
             }
+
+
 
             return null;
         }
