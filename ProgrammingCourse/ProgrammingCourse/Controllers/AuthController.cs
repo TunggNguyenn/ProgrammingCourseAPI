@@ -10,7 +10,6 @@ using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
 using ProgrammingCourse.Utilities;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -27,15 +26,13 @@ namespace ProgrammingCourse.Controllers
         private JwtBearerTokenSettings jwtBearerTokenSettings;
         private UserManager<User> userManager;
         private RoleManager<IdentityRole> roleManager;
-        private ProgrammingCourseDbContext programmingCourseDbContext;
         private RefreshTokenRepository refreshTokenRepository;
 
-        public AuthController(IOptions<JwtBearerTokenSettings> jwtTokenOptions, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ProgrammingCourseDbContext programmingCourseDbContext, RefreshTokenRepository refreshTokenRepository)
+        public AuthController(IOptions<JwtBearerTokenSettings> jwtTokenOptions, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, RefreshTokenRepository refreshTokenRepository)
         {
             this.jwtBearerTokenSettings = jwtTokenOptions.Value;
             this.userManager = userManager;
             this.roleManager = roleManager;
-            this.programmingCourseDbContext = programmingCourseDbContext;
             this.refreshTokenRepository = refreshTokenRepository;
         }
 
@@ -47,7 +44,8 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Message = "Invalid Input Parameters!"
+                    Status = false,
+                    Message = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
                 });
             }
 
@@ -57,8 +55,9 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Message = "Invalid email address!"
-                }); ;
+                    Status = false,
+                    Message = new object[] { new { Code = "ExistedEmailAddress", Description = "Email address has exited!" } }
+                });
             }
 
             //Check IsRole existed
@@ -68,7 +67,8 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Message = $"Role {userViewModel.Role} is invalid!"
+                    Status = false,
+                    Message = new object[] { new { Code = "InvalidRole", Description = $"Role {userViewModel.Role} is invalid!" } }
                 });
             }
 
@@ -78,7 +78,8 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Message = $"Email {userViewModel.Email} is already taken."
+                    Status = false,
+                    Message = new object[] { new { Code = "InvalidEmail", Description = $"Email {userViewModel.Email} has already taken!" } }
                 });
             }
 
@@ -98,24 +99,24 @@ namespace ProgrammingCourse.Controllers
                     return Ok(
                         new
                         {
-                            Result = identityUser,
-                            Message = "User Registration Successful!"
+                            Status = true,
+                            Message = new object[] { new { Code = "Success", Description = "User Registration Successful!" } }
                         });
                 }
 
                 return BadRequest(
                     new
                     {
-                        Result = result2,
-                        Message = "User Registration Unsuccessful!"
+                        Status = false,
+                        Message = result2.Errors
                     });
             }
 
             return BadRequest(
                 new
                 {
-                    Result = result1,
-                    Message = "User Registration Unsuccessful!"
+                    Status = false,
+                    Message = result1.Errors
                 });
         }
 
@@ -134,17 +135,24 @@ namespace ProgrammingCourse.Controllers
                     return BadRequest(
                         new
                         {
-                            Message = "This account is not verified!"
+                            Status = false,
+                            Message = new object[] { new { Code = "NotVerifiedAccount", Description = "This account has not verified yet!" } }
                         });
                 }
 
                 var token = await GenerateTokens(identityUser);
-                return Ok(new { Token = token, Message = "Login Successful" });
+                return Ok(new 
+                { 
+                    Status = true, 
+                    Token = token,
+                    Message = new object[] { new { Code = "Success", Description = "Login Successful" } }
+                });
             }
             return BadRequest(
                 new
                 {
-                    Message = "Login Failed"
+                    Status = false,
+                    Message = new object[] { new { Code = "InvalidAccount", Description = "This account is invalid!" } }
                 });
         }
 
@@ -169,14 +177,16 @@ namespace ProgrammingCourse.Controllers
                     Email.SendEmailOTP(email, OTPCOde);
 
                     return Ok(new {
-                        Message = "Resend OTP Code successfully!"
+                        Status = true,
+                        Message = new object[] { new { Code = "Success", Description = "Resend OTP Code successfully!" } }
                     });
                 }
                 else
                 {
                     return BadRequest(new
                     {
-                        Message = "Resend OTP Code unsuccessfully!"
+                        Status = false,
+                        Message = new object[] { new { Code = "Fail", Description = "Resend OTP Code unsuccessfully!" } }
                     });
                 }
             }
@@ -185,7 +195,8 @@ namespace ProgrammingCourse.Controllers
                 return BadRequest(
                     new
                     {
-                        Message = "Invalid Email!"
+                        Status = false,
+                        Message = new object[] { new { Code = "InvalidEmail", Description = "Invalid Email!" } }
                     });
             }
         }
@@ -198,7 +209,7 @@ namespace ProgrammingCourse.Controllers
             var identityUser = await userManager.FindByEmailAsync(email);
             if (identityUser != null)
             {
-                if(identityUser.OTPCode == OTPCode)
+                if (identityUser.OTPCode == OTPCode)
                 {
                     identityUser.IsTwoStepConfirmation = true;
 
@@ -210,14 +221,16 @@ namespace ProgrammingCourse.Controllers
 
                         return Ok(new
                         {
-                            Message = "Verify OTP Code successfully!"
+                            Status = true,
+                            Message = new object[] { new { Code = "Success", Description = "Verify OTP Code successfully!" } }
                         });
                     }
                     else
                     {
                         return BadRequest(new
                         {
-                            Message = "Verify OTP Code unsuccessfully!"
+                            Status = false,
+                            Message = new object[] { new { Code = "Fail", Description = "Verify OTP Code unsuccessfully!" } }
                         });
                     }
                 }
@@ -225,17 +238,19 @@ namespace ProgrammingCourse.Controllers
                 {
                     return BadRequest(new
                     {
-                        Message = "Invalid OTP Code!"
+                        Status = false,
+                        Message = new object[] { new { Code = "InvalidOTPCode!", Description = "Invalid OTP Code!" } }
                     });
                 }
-               
+
             }
             else
             {
                 return BadRequest(
                     new
                     {
-                        Message = "Invalid Email!"
+                        Status = false,
+                        Message = new object[] { new { Code = "InvalidEmail!", Description = "Invalid Email!" } }
                     });
             }
         }
@@ -262,7 +277,7 @@ namespace ProgrammingCourse.Controllers
             return null;
         }
 
-        private async Task<ActionResult<Tuple<string, string>>> GenerateTokens(User identityUser)
+        private async Task<Tuple<string, string>> GenerateTokens(User identityUser)
         {
             // Generate access token
             string accessToken = await GenerateAccessToken(identityUser);
@@ -292,14 +307,13 @@ namespace ProgrammingCourse.Controllers
             RefreshToken rf = new RefreshToken
             {
                 Token = refreshToken,
-                ExpiryOn = DateTime.Now.AddSeconds(jwtBearerTokenSettings.RefreshTokenExpiryInDays),
-                CreatedOn = DateTime.Now,
+                ExpiryOn = DateTime.UtcNow.AddDays(jwtBearerTokenSettings.RefreshTokenExpiryInDays),
+                CreatedOn = DateTime.UtcNow,
                 UserId = identityUser.Id,
                 User = identityUser
             };
 
-            programmingCourseDbContext.Add(rf);
-            programmingCourseDbContext.SaveChanges();
+            await refreshTokenRepository.Add(rf);
 
 
             return new Tuple<string, string>(accessToken, refreshToken);
@@ -325,12 +339,13 @@ namespace ProgrammingCourse.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
+                        new Claim(ClaimTypes.NameIdentifier, identityUser.Id),
                         new Claim(ClaimTypes.Name, identityUser.UserName.ToString()),
                         new Claim(ClaimTypes.Email, identityUser.Email.ToString()),
                         new Claim(ClaimTypes.Role, role[0])
                    }),
 
-                Expires = DateTime.Now.AddSeconds(jwtBearerTokenSettings.ExpiryTimeInSeconds),
+                Expires = DateTime.UtcNow.AddSeconds(jwtBearerTokenSettings.ExpiryTimeInSeconds),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = jwtBearerTokenSettings.Audience,
                 Issuer = jwtBearerTokenSettings.Issuer
@@ -340,10 +355,15 @@ namespace ProgrammingCourse.Controllers
             return tokenHandler.WriteToken(token);
         }
 
-        private async Task<ActionResult<bool>> RevokeRefreshToken()
+        private async Task<bool> RevokeRefreshToken()
         {
             string accessToken = HttpContext.Request.Cookies["accessToken"];
             string refreshToken = HttpContext.Request.Cookies["refreshToken"];
+
+            if(accessToken == null || refreshToken == null)
+            {
+                return true;
+            }
 
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(accessToken);
@@ -365,11 +385,11 @@ namespace ProgrammingCourse.Controllers
             }
 
 
-            // Set Refresh Token Cookie
+            // Set Token Cookie
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = DateTime.Now.AddDays(-1)
+                Expires = DateTime.UtcNow.AddDays(-1)
             };
 
             HttpContext.Response.Cookies.Append("accessToken", "", cookieOptions);
@@ -380,11 +400,76 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("Logout")]
-        public async Task<ActionResult<string>> Logout()
+        public async Task<IActionResult> Logout()
         {
             // Revoke Refresh Token 
             await RevokeRefreshToken();
-            return Ok(new { Token = "", Message = "Logged Out" });
+            return Ok(new 
+            {
+                Status = true,
+                Message = new object[] { new { Code = "Success", Description = "Logged Out!" } }
+            });
+        }
+
+        [HttpPost]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromForm] string userId, [FromForm] string oldPassword, [FromForm] string newPassword, [FromForm] string confirmPassword)
+        {
+            if(newPassword != confirmPassword)
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = new object[] { new { Code = "NotMatchNewPasswordAndConfirmPassword", Description = "New password and confirm password dont match!" } }
+                });
+            }
+
+            User user = await userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+
+                IdentityResult result = await userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+
+                if (result.Succeeded)
+                {
+
+                    return Ok(new
+                    {
+                        Status = true,
+                        Message = new object[] { new { Code = "Success", Description = "Change password successfully!" } }
+                    });
+                }
+                else
+                {
+                    return Ok(new
+                    {
+                        Status = false,
+                        Message = result.Errors
+                    });
+                }
+
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = new object [] {new { Code = "InvalidUserId", Description = "UserId is invalid!" } }
+                });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("LoginGoogle")]
+        public IActionResult LoginGoogle([FromForm] string email)
+        {
+            return Ok(new
+            {
+                Status = true,
+                Message = new object[] { new { Code = "Success", Description = "Login is successful!" } }
+            });
         }
     }
 }

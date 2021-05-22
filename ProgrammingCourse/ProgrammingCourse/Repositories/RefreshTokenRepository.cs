@@ -31,7 +31,7 @@ namespace ProgrammingCourse.Repositories
                 return deletedRefreshToken;
             }
 
-            deletedRefreshToken.RevokedOn = DateTime.Now;
+            deletedRefreshToken.RevokedOn = DateTime.UtcNow;
 
             programmingCourseDbContext.Update(deletedRefreshToken);
             await programmingCourseDbContext.SaveChangesAsync();
@@ -55,6 +55,12 @@ namespace ProgrammingCourse.Repositories
         {
             var refreshTokens = programmingCourseDbContext.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId).ToList<RefreshToken>();
             return refreshTokens;
+        }
+
+        public RefreshToken GetByUserIdAndToken(string userId, string token)
+        {
+            var refreshToken = programmingCourseDbContext.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId && r.Token == token && r.RevokedOn == null).FirstOrDefault();
+            return refreshToken;
         }
 
         public async Task<RefreshToken> Update(RefreshToken refreshToken)

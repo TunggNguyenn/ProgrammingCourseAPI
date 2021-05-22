@@ -13,8 +13,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProgrammingCourse.Configurations;
+using ProgrammingCourse.Middlewares;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,8 +85,12 @@ namespace ProgrammingCourse
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
-                        {
+                        {          
                             context.Token = context.Request.Cookies["accessToken"];
+                            if (context.Request.Cookies["accessToken"] == null)
+                            {
+                                Console.WriteLine("Hello");
+                            }
                             return Task.CompletedTask;
                         }
                     };
@@ -123,6 +129,8 @@ namespace ProgrammingCourse
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseMiddleware<TokenVerificationMiddleware>();
 
             app.UseAuthorization();
 

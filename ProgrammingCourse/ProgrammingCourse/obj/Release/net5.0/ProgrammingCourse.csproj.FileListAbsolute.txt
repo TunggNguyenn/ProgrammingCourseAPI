@@ -69,3 +69,7 @@ D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse
 D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\obj\Release\net5.0\ProgrammingCourse.pdb
 D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\obj\Release\net5.0\ProgrammingCourse.genruntimeconfig.cache
 D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\obj\Release\net5.0\ProgrammingCourse.csprojAssemblyReference.cache
+D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\bin\Release\net5.0\Google.Apis.dll
+D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\bin\Release\net5.0\Google.Apis.Auth.PlatformServices.dll
+D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\bin\Release\net5.0\Google.Apis.Auth.dll
+D:\PTUDWNC\FinalProject\ProgrammingCourseAPI\ProgrammingCourse\ProgrammingCourse\bin\Release\net5.0\Google.Apis.Core.dll

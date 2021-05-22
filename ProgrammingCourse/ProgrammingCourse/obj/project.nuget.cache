@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "9ccNxr+ppIpHOikt8hmN5IA+H1RGVQ9CSwfVL8jBPxn/C3HHy1BV5qXWKJ+BKqz6/ZhNBqpx1g9q5ij3CGHnTw==",
+  "dgSpecHash": "lUQNrAv1SmFXDonxA3Tr6sblk/1NhSg6Z7M/UCYVU2+U7LEdkmoPv5fmqgmzU0qdyZ5NIShL1tDTdVk0E+SOMQ==",
   "success": true,
   "projectFilePath": "D:\\PTUDWNC\\FinalProject\\ProgrammingCourseAPI\\ProgrammingCourse\\ProgrammingCourse\\ProgrammingCourse.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Tung Nguyen\\.nuget\\packages\\google.apis\\1.51.0\\google.apis.1.51.0.nupkg.sha512",
+    "C:\\Users\\Tung Nguyen\\.nuget\\packages\\google.apis.auth\\1.51.0\\google.apis.auth.1.51.0.nupkg.sha512",
+    "C:\\Users\\Tung Nguyen\\.nuget\\packages\\google.apis.core\\1.51.0\\google.apis.core.1.51.0.nupkg.sha512",
     "C:\\Users\\Tung Nguyen\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Tung Nguyen\\.nuget\\packages\\mailkit\\2.12.0\\mailkit.2.12.0.nupkg.sha512",
     "C:\\Users\\Tung Nguyen\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
