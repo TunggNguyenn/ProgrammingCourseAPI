@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Repositories
 {
-    public class Course
+    public class CourseRepository
     {
     }
 }
