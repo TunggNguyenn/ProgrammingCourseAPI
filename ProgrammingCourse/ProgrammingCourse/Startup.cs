@@ -54,6 +54,14 @@ namespace ProgrammingCourse
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ProgrammingCourseDbContext>();
 
             services.AddScoped<RefreshTokenRepository>();
+            services.AddScoped<LectureRepository>();
+            services.AddScoped<StatusRepository>();
+            services.AddScoped<CategoryTypeRepository>();
+            services.AddScoped<CategoryRepository>();
+            services.AddScoped<CourseRepository>();
+            services.AddScoped<WatchListRepository>();
+            services.AddScoped<Student_CourseRepository>();
+            services.AddScoped<FeedbackRepository>();
 
 
             //configure strongly typed settings objects

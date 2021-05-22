@@ -144,7 +144,7 @@ namespace ProgrammingCourse.Controllers
                 return Ok(new 
                 { 
                     Status = true, 
-                    Token = token,
+                    Result = token,
                     Message = new object[] { new { Code = "Success", Description = "Login Successful" } }
                 });
             }
@@ -469,6 +469,111 @@ namespace ProgrammingCourse.Controllers
             {
                 Status = true,
                 Message = new object[] { new { Code = "Success", Description = "Login is successful!" } }
+            });
+        }
+
+        [HttpGet]
+        [Route("IsLoggedIn")]
+        public async Task<IActionResult> IsLoggedIn()
+        {
+            string accessToken = HttpContext.Request.Cookies["accessToken"];
+            string refreshToken = HttpContext.Request.Cookies["refreshToken"];
+
+            if (accessToken != null && refreshToken != null)
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                JwtSecurityToken token = tokenHandler.ReadJwtToken(accessToken);
+                var expDate = token.ValidTo;
+
+                if (expDate < DateTime.UtcNow)
+                {
+                    var nameid = token.Claims.Where(c => c.Type == "nameid").FirstOrDefault();
+                    RefreshToken refresh = refreshTokenRepository.GetByUserIdAndToken(nameid.Value, refreshToken);
+
+                    if (refresh != null)
+                    {
+
+                        if (refresh.ExpiryOn < DateTime.UtcNow)
+                        {
+                            await refreshTokenRepository.Delete(refresh.Id);
+
+                            // Set Token Cookie
+                            var cookieOptions = new CookieOptions
+                            {
+                                HttpOnly = true,
+                                Expires = DateTime.UtcNow.AddDays(-1)
+                            };
+                            HttpContext.Response.Cookies.Append("accessToken", "", cookieOptions);
+                            HttpContext.Response.Cookies.Append("refreshToken", "", cookieOptions);
+
+                            return Ok(new
+                            {
+                                Status = false,
+                                Message = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } }
+                            });
+                        }
+                        else
+                        {
+                            var key = Encoding.UTF8.GetBytes(jwtBearerTokenSettings.SecretKey);
+                            //var role = await userMgr.GetRolesAsync(identityUser);
+                            var unique_name = token.Claims.Where(c => c.Type == "unique_name").FirstOrDefault();
+                            var email = token.Claims.Where(c => c.Type == "email").FirstOrDefault();
+                            var role = token.Claims.Where(c => c.Type == "role").FirstOrDefault();
+
+                            var tokenDescriptor = new SecurityTokenDescriptor
+                            {
+                                Subject = new ClaimsIdentity(new Claim[]
+                                {
+                                        new Claim(ClaimTypes.NameIdentifier, nameid.Value),
+                                        new Claim(ClaimTypes.Name, unique_name.Value),
+                                        new Claim(ClaimTypes.Email, email.Value),
+                                        new Claim(ClaimTypes.Role, role.Value)
+                                   }),
+
+                                Expires = DateTime.UtcNow.AddSeconds(jwtBearerTokenSettings.ExpiryTimeInSeconds),
+                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                                Audience = jwtBearerTokenSettings.Audience,
+                                Issuer = jwtBearerTokenSettings.Issuer
+                            };
+
+                            // Set Access Token Cookie
+                            var accessTokenCookieOptions = new CookieOptions
+                            {
+                                HttpOnly = true
+                                //Expires = DateTime.UtcNow.AddDays(7)
+                            };
+                            HttpContext.Response.Cookies.Append("accessToken", tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor)), accessTokenCookieOptions);
+
+                            return Ok(new
+                            {
+                                Status = true,
+                                Message = new object[] { new { Code = "LoggedIn", Description = "Logged In!" } }
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return Ok(new
+                        {
+                            Status = false,
+                            Message = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } }
+                        });
+                    }
+                }
+                else
+                {
+                    return Ok(new
+                    {
+                        Status = true,
+                        Message = new object[] { new { Code = "LoggedIn", Description = "Logged In!" } }
+                    });
+                }
+            }
+
+            return Ok(new
+            {
+                Status = false,
+                Message = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In yet!" } }
             });
         }
     }
