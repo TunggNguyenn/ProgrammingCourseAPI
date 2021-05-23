@@ -1,4 +1,5 @@
-﻿using ProgrammingCourse.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ProgrammingCourse.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,15 +38,15 @@ namespace ProgrammingCourse.Repositories
             return deletedStatus;
         }
 
-        public Status Get(int id)
+        public async Task<Status> Get(int id)
         {
-            var status = programmingCourseDbContext.Statuses.Where<Status>(s => s.Id == id).FirstOrDefault();
+            var status = await programmingCourseDbContext.Statuses.Where<Status>(s => s.Id == id).Include(s => s.Courses).FirstOrDefaultAsync();
             return status;
         }
 
-        public IList<Status> GetAll()
+        public async Task<IList<Status>> GetAll()
         {
-            var statuses = programmingCourseDbContext.Statuses.ToList<Status>();
+            var statuses = await programmingCourseDbContext.Statuses.Include(s => s.Courses).ToListAsync<Status>();
             return statuses;
         }
 

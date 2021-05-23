@@ -44,8 +44,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Status = false,
-                    Message = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
+                    Errors = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
                 });
             }
 
@@ -55,8 +54,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Status = false,
-                    Message = new object[] { new { Code = "ExistedEmailAddress", Description = "Email address has exited!" } }
+                    Errors = new object[] { new { Code = "ExistedEmailAddress", Description = "Email address has exited!" } }
                 });
             }
 
@@ -67,8 +65,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Status = false,
-                    Message = new object[] { new { Code = "InvalidRole", Description = $"Role {userViewModel.Role} is invalid!" } }
+                    Errors = new object[] { new { Code = "InvalidRole", Description = $"Role {userViewModel.Role} is invalid!" } }
                 });
             }
 
@@ -78,8 +75,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Status = false,
-                    Message = new object[] { new { Code = "InvalidEmail", Description = $"Email {userViewModel.Email} has already taken!" } }
+                    Errors = new object[] { new { Code = "InvalidEmail", Description = $"Email {userViewModel.Email} has already taken!" } }
                 });
             }
 
@@ -99,25 +95,24 @@ namespace ProgrammingCourse.Controllers
                     return Ok(
                         new
                         {
-                            Status = true,
-                            Message = new object[] { new { Code = "Success", Description = "User Registration Successful!" } }
+                            Results = new object[] { new { Code = "Success", Description = $"User registeration is successful!" } }
                         });
                 }
 
                 return BadRequest(
                     new
                     {
-                        Status = false,
-                        Message = result2.Errors
+                        Errors = result2.Errors
                     });
             }
-
-            return BadRequest(
-                new
-                {
-                    Status = false,
-                    Message = result1.Errors
-                });
+            else
+            {
+                return BadRequest(
+                    new
+                    {
+                        Errors = result1.Errors
+                    });
+            }
         }
 
 
@@ -135,24 +130,20 @@ namespace ProgrammingCourse.Controllers
                     return BadRequest(
                         new
                         {
-                            Status = false,
-                            Message = new object[] { new { Code = "NotVerifiedAccount", Description = "This account has not verified yet!" } }
+                            Errors = new object[] { new { Code = "NotVerifiedAccount", Description = "This account has not verified yet!" } }
                         });
                 }
 
                 var token = await GenerateTokens(identityUser);
                 return Ok(new 
                 { 
-                    Status = true, 
-                    Result = token,
-                    Message = new object[] { new { Code = "Success", Description = "Login Successful" } }
+                    Results = token,
                 });
             }
             return BadRequest(
                 new
                 {
-                    Status = false,
-                    Message = new object[] { new { Code = "InvalidAccount", Description = "This account is invalid!" } }
+                    Errors = new object[] { new { Code = "InvalidAccount", Description = "This account is invalid!" } }
                 });
         }
 
@@ -177,16 +168,14 @@ namespace ProgrammingCourse.Controllers
                     Email.SendEmailOTP(email, OTPCOde);
 
                     return Ok(new {
-                        Status = true,
-                        Message = new object[] { new { Code = "Success", Description = "Resend OTP Code successfully!" } }
+                        Results = new object[] { new { Code = "Success", Description = $"Resend OTPCode Successfully!" } }
                     });
                 }
                 else
                 {
                     return BadRequest(new
                     {
-                        Status = false,
-                        Message = new object[] { new { Code = "Fail", Description = "Resend OTP Code unsuccessfully!" } }
+                        Errors = new object[] { new { Code = "Fail", Description = "Resend OTP Code unsuccessfully!" } }
                     });
                 }
             }
@@ -195,8 +184,7 @@ namespace ProgrammingCourse.Controllers
                 return BadRequest(
                     new
                     {
-                        Status = false,
-                        Message = new object[] { new { Code = "InvalidEmail", Description = "Invalid Email!" } }
+                        Errors = new object[] { new { Code = "InvalidEmail", Description = "Invalid Email!" } }
                     });
             }
         }
@@ -221,16 +209,14 @@ namespace ProgrammingCourse.Controllers
 
                         return Ok(new
                         {
-                            Status = true,
-                            Message = new object[] { new { Code = "Success", Description = "Verify OTP Code successfully!" } }
+                            Results = new object[] { new { Code = "Success", Description = "Verify OTP Code successfully!" } }
                         });
                     }
                     else
                     {
                         return BadRequest(new
                         {
-                            Status = false,
-                            Message = new object[] { new { Code = "Fail", Description = "Verify OTP Code unsuccessfully!" } }
+                            Errors = new object[] { new { Code = "Fail", Description = "Verify OTP Code unsuccessfully!" } }
                         });
                     }
                 }
@@ -238,8 +224,7 @@ namespace ProgrammingCourse.Controllers
                 {
                     return BadRequest(new
                     {
-                        Status = false,
-                        Message = new object[] { new { Code = "InvalidOTPCode!", Description = "Invalid OTP Code!" } }
+                        Errors = new object[] { new { Code = "InvalidOTPCode!", Description = "Invalid OTP Code!" } }
                     });
                 }
 
@@ -249,8 +234,7 @@ namespace ProgrammingCourse.Controllers
                 return BadRequest(
                     new
                     {
-                        Status = false,
-                        Message = new object[] { new { Code = "InvalidEmail!", Description = "Invalid Email!" } }
+                        Errors = new object[] { new { Code = "InvalidEmail!", Description = "Invalid Email!" } }
                     });
             }
         }
@@ -406,8 +390,7 @@ namespace ProgrammingCourse.Controllers
             await RevokeRefreshToken();
             return Ok(new 
             {
-                Status = true,
-                Message = new object[] { new { Code = "Success", Description = "Logged Out!" } }
+                Results = new object[] { new { Code = "Success", Description = "Logged Out!" } }
             });
         }
 
@@ -419,8 +402,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Status = false,
-                    Message = new object[] { new { Code = "NotMatchNewPasswordAndConfirmPassword", Description = "New password and confirm password dont match!" } }
+                    Errors = new object[] { new { Code = "NotMatchNewPasswordAndConfirmPassword", Description = "New password and confirm password dont match!" } }
                 });
             }
 
@@ -436,16 +418,14 @@ namespace ProgrammingCourse.Controllers
 
                     return Ok(new
                     {
-                        Status = true,
-                        Message = new object[] { new { Code = "Success", Description = "Change password successfully!" } }
+                        Results = new object[] { new { Code = "Success", Description = "Change password successfully!" } }
                     });
                 }
                 else
                 {
                     return Ok(new
                     {
-                        Status = false,
-                        Message = result.Errors
+                        Errors = result.Errors
                     });
                 }
 
@@ -454,8 +434,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Status = false,
-                    Message = new object [] {new { Code = "InvalidUserId", Description = "UserId is invalid!" } }
+                    Errors = new object [] {new { Code = "InvalidUserId", Description = "UserId is invalid!" } }
                 });
             }
         }
@@ -467,8 +446,7 @@ namespace ProgrammingCourse.Controllers
         {
             return Ok(new
             {
-                Status = true,
-                Message = new object[] { new { Code = "Success", Description = "Login is successful!" } }
+                Results = new object[] { new { Code = "Success", Description = "Login is successful!" } }
             });
         }
 
@@ -508,8 +486,7 @@ namespace ProgrammingCourse.Controllers
 
                             return Ok(new
                             {
-                                Status = false,
-                                Message = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } }
+                                Results = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } }
                             });
                         }
                         else
@@ -546,8 +523,7 @@ namespace ProgrammingCourse.Controllers
 
                             return Ok(new
                             {
-                                Status = true,
-                                Message = new object[] { new { Code = "LoggedIn", Description = "Logged In!" } }
+                                Results = new object[] { new { Code = "LoggedIn", Description = "Logged In!" } }
                             });
                         }
                     }
@@ -555,8 +531,7 @@ namespace ProgrammingCourse.Controllers
                     {
                         return Ok(new
                         {
-                            Status = false,
-                            Message = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } }
+                            Results = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } }
                         });
                     }
                 }
@@ -564,16 +539,14 @@ namespace ProgrammingCourse.Controllers
                 {
                     return Ok(new
                     {
-                        Status = true,
-                        Message = new object[] { new { Code = "LoggedIn", Description = "Logged In!" } }
+                        Results = new object[] { new { Code = "LoggedIn", Description = "Logged In!" } }
                     });
                 }
             }
 
             return Ok(new
             {
-                Status = false,
-                Message = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In yet!" } }
+                Results = new object[] { new { Code = "NotLoggedIn", Description = "Not Logged In yet!" } }
             });
         }
     }

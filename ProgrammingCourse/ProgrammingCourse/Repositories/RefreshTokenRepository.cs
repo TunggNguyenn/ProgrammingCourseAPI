@@ -33,7 +33,7 @@ namespace ProgrammingCourse.Repositories
 
             deletedRefreshToken.RevokedOn = DateTime.UtcNow;
 
-            programmingCourseDbContext.Update(deletedRefreshToken);
+            programmingCourseDbContext.RefreshTokens.Update(deletedRefreshToken);
             await programmingCourseDbContext.SaveChangesAsync();
 
             return deletedRefreshToken;

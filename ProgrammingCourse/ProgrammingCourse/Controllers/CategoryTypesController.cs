@@ -7,43 +7,42 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ProgrammingCourse.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StatusesController : ControllerBase
+    public class CategoryTypesController : ControllerBase
     {
-        private StatusRepository statusRepository;
+        private CategoryTypeRepository categoryTypeRepository;
 
-        public StatusesController(StatusRepository statusRepo)
+        public CategoryTypesController(CategoryTypeRepository categoryTypeRepo)
         {
-            statusRepository = statusRepo;
+            categoryTypeRepository = categoryTypeRepo;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var statuses = await statusRepository.GetAll();
+            var categoryTypes = await categoryTypeRepository.GetAll();
             return Ok(new
             {
-                Results = statuses,
+                Results = categoryTypes,
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] StatusViewModel statusViewModel)
+        public async Task<IActionResult> Create([FromForm] CategoryTypeViewModel categoryTypeViewModel)
         {
-            Status status = new Status() { Name = statusViewModel.Name };
+            CategoryType categoryType = new CategoryType() { Name = categoryTypeViewModel.Name };
 
-            var result = await statusRepository.Add(status);
+            var result = await categoryTypeRepository.Add(categoryType);
 
             if (result != null)
             {
                 return Ok(new
                 {
-                    Results = status,
+                    Results = result,
                 });
             }
             else

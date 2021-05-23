@@ -21,9 +21,12 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IList<IdentityRole>> GetAll()
+        public IActionResult GetAll()
         {
-            return roleManager.Roles.ToList();
+            return Ok(new
+            {
+                Results = roleManager.Roles.ToList()
+            });
         }
 
         [HttpPost]
@@ -34,16 +37,14 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Result = result,
-                    Message = "Role Adding Successful!"
+                    Results = result,
                 });
             }
             else
             {
-                return Ok(new
+                return BadRequest(new
                 {
-                    Result = result,
-                    Message = "Role Adding Unsuccessful!"
+                    Errors = result.Errors
                 });
             }
         }
