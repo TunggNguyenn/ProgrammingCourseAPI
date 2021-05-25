@@ -158,6 +158,7 @@ namespace ProgrammingCourse.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("CategoryTypeId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -225,7 +226,7 @@ namespace ProgrammingCourse.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StatusId")
+                    b.Property<int>("StatusId")
                         .HasColumnType("int");
 
                     b.Property<int>("View")
@@ -249,7 +250,7 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<int>("Rate")
@@ -259,6 +260,7 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -277,7 +279,7 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -319,6 +321,7 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -351,10 +354,11 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("StudentId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -448,10 +452,11 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("StudentId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -518,7 +523,9 @@ namespace ProgrammingCourse.Migrations
                 {
                     b.HasOne("ProgrammingCourse.Models.CategoryType", "CategoryType")
                         .WithMany("Categories")
-                        .HasForeignKey("CategoryTypeId");
+                        .HasForeignKey("CategoryTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CategoryType");
                 });
@@ -535,7 +542,9 @@ namespace ProgrammingCourse.Migrations
 
                     b.HasOne("ProgrammingCourse.Models.Status", "Status")
                         .WithMany("Courses")
-                        .HasForeignKey("StatusId");
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 
@@ -548,11 +557,15 @@ namespace ProgrammingCourse.Migrations
                 {
                     b.HasOne("ProgrammingCourse.Models.Course", "Course")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProgrammingCourse.Models.User", "User")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 
@@ -563,7 +576,9 @@ namespace ProgrammingCourse.Migrations
                 {
                     b.HasOne("ProgrammingCourse.Models.Course", "Course")
                         .WithMany("Lectures")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
                 });
@@ -572,7 +587,9 @@ namespace ProgrammingCourse.Migrations
                 {
                     b.HasOne("ProgrammingCourse.Models.User", "User")
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -581,11 +598,15 @@ namespace ProgrammingCourse.Migrations
                 {
                     b.HasOne("ProgrammingCourse.Models.Course", "Course")
                         .WithMany("StudentCourses")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProgrammingCourse.Models.User", "Student")
                         .WithMany("StudentCourses")
-                        .HasForeignKey("StudentId");
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 
@@ -596,11 +617,15 @@ namespace ProgrammingCourse.Migrations
                 {
                     b.HasOne("ProgrammingCourse.Models.Course", "Course")
                         .WithMany("WatchLists")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProgrammingCourse.Models.User", "Student")
                         .WithMany("WatchLists")
-                        .HasForeignKey("StudentId");
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 

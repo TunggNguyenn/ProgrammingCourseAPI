@@ -24,7 +24,7 @@ namespace ProgrammingCourse.Models
         //[Required]
         public DateTime? RevokedOn { get; set; }
 
-        //[Required]
+        [Required] //
         public string UserId { get; set; }
 
         [ForeignKey("UserId")]

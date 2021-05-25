@@ -49,14 +49,14 @@ namespace ProgrammingCourse.Controllers
             }
 
 
-            bool isExisted = await EmailChecker.Check(userViewModel.Email);
-            if (isExisted == false)
-            {
-                return BadRequest(new
-                {
-                    Errors = new object[] { new { Code = "ExistedEmailAddress", Description = "Email address has exited!" } }
-                });
-            }
+            //bool isExisted = await EmailChecker.Check(userViewModel.Email);
+            //if (isExisted == false)
+            //{
+            //    return BadRequest(new
+            //    {
+            //        Errors = new object[] { new { Code = "NotExistedEmailAddress", Description = "Email address is not existed!" } }
+            //    });
+            //}
 
             //Check IsRole existed
             IdentityRole isRoleExisted = await roleManager.FindByNameAsync(userViewModel.Role);

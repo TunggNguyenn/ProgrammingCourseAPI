@@ -53,18 +53,13 @@ namespace ProgrammingCourse.Repositories
 
         public async Task<Category> Update(Category category)
         {
-            Category updatedCategory = await this.Get(category.Id);
-
-            if (updatedCategory != null)
+            if (category != null)
             {
-                updatedCategory.Name = category.Name;
-                updatedCategory.CategoryTypeId = category.CategoryTypeId;
-
-                programmingCourseDbContext.Categories.Update(updatedCategory);
+                programmingCourseDbContext.Categories.Update(category);
                 await programmingCourseDbContext.SaveChangesAsync();
             }
 
-            return updatedCategory;
+            return category;
         }
     }
 }

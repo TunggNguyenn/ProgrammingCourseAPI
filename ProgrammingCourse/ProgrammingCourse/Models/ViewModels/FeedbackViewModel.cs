@@ -8,6 +8,8 @@ namespace ProgrammingCourse.Models.ViewModels
 {
     public class FeedbackViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         public int Rate { get; set; }
 
@@ -17,6 +19,6 @@ namespace ProgrammingCourse.Models.ViewModels
         public int CourseId { get; set; }
 
         [Required]
-        public int StudentId { get; set; }
+        public string UserId { get; set; }
     }
 }

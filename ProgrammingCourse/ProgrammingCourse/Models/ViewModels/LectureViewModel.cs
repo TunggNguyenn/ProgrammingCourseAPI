@@ -8,6 +8,8 @@ namespace ProgrammingCourse.Models.ViewModels
 {
     public class LectureViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         public int Section { get; set; }
 

@@ -8,6 +8,8 @@ namespace ProgrammingCourse.Models.ViewModels
 {
     public class CourseViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         public string Name { get; set; }
 
@@ -15,7 +17,7 @@ namespace ProgrammingCourse.Models.ViewModels
         public int CategoryId { get; set; }
 
         [Required]
-        public int LecturerId { get; set; }
+        public string LecturerId { get; set; }
 
 
         [Required]

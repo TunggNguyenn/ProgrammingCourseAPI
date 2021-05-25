@@ -15,7 +15,7 @@ namespace ProgrammingCourse.Models
         [Required]
         public string Name { get; set; }
 
-        //[Required]
+        [Required] //
         public int? CategoryTypeId { get; set; }
 
         [ForeignKey("CategoryTypeId")]

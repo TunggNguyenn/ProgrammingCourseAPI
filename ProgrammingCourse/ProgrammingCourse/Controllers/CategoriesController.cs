@@ -79,21 +79,29 @@ namespace ProgrammingCourse.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromForm] CategoryViewModel categoryViewModel)
         {
-            Category category = new Category()
-            {
-                Id = categoryViewModel.Id,
-                Name = categoryViewModel.Name,
-                CategoryTypeId = categoryViewModel.CategoryTypeId
-            };
-
-            var updatedCategory = await categoryRepository.Update(category);
+            var updatedCategory = await categoryRepository.Get(categoryViewModel.Id);
 
             if (updatedCategory != null)
             {
-                return Ok(new
+                updatedCategory.Name = categoryViewModel.Name;
+                updatedCategory.CategoryTypeId = categoryViewModel.CategoryTypeId;
+
+                var result = await categoryRepository.Update(updatedCategory);
+                
+                if(result != null)
                 {
-                    Results = updatedCategory,
-                });
+                    return Ok(new
+                    {
+                        Results = result
+                    });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Errors = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
+                    });
+                }
             }
             else
             {

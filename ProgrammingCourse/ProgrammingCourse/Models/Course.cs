@@ -46,8 +46,8 @@ namespace ProgrammingCourse.Models
 
         public DateTime LastUpdated { get; set; }
 
-        //[Required]
-        public int? StatusId { get; set; }
+        [Required] //
+        public int StatusId { get; set; }   //?
 
         [ForeignKey("StatusId")]
         public Status Status { get; set; }

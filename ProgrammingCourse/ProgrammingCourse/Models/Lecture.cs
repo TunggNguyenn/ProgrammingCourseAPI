@@ -21,8 +21,8 @@ namespace ProgrammingCourse.Models
         [Required]
         public string VideoUrl { get; set; }
 
-        //[Required]
-        public int? CourseId { get; set; }
+        [Required]  //
+        public int CourseId { get; set; } //?
 
         [ForeignKey("CourseId")]
         public Course Course { get; set; }

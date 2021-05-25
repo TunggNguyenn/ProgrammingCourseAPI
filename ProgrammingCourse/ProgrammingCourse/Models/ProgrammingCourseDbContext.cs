@@ -14,6 +14,7 @@ namespace ProgrammingCourse.Models
 
         }
 
+
         public DbSet<Status> Statuses { get; set; }
         public DbSet<CategoryType> CategoryTypes { get; set; }
         public DbSet<Category> Categories { get; set; }
