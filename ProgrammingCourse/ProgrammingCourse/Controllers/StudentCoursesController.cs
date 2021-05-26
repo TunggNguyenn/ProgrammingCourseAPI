@@ -12,25 +12,25 @@ namespace ProgrammingCourse.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CoursesController : ControllerBase
+    public class StudentCoursesController : ControllerBase
     {
-        private CourseRepository courseRepository;
+        private StudentCourseRepository studentCourseRepository;
 
-        public CoursesController(CourseRepository courseRepo)
+        public StudentCoursesController(StudentCourseRepository studentCourseRepo)
         {
-            courseRepository = courseRepo;
+            studentCourseRepository = studentCourseRepo;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var course = await courseRepository.Get(id);
+            var studentCourse = await studentCourseRepository.Get(id);
 
-            if (course != null)
+            if (studentCourse != null)
             {
                 return Ok(new
                 {
-                    Results = course,
+                    Results = studentCourse,
                 });
             }
             else
@@ -45,32 +45,19 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var courses = await courseRepository.GetAll();
+            var studentCourses = await studentCourseRepository.GetAll();
             return Ok(new
             {
-                Results = courses,
+                Results = studentCourses,
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CourseViewModel courseViewModel)
+        public async Task<IActionResult> Create([FromForm] StudentCourseViewModel studentCourseViewModel)
         {
-            Course course = new Course()
-            {
-                Name = courseViewModel.Name,
-                CategoryId = courseViewModel.CategoryId,
-                LecturerId = courseViewModel.LecturerId,
-                ImageUrl = courseViewModel.ImageUrl,
-                Price = courseViewModel.Price,
-                Discount = courseViewModel.Discount,
-                View = courseViewModel.View,
-                ShortDiscription = courseViewModel.ShortDiscription,
-                DetailDiscription = courseViewModel.DetailDiscription,
-                LastUpdated = DateTime.Now,
-                StatusId = courseViewModel.StatusId
-            };
+            StudentCourse studentCourse = new StudentCourse() { StudentId = studentCourseViewModel.StudentId, CourseId = studentCourseViewModel.CourseId };
 
-            var result = await courseRepository.Add(course);
+            var result = await studentCourseRepository.Add(studentCourse);
 
             if (result != null)
             {
@@ -90,31 +77,21 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromForm] CourseViewModel courseViewModel)
+        public async Task<IActionResult> Update([FromForm] StudentCourseViewModel studentCourseViewModel)
         {
-            var updatedCourse = await courseRepository.Get(courseViewModel.Id);
+            var updatedStudentCourse = await studentCourseRepository.Get(studentCourseViewModel.Id);
 
-            if (updatedCourse != null)
+            if (updatedStudentCourse != null)
             {
-                updatedCourse.Name = courseViewModel.Name;
-                updatedCourse.CategoryId = courseViewModel.CategoryId;
-                updatedCourse.LecturerId = courseViewModel.LecturerId;
-                updatedCourse.ImageUrl = courseViewModel.ImageUrl;
-                updatedCourse.Price = courseViewModel.Price;
-                updatedCourse.Discount = courseViewModel.Discount;
-                updatedCourse.View = courseViewModel.View;
-                updatedCourse.ShortDiscription = courseViewModel.ShortDiscription;
-                updatedCourse.DetailDiscription = courseViewModel.DetailDiscription;
-                updatedCourse.LastUpdated = DateTime.Now;
-                updatedCourse.StatusId = courseViewModel.StatusId;
+                updatedStudentCourse.StudentId = studentCourseViewModel.StudentId;
+                updatedStudentCourse.CourseId = studentCourseViewModel.CourseId;
 
-                var result = await courseRepository.Update(updatedCourse);
+                var result = await studentCourseRepository.Update(updatedStudentCourse);
 
                 if (result != null)
                 {
                     return Ok(new
                     {
-
                         Results = result
                     });
                 }
@@ -138,13 +115,13 @@ namespace ProgrammingCourse.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deletedCourse = await courseRepository.Delete(id);
+            var deletedStudentCourse = await studentCourseRepository.Delete(id);
 
-            if (deletedCourse != null)
+            if (deletedStudentCourse != null)
             {
                 return Ok(new
                 {
-                    Results = deletedCourse
+                    Results = deletedStudentCourse
                 });
             }
             else

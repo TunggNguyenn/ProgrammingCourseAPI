@@ -27,5 +27,8 @@ namespace ProgrammingCourse.Models
 
         [Required]
         public int OTPCode { get; set; }
+
+        [Required]
+        public bool IsLocked { get; set; }
     }
 }

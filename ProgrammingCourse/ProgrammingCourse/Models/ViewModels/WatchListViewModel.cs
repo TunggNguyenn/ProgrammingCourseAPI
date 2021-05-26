@@ -8,8 +8,10 @@ namespace ProgrammingCourse.Models.ViewModels
 {
     public class WatchListViewModel
     {
+        public int Id { get; set; }
+
         [Required]
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
 
         [Required]
         public int CourseId { get; set; }

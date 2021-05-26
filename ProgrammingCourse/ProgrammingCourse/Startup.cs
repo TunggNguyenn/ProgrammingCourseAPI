@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -60,7 +61,7 @@ namespace ProgrammingCourse
             services.AddScoped<CategoryRepository>();
             services.AddScoped<CourseRepository>();
             services.AddScoped<WatchListRepository>();
-            services.AddScoped<Student_CourseRepository>();
+            services.AddScoped<StudentCourseRepository>();
             services.AddScoped<FeedbackRepository>();
 
 
@@ -95,10 +96,13 @@ namespace ProgrammingCourse
                         OnMessageReceived = context =>
                         {          
                             context.Token = context.Request.Cookies["accessToken"];
-                            if (context.Request.Cookies["accessToken"] == null)
-                            {
-                                Console.WriteLine("Hello");
-                            }
+                            Console.WriteLine(context.HttpContext.Items["Hello"]);
+                            Console.WriteLine(context.HttpContext.Request.Cookies["accessToken"]);
+                            context.HttpContext.Response.StatusCode = StatusCodes.Status423Locked;
+                            //if (context.Request.Cookies["accessToken"] == null)
+                            //{
+                            //    Console.WriteLine("Hello");
+                            //}
                             return Task.CompletedTask;
                         }
                     };

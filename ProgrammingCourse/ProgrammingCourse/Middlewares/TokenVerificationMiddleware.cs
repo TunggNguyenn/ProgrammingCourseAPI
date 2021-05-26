@@ -27,6 +27,8 @@ namespace ProgrammingCourse.Middlewares
 
         public async Task Invoke(HttpContext httpContext, IOptions<JwtBearerTokenSettings> jwtTokenOptions, UserManager<User> userMgr, RefreshTokenRepository refreshTokenRepo)
         {
+            httpContext.Items["Hello"] = "Hello Here";
+            Console.WriteLine("Hello MiddleWare");
             string accessToken = httpContext.Request.Cookies["accessToken"];
             string refreshToken = httpContext.Request.Cookies["refreshToken"];
 
@@ -44,7 +46,6 @@ namespace ProgrammingCourse.Middlewares
 
                     if (refresh != null)
                     {
-
                         if(refresh.ExpiryOn < DateTime.UtcNow)
                         {
                             await refreshTokenRepo.Delete(refresh.Id);

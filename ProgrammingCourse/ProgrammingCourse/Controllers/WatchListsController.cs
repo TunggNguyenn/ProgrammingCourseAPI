@@ -12,25 +12,25 @@ namespace ProgrammingCourse.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CoursesController : ControllerBase
+    public class WatchListsController : ControllerBase
     {
-        private CourseRepository courseRepository;
+        private WatchListRepository watchListRepository;
 
-        public CoursesController(CourseRepository courseRepo)
+        public WatchListsController(WatchListRepository watchListRepo)
         {
-            courseRepository = courseRepo;
+            watchListRepository = watchListRepo;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var course = await courseRepository.Get(id);
+            var watchList = await watchListRepository.Get(id);
 
-            if (course != null)
+            if (watchList != null)
             {
                 return Ok(new
                 {
-                    Results = course,
+                    Results = watchList,
                 });
             }
             else
@@ -45,32 +45,19 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var courses = await courseRepository.GetAll();
+            var watchLists = await watchListRepository.GetAll();
             return Ok(new
             {
-                Results = courses,
+                Results = watchLists,
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CourseViewModel courseViewModel)
+        public async Task<IActionResult> Create([FromForm] WatchListViewModel watchListViewModel)
         {
-            Course course = new Course()
-            {
-                Name = courseViewModel.Name,
-                CategoryId = courseViewModel.CategoryId,
-                LecturerId = courseViewModel.LecturerId,
-                ImageUrl = courseViewModel.ImageUrl,
-                Price = courseViewModel.Price,
-                Discount = courseViewModel.Discount,
-                View = courseViewModel.View,
-                ShortDiscription = courseViewModel.ShortDiscription,
-                DetailDiscription = courseViewModel.DetailDiscription,
-                LastUpdated = DateTime.Now,
-                StatusId = courseViewModel.StatusId
-            };
+            WatchList watchList = new WatchList() { StudentId = watchListViewModel.StudentId, CourseId = watchListViewModel.CourseId };
 
-            var result = await courseRepository.Add(course);
+            var result = await watchListRepository.Add(watchList);
 
             if (result != null)
             {
@@ -90,31 +77,21 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromForm] CourseViewModel courseViewModel)
+        public async Task<IActionResult> Update([FromForm] WatchListViewModel watchListViewModel)
         {
-            var updatedCourse = await courseRepository.Get(courseViewModel.Id);
+            var updatedWatchList = await watchListRepository.Get(watchListViewModel.Id);
 
-            if (updatedCourse != null)
+            if (updatedWatchList != null)
             {
-                updatedCourse.Name = courseViewModel.Name;
-                updatedCourse.CategoryId = courseViewModel.CategoryId;
-                updatedCourse.LecturerId = courseViewModel.LecturerId;
-                updatedCourse.ImageUrl = courseViewModel.ImageUrl;
-                updatedCourse.Price = courseViewModel.Price;
-                updatedCourse.Discount = courseViewModel.Discount;
-                updatedCourse.View = courseViewModel.View;
-                updatedCourse.ShortDiscription = courseViewModel.ShortDiscription;
-                updatedCourse.DetailDiscription = courseViewModel.DetailDiscription;
-                updatedCourse.LastUpdated = DateTime.Now;
-                updatedCourse.StatusId = courseViewModel.StatusId;
+                updatedWatchList.StudentId = watchListViewModel.StudentId;
+                updatedWatchList.CourseId = watchListViewModel.CourseId;
 
-                var result = await courseRepository.Update(updatedCourse);
+                var result = await watchListRepository.Update(updatedWatchList);
 
                 if (result != null)
                 {
                     return Ok(new
                     {
-
                         Results = result
                     });
                 }
@@ -138,13 +115,13 @@ namespace ProgrammingCourse.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deletedCourse = await courseRepository.Delete(id);
+            var deletedWatchList = await watchListRepository.Delete(id);
 
-            if (deletedCourse != null)
+            if (deletedWatchList != null)
             {
                 return Ok(new
                 {
-                    Results = deletedCourse
+                    Results = deletedWatchList
                 });
             }
             else

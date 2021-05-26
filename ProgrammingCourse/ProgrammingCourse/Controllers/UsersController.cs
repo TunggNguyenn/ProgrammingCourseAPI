@@ -91,7 +91,11 @@ namespace ProgrammingCourse.Controllers
             {
                 var role = await userManager.GetRolesAsync(user);
 
-                await userManager.RemoveFromRoleAsync(user, role[0]);
+                if(role.Count > 0)
+                {
+                    await userManager.RemoveFromRoleAsync(user, role[0]);
+                }
+ 
 
                 var deletedUser = await userManager.DeleteAsync(user);
 

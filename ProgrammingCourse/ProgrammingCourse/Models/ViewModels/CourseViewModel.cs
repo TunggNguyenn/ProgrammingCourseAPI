@@ -26,7 +26,8 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public double Price { get; set; }
 
-        public double DiscountPrice { get; set; }
+        [Required]
+        public float Discount { get; set; }
 
         [Required]
         public int View { get; set; }
@@ -37,7 +38,7 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public string DetailDiscription { get; set; }
 
-        public DateTime LastUpdated { get; set; }
+        //public DateTime LastUpdated { get; set; }
 
         [Required]
         public int StatusId { get; set; }

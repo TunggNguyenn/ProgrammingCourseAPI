@@ -15,13 +15,13 @@ namespace ProgrammingCourse.Models
         [Required]
         public string Name { get; set; }
 
-        //[Required]
-        public int? CategoryId { get; set; }
+        [Required]  //
+        public int CategoryId { get; set; } //?
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
 
-        //[Required]
+        //[Required]  //
         public string LecturerId { get; set; }
 
         [ForeignKey("LecturerId")]
@@ -33,7 +33,7 @@ namespace ProgrammingCourse.Models
         [Required]
         public double Price { get; set; }
 
-        public double DiscountPrice { get; set; }
+        public float Discount { get; set; }
 
         [Required]
         public int View { get; set; }

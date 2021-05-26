@@ -21,8 +21,8 @@ namespace ProgrammingCourse.Models
         [Required]
         public DateTime CreatedOn { get; set; }
 
-        //[Required]
-        public DateTime? RevokedOn { get; set; }
+        [Required]  //
+        public DateTime RevokedOn { get; set; } //?
 
         [Required] //
         public string UserId { get; set; }
