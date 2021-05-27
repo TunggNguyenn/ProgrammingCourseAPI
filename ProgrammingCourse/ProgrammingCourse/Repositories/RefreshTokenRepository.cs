@@ -59,7 +59,7 @@ namespace ProgrammingCourse.Repositories
 
         public RefreshToken GetByUserIdAndToken(string userId, string token)
         {
-            var refreshToken = programmingCourseDbContext.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId && r.Token == token && r.RevokedOn == null).FirstOrDefault();
+            var refreshToken = programmingCourseDbContext.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId && r.Token == token && r.RevokedOn == DateTime.MinValue).FirstOrDefault();
             return refreshToken;
         }
 

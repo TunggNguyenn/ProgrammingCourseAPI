@@ -49,6 +49,7 @@ namespace ProgrammingCourse.Controllers
             }
 
 
+            //Check whether email is existed
             bool isExisted = await EmailChecker.Check(userViewModel.Email);
             if (isExisted == false)
             {
@@ -59,15 +60,15 @@ namespace ProgrammingCourse.Controllers
             }
 
             //Check IsRole existed
-            IdentityRole isRoleExisted = await roleManager.FindByNameAsync(userViewModel.Role);
+            //IdentityRole isRoleExisted = await roleManager.FindByNameAsync(userViewModel.Role);
 
-            if (isRoleExisted == null)
-            {
-                return BadRequest(new
-                {
-                    Errors = new object[] { new { Code = "InvalidRole", Description = $"Role {userViewModel.Role} is invalid!" } }
-                });
-            }
+            //if (isRoleExisted == null)
+            //{
+            //    return BadRequest(new
+            //    {
+            //        Errors = new object[] { new { Code = "InvalidRole", Description = $"Role {userViewModel.Role} is invalid!" } }
+            //    });
+            //}
 
             //Check IsEmail existed
             User isEmailExisted = await userManager.FindByEmailAsync(userViewModel.Email);
@@ -125,6 +126,15 @@ namespace ProgrammingCourse.Controllers
 
             if (identityUser != null)
             {
+                if (identityUser.IsLocked == true)
+                {
+                    return Unauthorized(
+                        new
+                        {
+                            Errors = new object[] { new { Code = "LockedAccount", Description = "This account has been locked!" } }
+                        });
+                }
+
                 if (identityUser.IsTwoStepConfirmation == false)
                 {
                     return BadRequest(
@@ -467,11 +477,12 @@ namespace ProgrammingCourse.Controllers
                 {
                     var nameid = token.Claims.Where(c => c.Type == "nameid").FirstOrDefault();
                     RefreshToken refresh = refreshTokenRepository.GetByUserIdAndToken(nameid.Value, refreshToken);
+                    User identityUser = await userManager.FindByIdAsync(nameid.Value);
 
                     if (refresh != null)
                     {
 
-                        if (refresh.ExpiryOn < DateTime.UtcNow)
+                        if (refresh.ExpiryOn < DateTime.UtcNow || identityUser.IsLocked == true)
                         {
                             await refreshTokenRepository.Delete(refresh.Id);
 

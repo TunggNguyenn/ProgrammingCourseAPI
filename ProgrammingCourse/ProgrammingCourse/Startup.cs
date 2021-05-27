@@ -94,14 +94,16 @@ namespace ProgrammingCourse
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
-                        {          
-                            context.Token = context.Request.Cookies["accessToken"];
-                            Console.WriteLine(context.HttpContext.Items["Hello"]);
-                            Console.WriteLine(context.HttpContext.Request.Cookies["accessToken"]);
-                            context.HttpContext.Response.StatusCode = StatusCodes.Status423Locked;
-                            //if (context.Request.Cookies["accessToken"] == null)
+                        {
+                            if(context.HttpContext.Items["accessToken"] != null)
+                            {
+                                context.Token = context.HttpContext.Items["accessToken"].ToString();
+                            }
+                            //context.Token = context.Request.Cookies["accessToken"];
+
+                            //if (context.HttpContext.Items["accessToken"].ToString() != "")
                             //{
-                            //    Console.WriteLine("Hello");
+                            //    context.Token = context.HttpContext.Items["accessToken"].ToString();
                             //}
                             return Task.CompletedTask;
                         }
