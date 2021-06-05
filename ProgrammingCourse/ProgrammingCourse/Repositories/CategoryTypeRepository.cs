@@ -16,6 +16,12 @@ namespace ProgrammingCourse.Repositories
             this.programmingCourseDbContext = programmingCourseDbContext;
         }
 
+        public async Task<CategoryType> Get(int id)
+        {
+            var categoryType = await programmingCourseDbContext.CategoryTypes.Where<CategoryType>(c => c.Id == id).Include(c => c.Categories).FirstOrDefaultAsync();
+            return categoryType;
+        }
+
         public async Task<CategoryType> Add(CategoryType categoryType)
         {
             await programmingCourseDbContext.CategoryTypes.AddAsync(categoryType);
@@ -36,12 +42,6 @@ namespace ProgrammingCourse.Repositories
             await programmingCourseDbContext.SaveChangesAsync();
 
             return deletedCategoryType;
-        }
-
-        public async Task<CategoryType> Get(int id)
-        {
-            var categoryType = await programmingCourseDbContext.CategoryTypes.Where<CategoryType>(c => c.Id == id).Include(c => c.Categories).FirstOrDefaultAsync();
-            return categoryType;
         }
 
         public async Task<IList<CategoryType>> GetAll()

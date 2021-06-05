@@ -47,7 +47,7 @@ namespace ProgrammingCourse.Repositories
 
         public async Task<IList<Category>> GetAll()
         {
-            var categories = await programmingCourseDbContext.Categories.Include(c => c.Courses).Include(c => c.CategoryType).ToListAsync<Category>();
+            var categories = await programmingCourseDbContext.Categories.ToListAsync<Category>();
             return categories;
         }
 
@@ -60,6 +60,27 @@ namespace ProgrammingCourse.Repositories
             }
 
             return category;
+        }
+
+
+        public async Task<dynamic> GetMostRegisteredCategories()
+        {
+            var categories = await programmingCourseDbContext.StudentCourses
+                .Include(s => s.Course).ThenInclude(s => s.Category)
+                .GroupBy(s => new
+                {
+                    CategoryId = s.Course.Category.Id,
+                    CategoryName = s.Course.Category.Name
+                })
+                .Select(s => new
+                {
+                    CategoryId = s.Key.CategoryId,
+                    CategoryName = s.Key.CategoryName,
+                    TotalRegisteredUserNumber = s.Count()
+                })
+                .OrderByDescending(s => s.TotalRegisteredUserNumber)
+                .ToListAsync<dynamic>();
+            return categories;
         }
     }
 }

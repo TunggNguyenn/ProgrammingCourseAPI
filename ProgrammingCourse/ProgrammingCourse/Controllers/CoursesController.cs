@@ -155,5 +155,56 @@ namespace ProgrammingCourse.Controllers
                 });
             }
         }
+
+
+        [HttpGet()]
+        [Route("OutstandingCourses")]
+        public async Task<IActionResult> OutstandingCourses()
+        {
+            var outstandingCourses = await courseRepository.GetOutStandingCourses();
+
+            return Ok(new
+            {
+                Results = outstandingCourses,
+            });
+        }
+
+        [HttpGet()]
+        [Route("MostViewedCourses")]
+        public async Task<IActionResult> MostViewedCourses()
+        {
+            var mostViewedCourses = await courseRepository.GetMostViewedCourses();
+
+            return Ok(new
+            {
+                Results = mostViewedCourses,
+            });
+        }
+
+
+        [HttpGet()]
+        [Route("NewestCourses")]
+        public async Task<IActionResult> NewestCourses()
+        {
+            var newestCourses = await courseRepository.GetNewestCourses();
+
+            return Ok(new
+            {
+                Results = newestCourses,
+            });
+        }
+
+
+        [HttpGet()]
+        [Route("BestSellerCoursesByCategoryId")]
+        public async Task<IActionResult> BestSellerCoursesByCategoryId([FromQuery] int courseId, [FromQuery] int categoryId)
+        {
+            var bestSellerCourses = await courseRepository.GetBestSellerCoursesByCategoryId(courseId, categoryId);
+
+            return Ok(new
+            {
+                Results = bestSellerCourses,
+            });
+        }
     }
 }

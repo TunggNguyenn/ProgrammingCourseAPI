@@ -15,10 +15,12 @@ namespace ProgrammingCourse.Controllers
     public class CategoriesController : ControllerBase
     {
         private CategoryRepository categoryRepository;
+        private CourseRepository courseRepository;
 
-        public CategoriesController(CategoryRepository categoryRepo)
+        public CategoriesController(CategoryRepository categoryRepo, CourseRepository courseRepo)
         {
             categoryRepository = categoryRepo;
+            courseRepository = courseRepo;
         }
 
         [HttpGet("{id}")]
@@ -115,6 +117,16 @@ namespace ProgrammingCourse.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            var courses = await courseRepository.GetByCategoryId(id);
+
+            if(courses.Count > 0)
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "ExistedCourse", Description = "Category has already existed course" } }
+                });
+            }
+
             var deletedCategory = await categoryRepository.Delete(id);
 
             if (deletedCategory != null)
@@ -131,6 +143,19 @@ namespace ProgrammingCourse.Controllers
                     Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
                 });
             }
+        }
+
+
+        [HttpGet()]
+        [Route("MostRegisteredCategories")]
+        public async Task<IActionResult> MostRegisteredCategories()
+        {
+            var mostRegisteredCategories = await categoryRepository.GetMostRegisteredCategories();
+
+            return Ok(new
+            {
+                Results = mostRegisteredCategories,
+            });
         }
     }
 }

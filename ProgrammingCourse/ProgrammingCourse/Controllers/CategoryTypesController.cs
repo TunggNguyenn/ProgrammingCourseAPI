@@ -21,6 +21,28 @@ namespace ProgrammingCourse.Controllers
             categoryTypeRepository = categoryTypeRepo;
         }
 
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var categoryType = await categoryTypeRepository.Get(id);
+
+            if (categoryType != null)
+            {
+                return Ok(new
+                {
+                    Results = categoryType,
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
+                });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
