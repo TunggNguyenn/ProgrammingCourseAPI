@@ -22,6 +22,28 @@ namespace ProgrammingCourse.Controllers
             statusRepository = statusRepo;
         }
 
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var status = await statusRepository.Get(id);
+
+            if (status != null)
+            {
+                return Ok(new
+                {
+                    Results = status,
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
+                });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

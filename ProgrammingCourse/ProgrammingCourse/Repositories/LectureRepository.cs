@@ -46,7 +46,7 @@ namespace ProgrammingCourse.Repositories
 
         public async Task<IList<Lecture>> GetAll()
         {
-            var lectures = await programmingCourseDbContext.Lectures.Include(l => l.Course).ToListAsync<Lecture>();
+            var lectures = await programmingCourseDbContext.Lectures.ToListAsync<Lecture>();
             return lectures;
         }
 
@@ -59,6 +59,15 @@ namespace ProgrammingCourse.Repositories
             }
 
             return lecture;
+        }
+
+
+        public async Task<IList<Lecture>> GetAllByCourseId(int courseId)
+        {
+            var lectures = await programmingCourseDbContext.Lectures
+                .Where<Lecture>(l => l.CourseId == courseId)
+                .ToListAsync<Lecture>();
+            return lectures;
         }
     }
 }

@@ -206,5 +206,56 @@ namespace ProgrammingCourse.Controllers
                 Results = bestSellerCourses,
             });
         }
+
+
+        [HttpPut]
+        [Route("ChangeStatus")]
+        public async Task<IActionResult> ChangeStatus([FromForm] int courseId, [FromForm] int statusId)
+        {
+            var updatedCourse = await courseRepository.Get(courseId);
+
+            if (updatedCourse != null)
+            {
+                updatedCourse.StatusId = statusId;
+
+                var result = await courseRepository.Update(updatedCourse);
+
+                if (result != null)
+                {
+                    return Ok(new
+                    {
+
+                        Results = result
+                    });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Errors = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
+                    });
+                }
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
+                });
+            }
+        }
+
+
+
+        [HttpGet]
+        [Route("GetAllByLecturerId")]
+        public async Task<IActionResult> GetAllByLecturerId([FromQuery] string lecturerId)
+        {
+            var courses = await courseRepository.GetAllByLecturerId(lecturerId);
+            return Ok(new
+            {
+                Results = courses,
+            });
+        }
     }
 }

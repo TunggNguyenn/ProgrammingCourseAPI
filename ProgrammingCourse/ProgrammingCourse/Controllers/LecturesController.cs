@@ -134,5 +134,17 @@ namespace ProgrammingCourse.Controllers
                 });
             }
         }
+
+
+        [HttpGet]
+        [Route("GetAllByCourseId")]
+        public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
+        {
+            var lectures = await lectureRepository.GetAllByCourseId(courseId);
+            return Ok(new
+            {
+                Results = lectures,
+            });
+        }
     }
 }

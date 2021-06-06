@@ -233,5 +233,38 @@ namespace ProgrammingCourse.Repositories
                 .ToListAsync<dynamic>();
             return courses;
         }
+
+
+        public async Task<IList<dynamic>> GetAllByLecturerId(string lecturerId)
+        {
+            var courses = await programmingCourseDbContext.Courses
+                .Where<Course>(c => c.LecturerId == lecturerId)
+                .Include(c => c.Feedbacks).Include(c => c.Lecturer).Include(c => c.Status).Include(c => c.StudentCourses).Include(c => c.Category)
+                .ThenInclude(c => c.CategoryType)
+                .Select(c => new
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    CategoryTypeId = c.Category.CategoryType.Id,
+                    CategoryTypeName = c.Category.CategoryType.Name,
+                    CategoryId = c.Category.Id,
+                    CategoryName = c.Category.Name,
+                    LectureId = c.Lecturer.Id,
+                    LectureName = c.Lecturer.UserName,
+                    ImageUrl = c.ImageUrl,
+                    Price = c.Price,
+                    Discount = c.Discount,
+                    View = c.View,
+                    ShortDiscription = c.ShortDiscription,
+                    DetailDiscription = c.DetailDiscription,
+                    LastUpdated = c.LastUpdated,
+                    StatusId = c.Status.Id,
+                    StatusName = c.Status.Name,
+                    RegisteredUserNumber = c.StudentCourses.Count,
+                    Feedbacks = c.Feedbacks
+                })
+                .ToListAsync<dynamic>();
+            return courses;
+        }
     }
 }

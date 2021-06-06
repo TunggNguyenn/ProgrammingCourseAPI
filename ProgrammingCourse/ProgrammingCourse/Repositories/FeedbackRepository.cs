@@ -40,13 +40,17 @@ namespace ProgrammingCourse.Repositories
 
         public async Task<Feedback> Get(int id)
         {
-            var feedback = await programmingCourseDbContext.Feedbacks.Where<Feedback>(f => f.Id == id).Include(f => f.User).Include(f => f.Course).FirstOrDefaultAsync();
+            var feedback = await programmingCourseDbContext.Feedbacks
+                .Where<Feedback>(f => f.Id == id)
+                .Include(f => f.User).Include(f => f.Course)
+                .FirstOrDefaultAsync();
             return feedback;
         }
 
         public async Task<IList<Feedback>> GetAll()
         {
-            var feedbacks = await programmingCourseDbContext.Feedbacks.Include(f => f.User).Include(f => f.Course).ToListAsync<Feedback>();
+            var feedbacks = await programmingCourseDbContext.Feedbacks
+                .ToListAsync<Feedback>();
             return feedbacks;
         }
 
@@ -59,6 +63,38 @@ namespace ProgrammingCourse.Repositories
             }
 
             return feedback;
+        }
+
+
+        public async Task<bool> IsExistedFeedbackByStudentIdAndCourseId(string userId, int courseId)
+        {
+            var course = await programmingCourseDbContext.Feedbacks.Where<Feedback>(f => f.UserId == userId && f.CourseId == courseId).FirstOrDefaultAsync();
+
+            if(course != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public async Task<IList<dynamic>> GetAllByCourseId(int courseId)
+        {
+            var feedbacks = await programmingCourseDbContext.Feedbacks
+                .Where<Feedback>(f => f.CourseId == courseId)
+                .Include(f => f.User)
+                .Select(f => new
+                {
+                    Id = f.Id,
+                    Rate = f.Rate,
+                    Review = f.Review,
+                    UserId = f.User.Id,
+                    UserName = f.User.UserName,
+                    UserAvatarUrl = f.User.AvatarUrl
+                })
+                .ToListAsync<dynamic>();
+            return feedbacks;
         }
     }
 }

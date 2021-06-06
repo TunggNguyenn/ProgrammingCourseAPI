@@ -55,6 +55,16 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] StudentCourseViewModel studentCourseViewModel)
         {
+            bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentCourseViewModel.StudentId, studentCourseViewModel.CourseId);
+            
+            if (isParticipatedByStudentIdAndCourseId == true)
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "ParticipatedCourse", Description = "The student has already participated the course!" } }
+                });
+            }
+
             StudentCourse studentCourse = new StudentCourse() { StudentId = studentCourseViewModel.StudentId, CourseId = studentCourseViewModel.CourseId };
 
             var result = await studentCourseRepository.Add(studentCourse);
@@ -131,6 +141,42 @@ namespace ProgrammingCourse.Controllers
                     Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
                 });
             }
+        }
+
+
+        [HttpGet]
+        [Route("GetAllByStudentId")]
+        public async Task<IActionResult> GetAllByStudentId([FromQuery] string studentId)
+        {
+            var studentCourses = await studentCourseRepository.GetAllByStudentId(studentId);
+            return Ok(new
+            {
+                Results = studentCourses,
+            });
+        }
+
+
+        [HttpGet]
+        [Route("GetAllByCourseId")]
+        public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
+        {
+            var studentCourses = await studentCourseRepository.GetAllByCourseId(courseId);
+            return Ok(new
+            {
+                Results = studentCourses,
+            });
+        }
+
+
+        [HttpGet]
+        [Route("IsParticipatedByStudentIdAndCourseId")]
+        public async Task<IActionResult> IsParticipatedByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
+        {
+            bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentId, courseId);
+            return Ok(new
+            {
+                Results = isParticipatedByStudentIdAndCourseId,
+            });
         }
     }
 }

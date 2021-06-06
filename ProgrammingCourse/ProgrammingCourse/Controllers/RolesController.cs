@@ -21,6 +21,27 @@ namespace ProgrammingCourse.Controllers
             roleManager = roleMgr;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            var role = await roleManager.Roles.Where<IdentityRole>(r => r.Id == id).FirstOrDefaultAsync();
+
+            if (role != null)
+            {
+                return Ok(new
+                {
+                    Results = role,
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
+                });
+            }
+        }
+
         [HttpGet]
         public IActionResult GetAll()
         {

@@ -55,6 +55,16 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] FeedbackViewModel feedbackViewModel)
         {
+            bool isExistedFeedbackByUserIdAndCourseId = await feedbackRepository.IsExistedFeedbackByStudentIdAndCourseId(feedbackViewModel.UserId, feedbackViewModel.CourseId);
+
+            if(isExistedFeedbackByUserIdAndCourseId == true)
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "ExistedFeedback", Description = "Feedback has already existed!" } }
+                });
+            }
+
             Feedback feedback = new Feedback() { Rate = feedbackViewModel.Rate, Review = feedbackViewModel.Review, CourseId = feedbackViewModel.CourseId, UserId = feedbackViewModel.UserId };
 
             var result = await feedbackRepository.Add(feedback);
@@ -133,6 +143,30 @@ namespace ProgrammingCourse.Controllers
                     Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
                 });
             }
+        }
+
+
+        [HttpGet]
+        [Route("IsExistedFeedbackByStudentIdAndCourseId")]
+        public async Task<IActionResult> IsExistedFeedbackByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
+        {
+            bool isExistedFeedbackByUserIdAndCourseId = await feedbackRepository.IsExistedFeedbackByStudentIdAndCourseId(studentId, courseId);
+            return Ok(new
+            {
+                Results = isExistedFeedbackByUserIdAndCourseId
+            });
+        }
+
+
+        [HttpGet]
+        [Route("GetAllByCourseId")]
+        public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
+        {
+            var feedbacks = await feedbackRepository.GetAllByCourseId(courseId);
+            return Ok(new
+            {
+                Results = feedbacks,
+            });
         }
     }
 }

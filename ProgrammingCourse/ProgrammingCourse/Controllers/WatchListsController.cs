@@ -55,6 +55,16 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] WatchListViewModel watchListViewModel)
         {
+            bool isExistedWatchListByStudentIdAndCourseId = await watchListRepository.IsExistedWatchListByStudentIdAndCourseId(watchListViewModel.StudentId, watchListViewModel.CourseId);
+
+            if (isExistedWatchListByStudentIdAndCourseId == true)
+            {
+                return BadRequest(new
+                {
+                    Errors = new object[] { new { Code = "ExistedWatchList", Description = "WatchList has already existed!" } }
+                });
+            }
+
             WatchList watchList = new WatchList() { StudentId = watchListViewModel.StudentId, CourseId = watchListViewModel.CourseId };
 
             var result = await watchListRepository.Add(watchList);
@@ -131,6 +141,30 @@ namespace ProgrammingCourse.Controllers
                     Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
                 });
             }
+        }
+
+
+        [HttpGet]
+        [Route("GetAllByStudentId")]
+        public async Task<IActionResult> GetAllByStudentId([FromQuery] string studentId)
+        {
+            var watchLists = await watchListRepository.GetAllByStudentId(studentId);
+            return Ok(new
+            {
+                Results = watchLists,
+            });
+        }
+
+
+        [HttpGet]
+        [Route("IsExistedWatchListByStudentIdAndCourseId")]
+        public async Task<IActionResult> IsExistedWatchListByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
+        {
+            bool isExistedWatchListByStudentIdAndCourseId = await watchListRepository.IsExistedWatchListByStudentIdAndCourseId(studentId, courseId);
+            return Ok(new
+            {
+                Results = isExistedWatchListByStudentIdAndCourseId
+            });
         }
     }
 }
