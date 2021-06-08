@@ -32,7 +32,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = status,
+                    Results = status
                 });
             }
             else
@@ -50,7 +50,7 @@ namespace ProgrammingCourse.Controllers
             var statuses = await statusRepository.GetAll();
             return Ok(new
             {
-                Results = statuses,
+                Results = statuses
             });
         }
 
@@ -65,7 +65,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = status,
+                    Results = status
                 });
             }
             else

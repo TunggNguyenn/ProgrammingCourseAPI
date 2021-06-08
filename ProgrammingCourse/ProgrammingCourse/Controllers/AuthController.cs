@@ -140,7 +140,7 @@ namespace ProgrammingCourse.Controllers
                     return BadRequest(
                         new
                         {
-                            Errors = new object[] { new { Code = "NotVerifiedAccount", Description = "This account has not verified yet!" } }
+                            Errors = new object[] { new { Code = "NotVerifiedAccount", Description = "This account has not been verified yet!" } }
                         });
                 }
 

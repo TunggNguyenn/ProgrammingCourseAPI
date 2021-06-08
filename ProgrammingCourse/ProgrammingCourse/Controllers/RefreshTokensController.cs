@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProgrammingCourse.Models;
+using ProgrammingCourse.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,25 +10,26 @@ namespace ProgrammingCourse.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class RefreshTokensController : ControllerBase
     {
-        private RoleManager<IdentityRole> roleManager;
+        private RefreshTokenRepository refreshTokenRepository;
 
-        public RolesController(RoleManager<IdentityRole> roleMgr)
+        public RefreshTokensController(RefreshTokenRepository refreshTokenRepo)
         {
-            roleManager = roleMgr;
+            refreshTokenRepository = refreshTokenRepo;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
-        {
-            var role = await roleManager.Roles.Where<IdentityRole>(r => r.Id == id).FirstOrDefaultAsync();
 
-            if (role != null)
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var refreshToken = refreshTokenRepository.Get(id);
+
+            if (refreshToken != null)
             {
                 return Ok(new
                 {
-                    Results = role
+                    Results = refreshToken
                 });
             }
             else
@@ -45,17 +44,19 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
+            var refreshToken = refreshTokenRepository.GetAll();
             return Ok(new
             {
-                Results = roleManager.Roles.ToList()
+                Results = refreshToken
             });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] string name)
+        [HttpDelete]
+        public async Task<IActionResult> Remove(int id)
         {
-            IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
-            if (result.Succeeded)
+            var result = await refreshTokenRepository.Remove(id);
+
+            if (result != null)
             {
                 return Ok(new
                 {
@@ -66,7 +67,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = result.Errors
+                    Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
                 });
             }
         }

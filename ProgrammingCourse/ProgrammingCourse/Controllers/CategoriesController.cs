@@ -32,7 +32,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = category,
+                    Results = category
                 });
             }
             else
@@ -50,7 +50,7 @@ namespace ProgrammingCourse.Controllers
             var categories = await categoryRepository.GetAll();
             return Ok(new
             {
-                Results = categories,
+                Results = categories
             });
         }
 
@@ -65,7 +65,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = result,
+                    Results = result
                 });
             }
             else
@@ -154,7 +154,7 @@ namespace ProgrammingCourse.Controllers
 
             return Ok(new
             {
-                Results = mostRegisteredCategories,
+                Results = mostRegisteredCategories
             });
         }
     }

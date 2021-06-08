@@ -30,7 +30,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = feedback,
+                    Results = feedback
                 });
             }
             else
@@ -48,7 +48,7 @@ namespace ProgrammingCourse.Controllers
             var feedbacks = await feedbackRepository.GetAll();
             return Ok(new
             {
-                Results = feedbacks,
+                Results = feedbacks
             });
         }
 
@@ -73,7 +73,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = result,
+                    Results = result
                 });
             }
             else
@@ -165,7 +165,7 @@ namespace ProgrammingCourse.Controllers
             var feedbacks = await feedbackRepository.GetAllByCourseId(courseId);
             return Ok(new
             {
-                Results = feedbacks,
+                Results = feedbacks
             });
         }
     }

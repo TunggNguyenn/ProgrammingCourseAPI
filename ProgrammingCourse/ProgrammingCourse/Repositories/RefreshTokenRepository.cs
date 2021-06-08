@@ -70,5 +70,21 @@ namespace ProgrammingCourse.Repositories
 
             return refreshToken;
         }
+
+
+        public async Task<RefreshToken> Remove(int id)
+        {
+            var deletedRefreshToken = await programmingCourseDbContext.RefreshTokens.FindAsync(id);
+
+            if (deletedRefreshToken == null)
+            {
+                return deletedRefreshToken;
+            }
+
+            programmingCourseDbContext.RefreshTokens.Remove(deletedRefreshToken);
+            await programmingCourseDbContext.SaveChangesAsync();
+
+            return deletedRefreshToken;
+        }
     }
 }

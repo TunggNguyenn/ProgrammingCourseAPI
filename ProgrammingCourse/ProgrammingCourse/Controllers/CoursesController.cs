@@ -30,7 +30,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = course,
+                    Results = course
                 });
             }
             else
@@ -48,7 +48,7 @@ namespace ProgrammingCourse.Controllers
             var courses = await courseRepository.GetAll();
             return Ok(new
             {
-                Results = courses,
+                Results = courses
             });
         }
 
@@ -76,7 +76,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = result,
+                    Results = result
                 });
             }
             else
@@ -165,7 +165,7 @@ namespace ProgrammingCourse.Controllers
 
             return Ok(new
             {
-                Results = outstandingCourses,
+                Results = outstandingCourses
             });
         }
 
@@ -177,7 +177,7 @@ namespace ProgrammingCourse.Controllers
 
             return Ok(new
             {
-                Results = mostViewedCourses,
+                Results = mostViewedCourses
             });
         }
 
@@ -190,7 +190,7 @@ namespace ProgrammingCourse.Controllers
 
             return Ok(new
             {
-                Results = newestCourses,
+                Results = newestCourses
             });
         }
 
@@ -203,7 +203,7 @@ namespace ProgrammingCourse.Controllers
 
             return Ok(new
             {
-                Results = bestSellerCourses,
+                Results = bestSellerCourses
             });
         }
 
@@ -254,7 +254,7 @@ namespace ProgrammingCourse.Controllers
             var courses = await courseRepository.GetAllByLecturerId(lecturerId);
             return Ok(new
             {
-                Results = courses,
+                Results = courses
             });
         }
     }

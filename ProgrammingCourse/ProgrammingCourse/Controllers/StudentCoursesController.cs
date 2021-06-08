@@ -30,7 +30,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = studentCourse,
+                    Results = studentCourse
                 });
             }
             else
@@ -48,7 +48,7 @@ namespace ProgrammingCourse.Controllers
             var studentCourses = await studentCourseRepository.GetAll();
             return Ok(new
             {
-                Results = studentCourses,
+                Results = studentCourses
             });
         }
 
@@ -73,7 +73,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return Ok(new
                 {
-                    Results = result,
+                    Results = result
                 });
             }
             else
@@ -151,7 +151,7 @@ namespace ProgrammingCourse.Controllers
             var studentCourses = await studentCourseRepository.GetAllByStudentId(studentId);
             return Ok(new
             {
-                Results = studentCourses,
+                Results = studentCourses
             });
         }
 
@@ -163,7 +163,7 @@ namespace ProgrammingCourse.Controllers
             var studentCourses = await studentCourseRepository.GetAllByCourseId(courseId);
             return Ok(new
             {
-                Results = studentCourses,
+                Results = studentCourses
             });
         }
 
@@ -175,7 +175,7 @@ namespace ProgrammingCourse.Controllers
             bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentId, courseId);
             return Ok(new
             {
-                Results = isParticipatedByStudentIdAndCourseId,
+                Results = isParticipatedByStudentIdAndCourseId
             });
         }
     }
