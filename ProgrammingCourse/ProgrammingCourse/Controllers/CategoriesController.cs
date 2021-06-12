@@ -57,7 +57,12 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CategoryViewModel categoryViewModel)
         {
-            Category category = new Category() { Name = categoryViewModel.Name, CategoryTypeId = categoryViewModel.CategoryTypeId };
+            Category category = new Category() 
+            { 
+                Name = categoryViewModel.Name, 
+                CategoryTypeId = categoryViewModel.CategoryTypeId,
+                ImageUrl = categoryViewModel.ImageUrl
+            };
 
             var result = await categoryRepository.Add(category);
 
@@ -87,6 +92,7 @@ namespace ProgrammingCourse.Controllers
             {
                 updatedCategory.Name = categoryViewModel.Name;
                 updatedCategory.CategoryTypeId = categoryViewModel.CategoryTypeId;
+                updatedCategory.ImageUrl = categoryViewModel.ImageUrl;
 
                 var result = await categoryRepository.Update(updatedCategory);
                 

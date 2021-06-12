@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ProgrammingCourse.Repositories;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +19,17 @@ namespace ProgrammingCourse.Controllers
     public class WebHookController : ControllerBase
     {
         private const string VERIFY_TOKEN = "nttung";
-        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBABriTtswMfDsaRGxS456SKLRrXE4I62bxjJfBIGwPlyMxqb8NcqUlMx9gLPBHdZCGZCIu2ynDEU5G4mxjAby2gbj8BbqO2biLS30Hn7EeJBBsiF52FtxZCP6fjvG4aJs7UZBpZCGFzPgxMhb6S4JVeLDq6RfZCfGahMxYouKtE";
+        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBADUuaAk8uMMsfDfMhFlScN3WZAFxE7ZALdZAVu4048XQUvfNQBRn0Gprz7ahyGdwruZAjqzv52P10ub6e2u8zEpLxvCiFXdhueZA372vk4vmAq2enIXKiCQZAxJKXNWZB4ni2zTkatCssK4ID8GZAD47RqAhEbwSSRhH51B3Iqth";
+
+        private CategoryRepository categoryRepository;
+        private CourseRepository courseRepository;
+
+        public WebHookController(CategoryRepository categoryRepo, CourseRepository courseRepo)
+        {
+            categoryRepository = categoryRepo;
+            courseRepository = courseRepo;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
@@ -93,110 +104,90 @@ namespace ProgrammingCourse.Controllers
         {
             object response = new { text = "Hi" };
 
-            //text
-            //dynamic text = received_message.GetType().GetProperty("text").GetValue(received_message);
 
-
+            //Text
             if (received_message["text"] != null)
             {
-                response = new
+                if (received_message["quick_reply"] == null)
                 {
-                    text = $"You sent the message: {received_message["text"]}.Now send me an image!"
-                };
+                    response = new
+                    {
+                        text = $"I don’t recognize {received_message["text"]}. Sorry, I'm just a bot ^_^"
+                    };
+
+                    await callSendAPI(sender_psid, response);
+
+                    await GetStarted(sender_psid);
+                }
+                else
+                {
+                    if (received_message["quick_reply"]["payload"] == "categories")
+                    {
+                        await Categories(sender_psid);
+                    }
+                    else if (received_message["quick_reply"]["payload"] == "lookup_course")
+                    {
+
+                    }   
+                    else if (received_message["quick_reply"]["payload"] == "talk_to_an_agent")
+                    {
+                        await TalkToAnAgent(sender_psid);
+                    }
+                }
             }
 
-
-            //attachments
-            //dynamic attachments = received_message.GetType().GetProperty("attachments").GetValue(received_message, null);
-
+            //Attachments
             if (received_message["attachments"] != null)
             {
-                string attachment_url = received_message["attachments"][0]["payload"]["url"];
+                //string attachment_url = received_message["attachments"][0]["payload"]["url"];
 
                 response = new
                 {
-                    attachment = new
-                    {
-                        type = "template",
-                        payload = new
-                        {
-                            template_type = "generic",
-                            elements = new object[] {new
-                            {
-                                title = "Is this the right picture?",
-                                subtitle = "Tap a button to answer.",
-                                image_url = attachment_url,
-                                buttons = new object[] {
-                                    new
-                                    {
-                                        type = "postback",
-                                        title = "Yes!",
-                                        payload = "yes"
-                                    },
-                                    new
-                                    {
-                                        type = "postback",
-                                        title = "No!",
-                                        payload = "no"
-                                    } }
-                            } }
-                        }
-                    }
+                    text = $"I don’t recognize the attachments. Sorry, I'm just a bot ^_^"
                 };
-            }
 
-            await callSendAPI(sender_psid, response);
+                await callSendAPI(sender_psid, response);
+
+                await GetStarted(sender_psid);
+            }
         }
 
         //Handles messaging_postbacks events
         private async Task handlePostback(string sender_psid, dynamic received_postback)
         {
-            object response = new { text = "bye" };
+            object response = new { text = "Bye" };
             if(received_postback["payload"] == "get_started")
             {
                 response = new
                 {
-                    attachment = new
-                    {
-                        type = "template",
-                        payload = new
-                        {
-                            template_type = "button",
-                            text = "What can I do to help you today?",
-                            buttons = new object[]
-                            {
-                                new
-                                {
-                                    type = "postback",
-                                    title = "Categories",
-                                    payload = "categories"
-                                },
-                                new
-                                {
-                                    type = "postback",
-                                    title = "Lookup Course",
-                                    payload = "lookup_course"
-                                },
-                                new
-                                {
-                                    type = "postback",
-                                    title = "Talk to an agent",
-                                    payload = "talk_to_an_agent"
-                                }
-                            }
-                        }
-                    }
+                    text = $"Hi, Welcome to Programming Course!"
                 };
+
+                await callSendAPI(sender_psid, response);
+
+                await GetStarted(sender_psid);
             } 
-            else if (received_postback["payload"] == "yes")
+            else if (received_postback["payload"] == "main_menu")
             {
-                response = new { text = "Thanks!" };
+                await GetStarted(sender_psid);
             }
-            else if (received_postback["payload"] == "no")
+            else if (received_postback["payload"] == "categories")
             {
-                response = new { text = "Oops, try sending another image." };
+                await Categories(sender_psid);
             }
-            await callSendAPI(sender_psid, response);
+            else 
+            {
+                if (received_postback["title"] == "Show Courses")
+                {
+                    string categoryId = received_postback["payload"];
+                    await ShowCourses(sender_psid, int.Parse(categoryId));
+                }    
+                else if (received_postback["title"] == "Show Details")
+                {
+                    string courseId = received_postback["payload"];
+                    await ShowDetails(sender_psid, int.Parse(courseId));
+                }
+            }
         }
 
         //Sends response messages via the send API
@@ -224,6 +215,217 @@ namespace ProgrammingCourse.Controllers
                 Console.WriteLine(result);
 
             }
+        }
+
+
+        private async Task GetStarted(string sender_psid)
+        {
+            object response = new { text = "" };
+
+            response = new
+            {
+                text = "You can use the menu below to navigate through the features or talk with a live agent."
+            };
+
+            await callSendAPI(sender_psid, response);
+
+            response = new
+            {
+                text = "What can I do to help you today?",
+                quick_replies = new object[]
+                {
+                        new
+                        {
+                             content_type = "text",
+                             title = "Categories",
+                             payload = "categories"
+                        },
+                        new
+                        {
+                             content_type = "text",
+                             title = "Lookup Course",
+                             payload = "lookup_course"
+                        },
+                        new
+                        {
+                             content_type = "text",
+                             title = "Talk to an agent",
+                             payload = "talk_to_an_agent"
+                        }
+                }
+            };
+
+            await callSendAPI(sender_psid, response);
+        }
+
+        private async Task Categories(string sender_psid)
+        {
+            object response = new { text = "" };
+
+            var categories = await categoryRepository.GetAll();
+            object[] elements = new object[categories.Count];
+
+            for(int i = 0; i < categories.Count; i++)
+            {
+                object element = new
+                {
+                    title = categories[i].Name,
+                    image_url = categories[i].ImageUrl,
+                    buttons = new object[]
+                    {
+                        new
+                        {
+                            type = "web_url",
+                            url = "https://webnc-az3r.vercel.app/",
+                            title = "View on Website"
+                        },
+                        new
+                        {
+                            type = "postback",
+                            title = "Show Courses",
+                            payload = categories[i].Id
+                        }
+                    }
+                };
+                elements[i] = element;
+            }
+
+            response = new
+            {
+                attachment = new
+                {
+                    type = "template",
+                    payload = new
+                    {
+                        template_type = "generic",
+                        elements = elements
+                    }
+                }
+            };
+
+            await callSendAPI(sender_psid, response);
+        }
+
+        private async Task TalkToAnAgent(string sender_psid)
+        {
+            object response = new { text = "" };
+
+            response = new
+            {
+                text = "Someone real will be with you in a few minutes."
+            };
+
+            await callSendAPI(sender_psid, response);
+        }
+
+        private async Task ShowCourses(string sender_psid, int categoryId)
+        {
+            object response = new { text = "" };
+
+            var category = await categoryRepository.Get(categoryId);
+            object[] elements = new object[category.Courses.Count];
+
+            for (int i = 0; i < category.Courses.Count; i++)
+            {
+                object element = new
+                {
+                    title = category.Courses[i].Name,
+                    image_url = category.Courses[i].ImageUrl,
+                    subtitle = $"${category.Courses[i].Price} (Discount: {category.Courses[i].Discount})",
+                    buttons = new object[]
+                    {
+                        new
+                        {
+                            type = "web_url",
+                            url = "https://webnc-az3r.vercel.app/",
+                            title = "View on Website"
+                        },
+                        new
+                        {
+                            type = "postback",
+                            title = "Show Details",
+                            payload = category.Courses[i].Id
+                        },
+                        new
+                        {
+                            type = "postback",
+                            title = "Main Menu",
+                            payload = "main_menu"
+                        }
+                    }
+                };
+                elements[i] = element;
+            }
+
+            response = new
+            {
+                attachment = new
+                {
+                    type = "template",
+                    payload = new
+                    {
+                        template_type = "generic",
+                        elements = elements
+                    }
+                }
+            };
+
+            await callSendAPI(sender_psid, response);
+        }
+
+        private async Task ShowDetails(string sender_psid, int courseId)
+        {
+            object response = new { text = "" };
+            var course = await courseRepository.Get(courseId);
+
+            response = new
+            {
+                attachment = new
+                {
+                    type = "template",
+                    payload = new
+                    {
+                        template_type = "generic",
+                        elements = new object[]
+                        {
+                            new
+                            {
+                                title = course.Name,
+                                image_url = course.ImageUrl,
+                                subtitle = $"${course.Price} (Discount: {course.Discount}) \n" +
+                                $"Category Type: {course.Category.Name} \n" +
+                                $"View: {course.View} \n" +
+                                $"Number of Lecture: {course.Lectures.Count} \n" +
+                                $"Number of Student: {course.StudentCourses.Count} \n" +
+                                $"Short Discription: {course.ShortDiscription}",
+                                buttons = new object[]
+                                {
+                                    new
+                                    {
+                                        type = "web_url",
+                                        url = "https://webnc-az3r.vercel.app/",
+                                        title = "View on Website"
+                                    },
+                                    new
+                                    {
+                                        type = "postback",
+                                        title = "Back to categories",
+                                        payload = "categories"
+                                    },
+                                    new
+                                    {
+                                        type = "postback",
+                                        title = "Main Menu",
+                                        payload = "main_menu"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            await callSendAPI(sender_psid, response);
         }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgrammingCourse.Models;
 
 namespace ProgrammingCourse.Migrations
 {
     [DbContext(typeof(ProgrammingCourseDbContext))]
-    partial class ProgrammingCourseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210612051304_ProgrammingCourseDB10")]
+    partial class ProgrammingCourseDB10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,7 +163,6 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")

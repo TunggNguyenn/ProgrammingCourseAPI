@@ -23,5 +23,8 @@ namespace ProgrammingCourse.Models
 
         public IList<Course> Courses { get; set; }
 
+        //
+        [Required]
+        public string ImageUrl { get; set; }
     }
 }

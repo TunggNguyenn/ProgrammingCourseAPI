@@ -65,7 +65,12 @@ namespace ProgrammingCourse.Controllers
                 });
             }
 
-            StudentCourse studentCourse = new StudentCourse() { StudentId = studentCourseViewModel.StudentId, CourseId = studentCourseViewModel.CourseId };
+            StudentCourse studentCourse = new StudentCourse()
+            {
+                StudentId = studentCourseViewModel.StudentId,
+                CourseId = studentCourseViewModel.CourseId,
+                DateTime = DateTime.Now
+            };
 
             var result = await studentCourseRepository.Add(studentCourse);
 

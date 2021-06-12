@@ -24,5 +24,10 @@ namespace ProgrammingCourse.Models
         [ForeignKey("CourseId")]
         public Course Course { get; set; }
 
+
+        //
+        [Required]
+        public DateTime DateTime { get; set; }
+
     }
 }
