@@ -19,7 +19,7 @@ namespace ProgrammingCourse.Controllers
     public class WebHookController : ControllerBase
     {
         private const string VERIFY_TOKEN = "nttung";
-        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBADUuaAk8uMMsfDfMhFlScN3WZAFxE7ZALdZAVu4048XQUvfNQBRn0Gprz7ahyGdwruZAjqzv52P10ub6e2u8zEpLxvCiFXdhueZA372vk4vmAq2enIXKiCQZAxJKXNWZB4ni2zTkatCssK4ID8GZAD47RqAhEbwSSRhH51B3Iqth";
+        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBACK4ZAAZBS6Xr19f05vVzEQ4p1jyNjryp7EXoLz50mvIUTUWGUQFt2FxJsUohals9EA9eXOZBgbJDcGKYueRvZAjioixS4bToPyoj7C2j4vf8rLwLIeocbYb0rgYv1Vg3rPba5FT3RJC1Cu9A7MZAZApmiTZBGZBXlkWgKPZB5DXX";
 
         private CategoryRepository categoryRepository;
         private CourseRepository courseRepository;
@@ -98,6 +98,78 @@ namespace ProgrammingCourse.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        [Route("FindCourse")]
+        public async Task<IActionResult> FindCourse([FromForm] string psid, [FromForm] string keywords)
+        {
+            object response = new { text = "Finding..." };
+
+            if (keywords != "")
+            {
+                var course = await courseRepository.FindCourse(keywords);
+
+                if(course == null)
+                {
+                    response = new
+                    {
+                        text = "I don't find any courses matching your key words!"
+                    };
+
+                    await callSendAPI(psid, response);
+                }
+                else
+                {
+                    await ShowDetails(psid, course.Id);
+                }
+            }
+            else
+            {
+                response = new
+                {
+                    text = "I don't find any courses matching your key words!"
+                };
+
+                await callSendAPI(psid, response);
+            }
+
+
+            await Continue(psid);
+
+            return Ok("EVENT_RECEIVED");
+        }
+
+        private async Task Continue(string sender_psid)
+        {
+            object response = new { text = "" };
+
+            response = new
+            {
+                text = "Do you want to continue...?",
+                quick_replies = new object[]
+    {
+                        new
+                        {
+                             content_type = "text",
+                             title = "Yes",
+                             payload = "yes"
+                        },
+                        new
+                        {
+                             content_type = "text",
+                             title = "No",
+                             payload = "no"
+                        },
+                        new
+                        {
+                             content_type = "text",
+                             title = "Main Menu",
+                             payload = "main_menu"
+                        }
+                }
+            };
+
+            await callSendAPI(sender_psid, response);
+        }
 
         //Handles messages events
         private async Task handleMessage(string sender_psid, dynamic received_message)
@@ -127,11 +199,23 @@ namespace ProgrammingCourse.Controllers
                     }
                     else if (received_message["quick_reply"]["payload"] == "lookup_course")
                     {
-
+                        await LookupCourse(sender_psid);
                     }   
                     else if (received_message["quick_reply"]["payload"] == "talk_to_an_agent")
                     {
                         await TalkToAnAgent(sender_psid);
+                    }
+                    else if (received_message["quick_reply"]["payload"] == "yes")
+                    {
+                        await LookupCourse(sender_psid);
+                    }
+                    else if (received_message["quick_reply"]["payload"] == "no")
+                    {
+                        await GetStarted(sender_psid);
+                    }
+                    else if (received_message["quick_reply"]["payload"] == "main_menu")
+                    {
+                        await GetStarted(sender_psid);
                     }
                 }
             }
@@ -175,6 +259,10 @@ namespace ProgrammingCourse.Controllers
             {
                 await Categories(sender_psid);
             }
+            else if (received_postback["payload"] == "talk_to_an_agent")
+            {
+                await TalkToAnAgent(sender_psid);
+            }
             else 
             {
                 if (received_postback["title"] == "Show Courses")
@@ -216,7 +304,6 @@ namespace ProgrammingCourse.Controllers
 
             }
         }
-
 
         private async Task GetStarted(string sender_psid)
         {
@@ -306,6 +393,43 @@ namespace ProgrammingCourse.Controllers
             await callSendAPI(sender_psid, response);
         }
 
+        private async Task LookupCourse(string sender_psid)
+        {
+            object response = new { text = "" };
+
+            response = new
+            {
+                attachment = new
+                {
+                    type = "template",
+                    payload = new
+                    {
+                        template_type = "button",
+                        text = "Please type course's keywords that you are want to search in Set info...",
+                        buttons = new object[]
+                            {
+                                new
+                                {
+                                    type = "web_url",
+                                    url = "https://programmingcourse.herokuapp.com/StaticFiles/lookup_course.html",
+                                    title = "Set info",
+                                    webview_height_ratio = "tall", //display on mobile
+                                    messenger_extensions = true    //false : open the webview in new tab
+                                },
+                                new
+                                {
+                                    type = "postback",
+                                    title = "Main Menu",
+                                    payload = "main_menu"
+                                }
+                            }
+                    }
+                }
+            };
+
+            await callSendAPI(sender_psid, response);
+        }
+
         private async Task TalkToAnAgent(string sender_psid)
         {
             object response = new { text = "" };
@@ -380,6 +504,19 @@ namespace ProgrammingCourse.Controllers
 
             response = new
             {
+                text = $"Course Name: {course.Name} \n" +
+                $"Price: {course.Price}$ (Discount: {course.Discount}) \n" +
+                $"Category Type: {course.Category.Name} \n" +
+                $"View: {course.View} \n" +
+                $"Number of Lecture: {course.Lectures.Count} \n" +
+                $"Number of Student: {course.StudentCourses.Count} \n" +
+                $"Short Discription: {course.ShortDiscription}"
+            };
+
+            await callSendAPI(sender_psid, response);
+
+            response = new
+            {
                 attachment = new
                 {
                     type = "template",
@@ -392,12 +529,7 @@ namespace ProgrammingCourse.Controllers
                             {
                                 title = course.Name,
                                 image_url = course.ImageUrl,
-                                subtitle = $"${course.Price} (Discount: {course.Discount}) \n" +
-                                $"Category Type: {course.Category.Name} \n" +
-                                $"View: {course.View} \n" +
-                                $"Number of Lecture: {course.Lectures.Count} \n" +
-                                $"Number of Student: {course.StudentCourses.Count} \n" +
-                                $"Short Discription: {course.ShortDiscription}",
+                                subtitle = $"${course.Price} (Discount: {course.Discount})",
                                 buttons = new object[]
                                 {
                                     new

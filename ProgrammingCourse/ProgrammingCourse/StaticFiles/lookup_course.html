@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Lookup Course</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+</head>
+
+<body>
+    <form method="POST" action="/api/WebHook/FindCourse">
+        <input type="text" hidden name="psid" id="psid">
+        <div class="form-group">
+            <label for="keywords" style="font-weight: bolder">Search:</label>
+            <input type="text" class="form-control" name="keywords" id="keywords">
+        </div>
+
+        <div>
+            <br>
+            <button class="btn btn-primary" type="submit" onclick="handleSaveBtn()">FIND COURSE</button>
+        </div>
+
+    </form>
+
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/messenger.Extensions.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'Messenger'));
+
+
+        window.extAsyncInit = function () {
+            // the Messenger Extensions JS SDK is done loading
+            MessengerExtensions.getContext('2999353323609561',
+                function success(thread_context) {
+                    // success
+                    document.getElementById("psid").value = thread_context.psid;
+                },
+                function error(err) {
+                    // error
+                    console.log(err);
+                }
+            );
+        };
+        function handleSaveBtn() {
+            //close the webview
+            MessengerExtensions.requestCloseBrowser(function success() {
+                // webview closed
+            }, function error(err) {
+                // an error occurred
+                console.log(err);
+            });
+        }
+    </script>
+</body>
+</html>

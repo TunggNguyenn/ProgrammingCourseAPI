@@ -37,7 +37,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
                 });
             }
         }
@@ -61,7 +61,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new object[] { new { Code = "ParticipatedCourse", Description = "The student has already participated the course!" } }
+                    Errors = new { Code = "ParticipatedCourse", Description = "The student has already participated the course!" } 
                 });
             }
 
@@ -85,7 +85,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
                 });
             }
         }
@@ -114,7 +114,7 @@ namespace ProgrammingCourse.Controllers
                 {
                     return BadRequest(new
                     {
-                        Errors = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
+                        Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
                     });
                 }
             }
@@ -122,7 +122,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new object[] { new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } }
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
                 });
             }
         }
@@ -143,7 +143,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new object[] { new { Code = "InvalidId", Description = "Invalid Id!" } }
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
                 });
             }
         }
