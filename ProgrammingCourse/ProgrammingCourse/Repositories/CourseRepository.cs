@@ -23,6 +23,13 @@ namespace ProgrammingCourse.Repositories
             return course;
         }
 
+        public async Task<IList<Course>> AddRange(IList<Course> courses)
+        {
+            await programmingCourseDbContext.Courses.AddRangeAsync(courses);
+            await programmingCourseDbContext.SaveChangesAsync();
+            return courses;
+        }
+
         public async Task<Course> Delete(int id)
         {
             var deletedCourse = await programmingCourseDbContext.Courses.FindAsync(id);
@@ -206,7 +213,7 @@ namespace ProgrammingCourse.Repositories
                 .Where<Course>(c => c.Id != courseId && c.CategoryId == categoryId)
                 .Include(c => c.Feedbacks).Include(c => c.Lecturer).Include(c => c.Status).Include(c => c.StudentCourses).Include(c => c.Category)
                 .ThenInclude(c => c.CategoryType)
-                .OrderByDescending(c => c.Id)
+                .OrderByDescending(c => c.StudentCourses.Count)
                 .Select(c => new
                 {
                     Id = c.Id,
@@ -276,6 +283,79 @@ namespace ProgrammingCourse.Repositories
                 .ThenInclude(c => c.CategoryType)
                 .FirstOrDefaultAsync();
             return course;
+        }
+
+
+        public async Task<dynamic> GetBestSellerCoursesByCategoryTypeId(int categoryTypeId, int pageSize, int pageOffset)
+        {
+            var courses = await programmingCourseDbContext.Courses
+                .Include(c => c.Category)
+                .Where<Course>(c => c.Category.CategoryTypeId == categoryTypeId)
+                .Include(c => c.Feedbacks).Include(c => c.Lecturer).Include(c => c.Status).Include(c => c.StudentCourses).Include(c => c.Category)
+                .ThenInclude(c => c.CategoryType)
+                .OrderByDescending(c => c.StudentCourses.Count)
+                .Select(c => new
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    CategoryTypeId = c.Category.CategoryType.Id,
+                    CategoryTypeName = c.Category.CategoryType.Name,
+                    CategoryId = c.Category.Id,
+                    CategoryName = c.Category.Name,
+                    LectureId = c.Lecturer.Id,
+                    LectureName = c.Lecturer.UserName,
+                    ImageUrl = c.ImageUrl,
+                    Price = c.Price,
+                    Discount = c.Discount,
+                    View = c.View,
+                    ShortDiscription = c.ShortDiscription,
+                    DetailDiscription = c.DetailDiscription,
+                    LastUpdated = c.LastUpdated,
+                    StatusId = c.Status.Id,
+                    StatusName = c.Status.Name,
+                    RegisteredUserNumber = c.StudentCourses.Count,
+                    Feedbacks = c.Feedbacks
+                })
+                .Skip(pageOffset)
+                .Take(pageSize)
+                .ToListAsync<dynamic>();
+            return courses;
+        }
+
+
+        public async Task<dynamic> GetOutStandingCoursesByCategoryId(int categoryId, int pageSize, int pageOffset)
+        {
+            var courses = await programmingCourseDbContext.Courses
+                .Where<Course>(c => c.CategoryId == categoryId)
+                .Include(c => c.Feedbacks).Include(c => c.Lecturer).Include(c => c.Status).Include(c => c.StudentCourses).Include(c => c.Category)
+                .ThenInclude(c => c.CategoryType)
+                .OrderByDescending(c => c.View).ThenByDescending(c => c.StudentCourses.Count)
+                .Select(c => new
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    CategoryTypeId = c.Category.CategoryType.Id,
+                    CategoryTypeName = c.Category.CategoryType.Name,
+                    CategoryId = c.Category.Id,
+                    CategoryName = c.Category.Name,
+                    LectureId = c.Lecturer.Id,
+                    LectureName = c.Lecturer.UserName,
+                    ImageUrl = c.ImageUrl,
+                    Price = c.Price,
+                    Discount = c.Discount,
+                    View = c.View,
+                    ShortDiscription = c.ShortDiscription,
+                    DetailDiscription = c.DetailDiscription,
+                    LastUpdated = c.LastUpdated,
+                    StatusId = c.Status.Id,
+                    StatusName = c.Status.Name,
+                    RegisteredUserNumber = c.StudentCourses.Count,
+                    Feedbacks = c.Feedbacks
+                })
+                .Skip(pageOffset)
+                .Take(pageSize)
+                .ToListAsync<dynamic>();
+            return courses;
         }
     }
 }

@@ -63,7 +63,7 @@ namespace ProgrammingCourse.Controllers
                 ImageUrl = courseViewModel.ImageUrl,
                 Price = courseViewModel.Price,
                 Discount = courseViewModel.Discount,
-                View = courseViewModel.View,
+                View = courseViewModel.View,   
                 ShortDiscription = courseViewModel.ShortDiscription,
                 DetailDiscription = courseViewModel.DetailDiscription,
                 LastUpdated = DateTime.Now,
@@ -256,6 +256,79 @@ namespace ProgrammingCourse.Controllers
             {
                 Results = courses
             });
+        }
+
+
+        [HttpGet()]
+        [Route("BestSellerCoursesByCategoryTypeId")]
+        public async Task<IActionResult> BestSellerCoursesByCategoryTypeId([FromQuery] int categoryTypeId, [FromQuery] int pageSize, [FromQuery] int pageOffset)
+        {
+            var bestSellerCourses = await courseRepository.GetBestSellerCoursesByCategoryTypeId(categoryTypeId, pageSize, pageOffset);
+
+            return Ok(new
+            {
+                Results = bestSellerCourses
+            });
+        }
+
+
+        [HttpGet()]
+        [Route("OutstandingCoursesByCategoryId")]
+        public async Task<IActionResult> OutstandingCoursesByCategoryId([FromQuery] int categoryId, [FromQuery] int pageSize, [FromQuery] int pageOffset)
+        {
+            var outstandingCourses = await courseRepository.GetOutStandingCoursesByCategoryId(categoryId, pageSize, pageOffset);
+
+            return Ok(new
+            {
+                Results = outstandingCourses
+            });
+        }
+
+
+        //For testing
+        [HttpPost]
+        [Route("CreateRange")]
+        public async Task<IActionResult> CreateRange([FromBody] IList<CourseViewModel> courseViewModel)
+        {
+            IList<Course> courses = new List<Course>();
+
+            foreach(var c in courseViewModel)
+            {
+                Course course = new Course()
+                {
+                    Name = c.Name,
+                    CategoryId = c.CategoryId,
+                    LecturerId = c.LecturerId,
+                    ImageUrl = c.ImageUrl,
+                    Price = c.Price,
+                    Discount = c.Discount,
+                    View = c.View,
+                    ShortDiscription = c.ShortDiscription,
+                    DetailDiscription = c.DetailDiscription,
+                    LastUpdated = DateTime.Now,
+                    StatusId = c.StatusId
+                };
+
+                courses.Add(course);
+            }
+            
+
+            var result = await courseRepository.AddRange(courses);
+
+            if (result != null)
+            {
+                return Ok(new
+                {
+                    Results = result
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
         }
     }
 }

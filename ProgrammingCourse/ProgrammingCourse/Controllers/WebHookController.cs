@@ -19,7 +19,7 @@ namespace ProgrammingCourse.Controllers
     public class WebHookController : ControllerBase
     {
         private const string VERIFY_TOKEN = "nttung";
-        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBACK4ZAAZBS6Xr19f05vVzEQ4p1jyNjryp7EXoLz50mvIUTUWGUQFt2FxJsUohals9EA9eXOZBgbJDcGKYueRvZAjioixS4bToPyoj7C2j4vf8rLwLIeocbYb0rgYv1Vg3rPba5FT3RJC1Cu9A7MZAZApmiTZBGZBXlkWgKPZB5DXX";
+        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBAJP5GZBf1z7FvzFmBlyDgJ5wtKXeJ5SsFU0KxVXHvcIoFBv6Cu58zZCAbLOW9BZANZB01v8Dh34RW4r8b8wJYDelqJYRRY3Ii8jXCewZCGYinO7Xy1cqDKEJVvrQ0g75a99vRdYDXQVnPjByb7wJorlgkf69hFq1PfBN9KkVC";
 
         private CategoryRepository categoryRepository;
         private CourseRepository courseRepository;
