@@ -5,6 +5,7 @@ using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,29 +13,27 @@ namespace ProgrammingCourse.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class ViewsController : ControllerBase
     {
-        private readonly CategoryRepository categoryRepository;
-        private readonly CourseRepository courseRepository;
+        private readonly ViewRepository viewRepository;
         private readonly IMapper mapper;
 
-        public CategoriesController(CategoryRepository categoryRepository, CourseRepository courseRepository, IMapper mapper)
+        public ViewsController(ViewRepository viewRepository, IMapper mapper)
         {
-            this.categoryRepository = categoryRepository;
-            this.courseRepository = courseRepository;
+            this.viewRepository = viewRepository;
             this.mapper = mapper;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var category = await categoryRepository.GetById(id);
+            var course = await viewRepository.GetById(id);
 
-            if (category != null)
+            if (course != null)
             {
                 return Ok(new
                 {
-                    Results = category
+                    Results = course
                 });
             }
             else
@@ -49,26 +48,26 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categories = await categoryRepository.GetAll();
-
+            var courses = await viewRepository.GetAll();
             return Ok(new
             {
-                Results = categories
+                Results = courses
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> Add([FromBody] ViewViewModel viewViewModel)
         {
             try
             {
-                Category categoryMapped = mapper.Map<Category>(categoryViewModel);
+                View viewMapped = mapper.Map<View>(viewViewModel);
+                viewMapped.DateTime = DateTime.Now;
 
-                await categoryRepository.Add(categoryMapped);
+                await viewRepository.Add(viewMapped);
 
                 return Ok(new
                 {
-                    Results = categoryMapped
+                    Results = viewMapped
                 });
 
             }
@@ -85,17 +84,19 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> Update([FromBody] ViewViewModel viewViewModel)
         {
             try
             {
-                Category categoryMapped = mapper.Map<Category>(categoryViewModel);
+                View viewMapped = mapper.Map<View>(viewViewModel);
+                viewMapped.DateTime = DateTime.Now;
 
-                await categoryRepository.Update(categoryMapped);
+                await viewRepository.Update(viewMapped);
 
                 return Ok(new
                 {
-                    Results = categoryMapped
+
+                    Results = viewMapped
                 });
             }
             catch (Exception e)
@@ -114,23 +115,13 @@ namespace ProgrammingCourse.Controllers
         {
             try
             {
-                var courses = await courseRepository.GetByCategoryId(id);
+                var removedView = await viewRepository.GetById(id);
 
-                if (courses.Count > 0)
-                {
-                    return BadRequest(new
-                    {
-                        Errors = new { Code = "ExistedCourse", Description = "Category has already existed course" }
-                    });
-                }
-
-                var removedCategory = await categoryRepository.GetById(id);
-
-                await categoryRepository.Remove(removedCategory);
+                await viewRepository.Remove(removedView);
 
                 return Ok(new
                 {
-                    Results = removedCategory
+                    Results = removedView
                 });
             }
             catch (Exception e)
@@ -143,18 +134,5 @@ namespace ProgrammingCourse.Controllers
                 });
             }
         }
-
-
-        //[HttpGet()]
-        //[Route("MostRegisteredCategories")]
-        //public async Task<IActionResult> MostRegisteredCategories()
-        //{
-        //    var mostRegisteredCategories = await categoryRepository.GetMostRegisteredCategories();
-
-        //    return Ok(new
-        //    {
-        //        Results = mostRegisteredCategories
-        //    });
-        //}
     }
 }

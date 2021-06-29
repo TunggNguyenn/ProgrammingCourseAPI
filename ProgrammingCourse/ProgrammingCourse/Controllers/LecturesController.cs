@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
@@ -14,126 +15,122 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class LecturesController : ControllerBase
     {
-        //private LectureRepository lectureRepository;
+        private readonly LectureRepository lectureRepository;
+        private readonly IMapper mapper;
 
-        //public LecturesController(LectureRepository lectureRepo)
-        //{
-        //    lectureRepository = lectureRepo;
-        //}
+        public LecturesController(LectureRepository lectureRepository, IMapper mapper)
+        {
+            this.lectureRepository = lectureRepository;
+            this.mapper = mapper;
+        }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(int id)
-        //{
-        //    var lecture = await lectureRepository.Get(id);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var lecture = await lectureRepository.GetById(id);
 
-        //    if (lecture != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = lecture
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-        //        });
-        //    }
-        //}
+            if (lecture != null)
+            {
+                return Ok(new
+                {
+                    Results = lecture
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var lectures = await lectureRepository.GetAll();
-        //    return Ok(new
-        //    {
-        //        Results = lectures
-        //    });
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var lectures = await lectureRepository.GetAll();
+            return Ok(new
+            {
+                Results = lectures
+            });
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromForm] LectureViewModel lectureViewModel)
-        //{
-        //    Lecture lecture = new Lecture() { Section = lectureViewModel.Section, Name = lectureViewModel.Name, VideoUrl = lectureViewModel.VideoUrl, CourseId = lectureViewModel.CourseId };
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] LectureViewModel lectureViewModel)
+        {
+            try
+            {
+                Lecture lectureMapped = mapper.Map<Lecture>(lectureViewModel);
 
-        //    var result = await lectureRepository.Add(lecture);
+                await lectureRepository.Add(lectureMapped);
 
-        //    if (result != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = result
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+                return Ok(new
+                {
+                    Results = lectureMapped
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
 
 
-        //[HttpPut]
-        //public async Task<IActionResult> Update([FromForm] LectureViewModel lectureViewModel)
-        //{
-        //    var updatedLecture = await lectureRepository.Get(lectureViewModel.Id);
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] LectureViewModel lectureViewModel)
+        {
+            try
+            {
+                Lecture lectureMapped = mapper.Map<Lecture>(lectureViewModel);
 
-        //    if (updatedLecture != null)
-        //    {
-        //        updatedLecture.Section = lectureViewModel.Section;
-        //        updatedLecture.Name = lectureViewModel.Name;
-        //        updatedLecture.VideoUrl = lectureViewModel.VideoUrl;
-        //        updatedLecture.CourseId = lectureViewModel.CourseId;
+                await lectureRepository.Update(lectureMapped);
 
-        //        var result = await lectureRepository.Update(updatedLecture);
+                return Ok(new
+                {
+                    Results = lectureMapped
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
 
-        //        if (result != null)
-        //        {
-        //            return Ok(new
-        //            {
-        //                Results = result
-        //            });
-        //        }
-        //        else
-        //        {
-        //            return BadRequest(new
-        //            {
-        //                Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //            });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var deletedLecture = await lectureRepository.Delete(id);
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(int id)
+        {
+            try
+            {
+                var removedLecture = await lectureRepository.GetById(id);
 
-        //    if (deletedLecture != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = deletedLecture
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-        //        });
-        //    }
-        //}
+                await lectureRepository.Remove(removedLecture);
+
+                return Ok(new
+                {
+                    Results = removedLecture
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
 
         //[HttpGet]

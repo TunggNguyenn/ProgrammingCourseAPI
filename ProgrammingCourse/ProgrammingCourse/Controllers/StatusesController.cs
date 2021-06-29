@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
@@ -15,66 +16,71 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class StatusesController : ControllerBase
     {
-        //private StatusRepository statusRepository;
+        private readonly StatusRepository statusRepository;
+        private readonly IMapper mapper;
 
-        //public StatusesController(StatusRepository statusRepo)
-        //{
-        //    statusRepository = statusRepo;
-        //}
+        public StatusesController(StatusRepository statusRepository, IMapper mapper)
+        {
+            this.statusRepository = statusRepository;
+            this.mapper = mapper;
+        }
 
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(int id)
-        //{
-        //    var status = await statusRepository.Get(id);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var status = await statusRepository.GetById(id);
 
-        //    if (status != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = status
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-        //        });
-        //    }
-        //}
+            if (status != null)
+            {
+                return Ok(new
+                {
+                    Results = status
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var statuses = await statusRepository.GetAll();
-        //    return Ok(new
-        //    {
-        //        Results = statuses
-        //    });
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var statuses = await statusRepository.GetAll();
+            return Ok(new
+            {
+                Results = statuses
+            });
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromForm] StatusViewModel statusViewModel)
-        //{
-        //    Status status = new Status() { Name = statusViewModel.Name };
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] StatusViewModel statusViewModel)
+        {
+            try
+            {
+                Status statusMapped = mapper.Map<Status>(statusViewModel);
 
-        //    var result = await statusRepository.Add(status);
+                await statusRepository.Add(statusMapped);
 
-        //    if (result != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = status
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+                return Ok(new
+                {
+                    Results = statusMapped
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
     }
 }

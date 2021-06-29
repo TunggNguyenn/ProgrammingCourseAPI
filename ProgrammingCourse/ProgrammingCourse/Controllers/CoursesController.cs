@@ -121,7 +121,7 @@ namespace ProgrammingCourse.Controllers
 
                 return Ok(new
                 {
-                    Results = "deletedCourse"
+                    Results = removedCourse
                 });
             }
             catch (Exception e)

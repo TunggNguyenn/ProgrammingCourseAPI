@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
@@ -14,134 +15,133 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class WatchListsController : ControllerBase
     {
-        //private WatchListRepository watchListRepository;
+        private readonly WatchListRepository watchListRepository;
+        private readonly IMapper mapper;
 
-        //public WatchListsController(WatchListRepository watchListRepo)
-        //{
-        //    watchListRepository = watchListRepo;
-        //}
+        public WatchListsController(WatchListRepository watchListRepository, IMapper mapper)
+        {
+            this.watchListRepository = watchListRepository;
+            this.mapper = mapper;
+        }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(int id)
-        //{
-        //    var watchList = await watchListRepository.Get(id);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var watchList = await watchListRepository.GetById(id);
 
-        //    if (watchList != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = watchList
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-        //        });
-        //    }
-        //}
+            if (watchList != null)
+            {
+                return Ok(new
+                {
+                    Results = watchList
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var watchLists = await watchListRepository.GetAll();
-        //    return Ok(new
-        //    {
-        //        Results = watchLists
-        //    });
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var watchLists = await watchListRepository.GetAll();
+            return Ok(new
+            {
+                Results = watchLists
+            });
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromForm] WatchListViewModel watchListViewModel)
-        //{
-        //    bool isExistedWatchListByStudentIdAndCourseId = await watchListRepository.IsExistedWatchListByStudentIdAndCourseId(watchListViewModel.StudentId, watchListViewModel.CourseId);
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] WatchListViewModel watchListViewModel)
+        {
+            try
+            {
+                bool isExistedWatchListByStudentIdAndCourseId = await watchListRepository.IsExistedWatchListByStudentIdAndCourseId(watchListViewModel.StudentId, watchListViewModel.CourseId);
 
-        //    if (isExistedWatchListByStudentIdAndCourseId == true)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "ExistedWatchList", Description = "WatchList has already existed!" } 
-        //        });
-        //    }
+                if (isExistedWatchListByStudentIdAndCourseId == true)
+                {
+                    return BadRequest(new
+                    {
+                        Errors = new { Code = "ExistedWatchList", Description = "WatchList has already existed!" }
+                    });
+                }
 
-        //    WatchList watchList = new WatchList() { StudentId = watchListViewModel.StudentId, CourseId = watchListViewModel.CourseId };
+                WatchList watchListMapped = mapper.Map<WatchList>(watchListViewModel);
 
-        //    var result = await watchListRepository.Add(watchList);
+                await watchListRepository.Add(watchListMapped);
 
-        //    if (result != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = result
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+                return Ok(new
+                {
+                    Results = watchListMapped
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
 
 
-        //[HttpPut]
-        //public async Task<IActionResult> Update([FromForm] WatchListViewModel watchListViewModel)
-        //{
-        //    var updatedWatchList = await watchListRepository.Get(watchListViewModel.Id);
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] WatchListViewModel watchListViewModel)
+        {
+            try
+            {
+                WatchList watchListMapped = mapper.Map<WatchList>(watchListViewModel);
 
-        //    if (updatedWatchList != null)
-        //    {
-        //        updatedWatchList.StudentId = watchListViewModel.StudentId;
-        //        updatedWatchList.CourseId = watchListViewModel.CourseId;
+                await watchListRepository.Update(watchListMapped);
 
-        //        var result = await watchListRepository.Update(updatedWatchList);
+                return Ok(new
+                {
 
-        //        if (result != null)
-        //        {
-        //            return Ok(new
-        //            {
-        //                Results = result
-        //            });
-        //        }
-        //        else
-        //        {
-        //            return BadRequest(new
-        //            {
-        //                Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //            });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+                    Results = watchListMapped
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var deletedWatchList = await watchListRepository.Delete(id);
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
 
-        //    if (deletedWatchList != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = deletedWatchList
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-        //        });
-        //    }
-        //}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(int id)
+        {
+            try
+            {
+                var removedWatchList = await watchListRepository.GetById(id);
+
+                await watchListRepository.Remove(removedWatchList);
+
+                return Ok(new
+                {
+                    Results = removedWatchList
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
 
         //[HttpGet]

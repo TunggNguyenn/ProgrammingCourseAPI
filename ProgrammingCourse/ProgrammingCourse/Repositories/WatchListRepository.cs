@@ -49,18 +49,18 @@ namespace ProgrammingCourse.Repositories
         //}
 
 
-        //public async Task<bool> IsExistedWatchListByStudentIdAndCourseId(string userId, int courseId)
-        //{
-        //    var watchList = await programmingCourseDbContext.WatchLists
-        //        .Where<WatchList>(w => w.StudentId == userId && w.CourseId == courseId)
-        //        .FirstOrDefaultAsync();
+        public async Task<bool> IsExistedWatchListByStudentIdAndCourseId(string userId, int courseId)
+        {
+            var watchList = await _context.WatchLists
+                .Where<WatchList>(w => w.StudentId == userId && w.CourseId == courseId)
+                .FirstOrDefaultAsync();
 
-        //    if (watchList != null)
-        //    {
-        //        return true;
-        //    }
+            if (watchList != null)
+            {
+                return true;
+            }
 
-        //    return false;
-        //}
+            return false;
+        }
     }
 }

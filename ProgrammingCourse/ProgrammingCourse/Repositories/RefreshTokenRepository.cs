@@ -14,7 +14,6 @@ namespace ProgrammingCourse.Repositories
 
         public async Task<RefreshToken> Remove(int id)
         {
-            Console.WriteLine("Entered");
             var deletedRefreshToken = await _context.RefreshTokens.FindAsync(id);
 
             if (deletedRefreshToken == null)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
@@ -14,139 +15,134 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class StudentCoursesController : ControllerBase
     {
-        //private StudentCourseRepository studentCourseRepository;
+        private readonly StudentCourseRepository studentCourseRepository;
+        private readonly IMapper mapper;
 
-        //public StudentCoursesController(StudentCourseRepository studentCourseRepo)
-        //{
-        //    studentCourseRepository = studentCourseRepo;
-        //}
+        public StudentCoursesController(StudentCourseRepository studentCourseRepository, IMapper mapper)
+        {
+            this.studentCourseRepository = studentCourseRepository;
+            this.mapper = mapper;
+        }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(int id)
-        //{
-        //    var studentCourse = await studentCourseRepository.Get(id);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var studentCourse = await studentCourseRepository.GetById(id);
 
-        //    if (studentCourse != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = studentCourse
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-        //        });
-        //    }
-        //}
+            if (studentCourse != null)
+            {
+                return Ok(new
+                {
+                    Results = studentCourse
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var studentCourses = await studentCourseRepository.GetAll();
-        //    return Ok(new
-        //    {
-        //        Results = studentCourses
-        //    });
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var studentCourses = await studentCourseRepository.GetAll();
+            return Ok(new
+            {
+                Results = studentCourses
+            });
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromForm] StudentCourseViewModel studentCourseViewModel)
-        //{
-        //    bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentCourseViewModel.StudentId, studentCourseViewModel.CourseId);
-            
-        //    if (isParticipatedByStudentIdAndCourseId == true)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "ParticipatedCourse", Description = "The student has already participated the course!" } 
-        //        });
-        //    }
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] StudentCourseViewModel studentCourseViewModel)
+        {
+            try
+            {
+                bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentCourseViewModel.StudentId, studentCourseViewModel.CourseId);
 
-        //    StudentCourse studentCourse = new StudentCourse()
-        //    {
-        //        StudentId = studentCourseViewModel.StudentId,
-        //        CourseId = studentCourseViewModel.CourseId,
-        //        DateTime = DateTime.Now
-        //    };
+                if (isParticipatedByStudentIdAndCourseId == true)
+                {
+                    return BadRequest(new
+                    {
+                        Errors = new { Code = "ParticipatedCourse", Description = "The student has already participated the course!" }
+                    });
+                }
 
-        //    var result = await studentCourseRepository.Add(studentCourse);
+                StudentCourse studentCourseMapped = mapper.Map<StudentCourse>(studentCourseViewModel);
+                studentCourseMapped.DateTime = DateTime.Now;
 
-        //    if (result != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = result
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+                await studentCourseRepository.Add(studentCourseMapped);
+
+                return Ok(new
+                {
+                    Results = studentCourseMapped
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
 
 
-        //[HttpPut]
-        //public async Task<IActionResult> Update([FromForm] StudentCourseViewModel studentCourseViewModel)
-        //{
-        //    var updatedStudentCourse = await studentCourseRepository.Get(studentCourseViewModel.Id);
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] StudentCourseViewModel studentCourseViewModel)
+        {
+            try
+            {
+                StudentCourse studentCourseMapped = mapper.Map<StudentCourse>(studentCourseViewModel);
+                studentCourseMapped.DateTime = DateTime.Now;
 
-        //    if (updatedStudentCourse != null)
-        //    {
-        //        updatedStudentCourse.StudentId = studentCourseViewModel.StudentId;
-        //        updatedStudentCourse.CourseId = studentCourseViewModel.CourseId;
+                await studentCourseRepository.Update(studentCourseMapped);
 
-        //        var result = await studentCourseRepository.Update(updatedStudentCourse);
+                return Ok(new
+                {
+                    Results = studentCourseMapped
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
 
-        //        if (result != null)
-        //        {
-        //            return Ok(new
-        //            {
-        //                Results = result
-        //            });
-        //        }
-        //        else
-        //        {
-        //            return BadRequest(new
-        //            {
-        //                Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //            });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var deletedStudentCourse = await studentCourseRepository.Delete(id);
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(int id)
+        {
+            try
+            {
+                var removedStudentCourse = await studentCourseRepository.GetById(id);
 
-        //    if (deletedStudentCourse != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = deletedStudentCourse
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-        //        });
-        //    }
-        //}
+                await studentCourseRepository.Remove(removedStudentCourse);
+
+                return Ok(new
+                {
+                    Results = removedStudentCourse
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
 
         //[HttpGet]

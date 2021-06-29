@@ -15,10 +15,8 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public int Number { get; set; }
 
-        [Required]
-        public DateTime DateTime { get; set; }
 
-        [Required]  //
+        [Required]  
         public string CourseId { get; set; }
     }
 }

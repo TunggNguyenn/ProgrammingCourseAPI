@@ -32,6 +32,5 @@ namespace ProgrammingCourse.Models
 
         [Required]
         public int Duration { get; set; }
-
     }
 }

@@ -129,7 +129,7 @@ namespace ProgrammingCourse.Controllers
 
                 return Ok(new
                 {
-                    Results = "deletedFeedback"
+                    Results = removedFeedback
                 });
             }
             catch(Exception e)

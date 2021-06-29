@@ -58,18 +58,18 @@ namespace ProgrammingCourse.Repositories
         //}
 
 
-        //public async Task<bool> IsParticipatedByStudentIdAndCourseId(string studentId, int courseId)
-        //{
-        //    var studentCourses = await programmingCourseDbContext.StudentCourses
-        //                    .Where<StudentCourse>(sc => sc.StudentId == studentId && sc.CourseId == courseId)
-        //                    .FirstOrDefaultAsync();
+        public async Task<bool> IsParticipatedByStudentIdAndCourseId(string studentId, int courseId)
+        {
+            var studentCourses = await _context.StudentCourses
+                            .Where<StudentCourse>(sc => sc.StudentId == studentId && sc.CourseId == courseId)
+                            .FirstOrDefaultAsync();
 
-        //    if(studentCourses != null)
-        //    {
-        //        return true;
-        //    }
+            if (studentCourses != null)
+            {
+                return true;
+            }
 
-        //    return false;
-        //}
+            return false;
+        }
     }
 }
