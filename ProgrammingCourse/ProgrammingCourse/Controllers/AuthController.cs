@@ -38,17 +38,8 @@ namespace ProgrammingCourse.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromForm] UserViewModel userViewModel)
+        public async Task<IActionResult> Register([FromBody] UserViewModel userViewModel)
         {
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest(new
-                {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
-                });
-            }
-
-
             //Check whether email is existed
             bool isExisted = await EmailChecker.Check(userViewModel.Email);
             if (isExisted == false)
@@ -120,9 +111,9 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromForm] string userName, [FromForm] string email, [FromForm] string password)
+        public async Task<IActionResult> Login([FromBody] UserViewModel userViewModel)
         {
-            User identityUser = await ValidateUser(userName, email, password);
+            User identityUser = await ValidateUser(userViewModel.UserName, userViewModel.Email, userViewModel.Password);
 
             if (identityUser != null)
             {
@@ -375,7 +366,7 @@ namespace ProgrammingCourse.Controllers
             var selectedRefreshToken = refreshTokens.Where<RefreshToken>(c => c.Token == refreshToken).FirstOrDefault();
             if (selectedRefreshToken != null)
             {
-                await refreshTokenRepository.Delete(selectedRefreshToken.Id);
+                await refreshTokenRepository.Remove(selectedRefreshToken.Id);
             }
 
 
@@ -473,18 +464,18 @@ namespace ProgrammingCourse.Controllers
                 JwtSecurityToken token = tokenHandler.ReadJwtToken(accessToken);
                 var expDate = token.ValidTo;
 
+                var nameid = token.Claims.Where(c => c.Type == "nameid").FirstOrDefault();
+                User identityUser = await userManager.FindByIdAsync(nameid.Value);
+
                 if (expDate < DateTime.UtcNow)
                 {
-                    var nameid = token.Claims.Where(c => c.Type == "nameid").FirstOrDefault();
                     RefreshToken refresh = refreshTokenRepository.GetByUserIdAndToken(nameid.Value, refreshToken);
-                    User identityUser = await userManager.FindByIdAsync(nameid.Value);
 
                     if (refresh != null)
                     {
-
                         if (refresh.ExpiryOn < DateTime.UtcNow || identityUser.IsLocked == true)
                         {
-                            await refreshTokenRepository.Delete(refresh.Id);
+                            await refreshTokenRepository.Remove(refresh.Id);
 
                             // Set Token Cookie
                             var cookieOptions = new CookieOptions
@@ -534,15 +525,15 @@ namespace ProgrammingCourse.Controllers
 
                             return Ok(new
                             {
-                                Results = new { Code = "LoggedIn", Description = "Logged In!" } 
+                                Results = identityUser 
                             });
                         }
                     }
                     else
                     {
-                        return Ok(new
+                        return BadRequest(new
                         {
-                            Results = new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } 
+                            Errors = new { Code = "ExpiredToken", Description = "Token expired!" }
                         });
                     }
                 }
@@ -550,14 +541,14 @@ namespace ProgrammingCourse.Controllers
                 {
                     return Ok(new
                     {
-                        Results = new { Code = "LoggedIn", Description = "Logged In!" } 
+                        Results = identityUser
                     });
                 }
             }
 
-            return Ok(new
+            return BadRequest(new
             {
-                Results = new { Code = "NotLoggedIn", Description = "Not Logged In yet!" } 
+                Errors = new { Code = "ExpiredToken", Description = "Token expired!" } 
             });
         }
     }

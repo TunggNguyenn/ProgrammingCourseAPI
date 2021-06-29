@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
@@ -14,18 +15,20 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class CategoryTypesController : ControllerBase
     {
-        private CategoryTypeRepository categoryTypeRepository;
+        private readonly CategoryTypeRepository categoryTypeRepository;
+        private readonly IMapper mapper;
 
-        public CategoryTypesController(CategoryTypeRepository categoryTypeRepo)
+        public CategoryTypesController(CategoryTypeRepository categoryTypeRepository, IMapper mapper)
         {
-            categoryTypeRepository = categoryTypeRepo;
+            this.categoryTypeRepository = categoryTypeRepository;
+            this.mapper = mapper;
         }
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var categoryType = await categoryTypeRepository.Get(id);
+            var categoryType = await categoryTypeRepository.GetById(id);
 
             if (categoryType != null)
             {
@@ -38,7 +41,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
                 });
             }
         }
@@ -47,6 +50,7 @@ namespace ProgrammingCourse.Controllers
         public async Task<IActionResult> GetAll()
         {
             var categoryTypes = await categoryTypeRepository.GetAll();
+
             return Ok(new
             {
                 Results = categoryTypes
@@ -54,26 +58,30 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CategoryTypeViewModel categoryTypeViewModel)
+        public async Task<IActionResult> Add([FromBody] CategoryTypeViewModel categoryTypeViewModel)
         {
-            CategoryType categoryType = new CategoryType() { Name = categoryTypeViewModel.Name };
-
-            var result = await categoryTypeRepository.Add(categoryType);
-
-            if (result != null)
+            try
             {
+                CategoryType categoryTypeMapped = mapper.Map<CategoryType>(categoryTypeViewModel);
+
+                await categoryTypeRepository.Add(categoryTypeMapped);
+
                 return Ok(new
                 {
-                    Results = result
+                    Results = categoryTypeMapped
                 });
+
             }
-            else
+            catch(Exception e)
             {
+                Console.WriteLine($"ErrorMesages: {e}");
+
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
                 });
             }
+
         }
     }
 }

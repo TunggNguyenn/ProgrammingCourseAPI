@@ -6,25 +6,16 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Repositories
 {
-    public class RefreshTokenRepository
+    public class RefreshTokenRepository : GenericRepository<RefreshToken>
     {
-        private ProgrammingCourseDbContext programmingCourseDbContext;
-
-        public RefreshTokenRepository(ProgrammingCourseDbContext programmingCourseDbContext)
+        public RefreshTokenRepository(ProgrammingCourseDbContext context) : base(context)
         {
-            this.programmingCourseDbContext = programmingCourseDbContext;
         }
 
-        public async Task<RefreshToken> Add(RefreshToken refreshToken)
+        public async Task<RefreshToken> Remove(int id)
         {
-            await programmingCourseDbContext.RefreshTokens.AddAsync(refreshToken);
-            await programmingCourseDbContext.SaveChangesAsync();
-            return refreshToken;
-        }
-
-        public async Task<RefreshToken> Delete(int id)
-        {
-            var deletedRefreshToken = await programmingCourseDbContext.RefreshTokens.FindAsync(id);
+            Console.WriteLine("Entered");
+            var deletedRefreshToken = await _context.RefreshTokens.FindAsync(id);
 
             if (deletedRefreshToken == null)
             {
@@ -33,58 +24,23 @@ namespace ProgrammingCourse.Repositories
 
             deletedRefreshToken.RevokedOn = DateTime.UtcNow;
 
-            programmingCourseDbContext.RefreshTokens.Update(deletedRefreshToken);
-            await programmingCourseDbContext.SaveChangesAsync();
+            _context.RefreshTokens.Update(deletedRefreshToken);
+            await _context.SaveChangesAsync();
 
             return deletedRefreshToken;
         }
 
-        public RefreshToken Get(int id)
-        {
-            var refreshToken = programmingCourseDbContext.RefreshTokens.Where<RefreshToken>(r => r.Id == id).FirstOrDefault();
-            return refreshToken;
-        }
-
-        public IList<RefreshToken> GetAll()
-        {
-            var refreshTokens = programmingCourseDbContext.RefreshTokens.ToList<RefreshToken>();
-            return refreshTokens;
-        }
 
         public IList<RefreshToken> GetByUserId(string userId)
         {
-            var refreshTokens = programmingCourseDbContext.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId).ToList<RefreshToken>();
+            var refreshTokens = _context.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId).ToList<RefreshToken>();
             return refreshTokens;
         }
 
         public RefreshToken GetByUserIdAndToken(string userId, string token)
         {
-            var refreshToken = programmingCourseDbContext.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId && r.Token == token && r.RevokedOn == DateTime.MinValue).FirstOrDefault();
+            var refreshToken = _context.RefreshTokens.Where<RefreshToken>(r => r.UserId == userId && r.Token == token && r.RevokedOn == DateTime.MinValue).FirstOrDefault();
             return refreshToken;
-        }
-
-        public async Task<RefreshToken> Update(RefreshToken refreshToken)
-        {
-            programmingCourseDbContext.RefreshTokens.Update(refreshToken);
-            await programmingCourseDbContext.SaveChangesAsync();
-
-            return refreshToken;
-        }
-
-
-        public async Task<RefreshToken> Remove(int id)
-        {
-            var deletedRefreshToken = await programmingCourseDbContext.RefreshTokens.FindAsync(id);
-
-            if (deletedRefreshToken == null)
-            {
-                return deletedRefreshToken;
-            }
-
-            programmingCourseDbContext.RefreshTokens.Remove(deletedRefreshToken);
-            await programmingCourseDbContext.SaveChangesAsync();
-
-            return deletedRefreshToken;
         }
     }
 }

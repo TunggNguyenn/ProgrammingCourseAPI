@@ -12,64 +12,64 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class RefreshTokensController : ControllerBase
     {
-        private RefreshTokenRepository refreshTokenRepository;
+        //private RefreshTokenRepository refreshTokenRepository;
 
-        public RefreshTokensController(RefreshTokenRepository refreshTokenRepo)
-        {
-            refreshTokenRepository = refreshTokenRepo;
-        }
+        //public RefreshTokensController(RefreshTokenRepository refreshTokenRepo)
+        //{
+        //    refreshTokenRepository = refreshTokenRepo;
+        //}
 
 
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            var refreshToken = refreshTokenRepository.Get(id);
+        //[HttpGet("{id}")]
+        //public IActionResult Get(int id)
+        //{
+        //    var refreshToken = refreshTokenRepository.Get(id);
 
-            if (refreshToken != null)
-            {
-                return Ok(new
-                {
-                    Results = refreshToken
-                });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-                });
-            }
-        }
+        //    if (refreshToken != null)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Results = refreshToken
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+        //        });
+        //    }
+        //}
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            var refreshToken = refreshTokenRepository.GetAll();
-            return Ok(new
-            {
-                Results = refreshToken
-            });
-        }
+        //[HttpGet]
+        //public IActionResult GetAll()
+        //{
+        //    var refreshToken = refreshTokenRepository.GetAll();
+        //    return Ok(new
+        //    {
+        //        Results = refreshToken
+        //    });
+        //}
 
-        [HttpDelete]
-        public async Task<IActionResult> Remove(int id)
-        {
-            var result = await refreshTokenRepository.Remove(id);
+        //[HttpDelete]
+        //public async Task<IActionResult> Remove(int id)
+        //{
+        //    var result = await refreshTokenRepository.Remove(id);
 
-            if (result != null)
-            {
-                return Ok(new
-                {
-                    Results = result
-                });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-                });
-            }
-        }
+        //    if (result != null)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Results = result
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+        //        });
+        //    }
+        //}
     }
 }

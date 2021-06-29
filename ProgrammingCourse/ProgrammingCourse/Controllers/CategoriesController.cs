@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,21 +14,23 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private CategoryRepository categoryRepository;
-        private CourseRepository courseRepository;
+        private readonly CategoryRepository categoryRepository;
+        private readonly CourseRepository courseRepository;
+        private readonly IMapper mapper;
 
-        public CategoriesController(CategoryRepository categoryRepo, CourseRepository courseRepo)
+        public CategoriesController(CategoryRepository categoryRepository, CourseRepository courseRepository, IMapper mapper)
         {
-            categoryRepository = categoryRepo;
-            courseRepository = courseRepo;
+            this.categoryRepository = categoryRepository;
+            this.courseRepository = courseRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var category = await categoryRepository.Get(id);
+            var category = await categoryRepository.GetById(id);
 
-            if(category != null)
+            if (category != null)
             {
                 return Ok(new
                 {
@@ -39,7 +41,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
                 });
             }
         }
@@ -48,6 +50,7 @@ namespace ProgrammingCourse.Controllers
         public async Task<IActionResult> GetAll()
         {
             var categories = await categoryRepository.GetAll();
+
             return Ok(new
             {
                 Results = categories
@@ -55,113 +58,104 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> Add([FromBody] CategoryViewModel categoryViewModel)
         {
-            Category category = new Category() 
-            { 
-                Name = categoryViewModel.Name, 
-                CategoryTypeId = categoryViewModel.CategoryTypeId,
-                ImageUrl = categoryViewModel.ImageUrl
-            };
-
-            var result = await categoryRepository.Add(category);
-
-            if (result != null)
+            try
             {
+                Category categoryMapped = mapper.Map<Category>(categoryViewModel);
+
+                await categoryRepository.Add(categoryMapped);
+
                 return Ok(new
                 {
-                    Results = result
+                    Results = categoryMapped
                 });
+
             }
-            else
+            catch (Exception e)
             {
+                Console.WriteLine($"ErrorMesages: {e}");
+
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
                 });
             }
+
         }
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromForm] CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> Update([FromBody] CategoryViewModel categoryViewModel)
         {
-            var updatedCategory = await categoryRepository.Get(categoryViewModel.Id);
-
-            if (updatedCategory != null)
+            try
             {
-                updatedCategory.Name = categoryViewModel.Name;
-                updatedCategory.CategoryTypeId = categoryViewModel.CategoryTypeId;
-                updatedCategory.ImageUrl = categoryViewModel.ImageUrl;
+                Category categoryMapped = mapper.Map<Category>(categoryViewModel);
 
-                var result = await categoryRepository.Update(updatedCategory);
-                
-                if(result != null)
+                await categoryRepository.Update(categoryMapped);
+
+                return Ok(new
                 {
-                    return Ok(new
-                    {
-                        Results = result
-                    });
-                }
-                else
-                {
-                    return BadRequest(new
-                    {
-                        Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-                    });
-                }
+                    Results = categoryMapped
+                });
             }
-            else
+            catch (Exception e)
             {
+                Console.WriteLine($"ErrorMesages: {e}");
+
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
                 });
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Remove(int id)
         {
-            var courses = await courseRepository.GetByCategoryId(id);
-
-            if(courses.Count > 0)
+            try
             {
-                return BadRequest(new
+                var courses = await courseRepository.GetByCategoryId(id);
+
+                if (courses.Count > 0)
                 {
-                    Errors = new { Code = "ExistedCourse", Description = "Category has already existed course" } 
-                });
-            }
+                    return BadRequest(new
+                    {
+                        Errors = new { Code = "ExistedCourse", Description = "Category has already existed course" }
+                    });
+                }
 
-            var deletedCategory = await categoryRepository.Delete(id);
+                var removedCategory = await categoryRepository.GetById(id);
 
-            if (deletedCategory != null)
-            {
+                await categoryRepository.Remove(removedCategory);
+
                 return Ok(new
                 {
-                    Results = deletedCategory
+                    Results = "deletedCategory"
                 });
             }
-            else
+            catch (Exception e)
             {
-                return BadRequest(new 
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
                 });
             }
         }
 
 
-        [HttpGet()]
-        [Route("MostRegisteredCategories")]
-        public async Task<IActionResult> MostRegisteredCategories()
-        {
-            var mostRegisteredCategories = await categoryRepository.GetMostRegisteredCategories();
+        //[HttpGet()]
+        //[Route("MostRegisteredCategories")]
+        //public async Task<IActionResult> MostRegisteredCategories()
+        //{
+        //    var mostRegisteredCategories = await categoryRepository.GetMostRegisteredCategories();
 
-            return Ok(new
-            {
-                Results = mostRegisteredCategories
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        Results = mostRegisteredCategories
+        //    });
+        //}
     }
 }

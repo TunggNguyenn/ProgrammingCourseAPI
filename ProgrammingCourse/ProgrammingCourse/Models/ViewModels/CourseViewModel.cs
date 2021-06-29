@@ -29,8 +29,8 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public float Discount { get; set; }
 
-        [Required]
-        public int View { get; set; }
+        //[Required]
+        //public int View { get; set; }
 
         [Required]
         public string ShortDiscription { get; set; }

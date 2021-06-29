@@ -7,31 +7,21 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Models
 {
-    public class Lecture
+    public class View
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public int Section { get; set; }
+        public int Number { get; set; }
 
         [Required]
-        public string Name { get; set; }
-
-        [Required]
-        public string VideoUrl { get; set; }
+        public DateTime DateTime { get; set; }
 
         [Required]  
-        public int CourseId { get; set; } 
+        public int CourseId { get; set; }
 
         [ForeignKey("CourseId")]
         public Course Course { get; set; }
-
-        [Required]
-        public string Discription { get; set; }
-
-        [Required]
-        public int Duration { get; set; }
-
     }
 }

@@ -49,6 +49,8 @@ namespace ProgrammingCourse
             services.AddDbContext<ProgrammingCourseDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ProgrammingCourseDbContext>();
 
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddScoped<RefreshTokenRepository>();
             services.AddScoped<LectureRepository>();
             services.AddScoped<StatusRepository>();
@@ -58,6 +60,7 @@ namespace ProgrammingCourse
             services.AddScoped<WatchListRepository>();
             services.AddScoped<StudentCourseRepository>();
             services.AddScoped<FeedbackRepository>();
+            services.AddScoped<ViewRepository>();
 
 
             //configure strongly typed settings objects

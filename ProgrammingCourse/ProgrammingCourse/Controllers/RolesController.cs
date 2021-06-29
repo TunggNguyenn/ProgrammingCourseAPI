@@ -14,61 +14,61 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private RoleManager<IdentityRole> roleManager;
+        //private RoleManager<IdentityRole> roleManager;
 
-        public RolesController(RoleManager<IdentityRole> roleMgr)
-        {
-            roleManager = roleMgr;
-        }
+        //public RolesController(RoleManager<IdentityRole> roleMgr)
+        //{
+        //    roleManager = roleMgr;
+        //}
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
-        {
-            var role = await roleManager.Roles.Where<IdentityRole>(r => r.Id == id).FirstOrDefaultAsync();
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Get(string id)
+        //{
+        //    var role = await roleManager.Roles.Where<IdentityRole>(r => r.Id == id).FirstOrDefaultAsync();
 
-            if (role != null)
-            {
-                return Ok(new
-                {
-                    Results = role
-                });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-                });
-            }
-        }
+        //    if (role != null)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Results = role
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+        //        });
+        //    }
+        //}
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(new
-            {
-                Results = roleManager.Roles.ToList()
-            });
-        }
+        //[HttpGet]
+        //public IActionResult GetAll()
+        //{
+        //    return Ok(new
+        //    {
+        //        Results = roleManager.Roles.ToList()
+        //    });
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] string name)
-        {
-            IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
-            if (result.Succeeded)
-            {
-                return Ok(new
-                {
-                    Results = result
-                });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    Errors = result.Errors.ToArray()[0]
-                });
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Create([FromForm] string name)
+        //{
+        //    IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
+        //    if (result.Succeeded)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Results = result
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Errors = result.Errors.ToArray()[0]
+        //        });
+        //    }
+        //}
     }
 }

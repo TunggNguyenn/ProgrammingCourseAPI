@@ -15,66 +15,66 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class StatusesController : ControllerBase
     {
-        private StatusRepository statusRepository;
+        //private StatusRepository statusRepository;
 
-        public StatusesController(StatusRepository statusRepo)
-        {
-            statusRepository = statusRepo;
-        }
+        //public StatusesController(StatusRepository statusRepo)
+        //{
+        //    statusRepository = statusRepo;
+        //}
 
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var status = await statusRepository.Get(id);
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Get(int id)
+        //{
+        //    var status = await statusRepository.Get(id);
 
-            if (status != null)
-            {
-                return Ok(new
-                {
-                    Results = status
-                });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
-                });
-            }
-        }
+        //    if (status != null)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Results = status
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+        //        });
+        //    }
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var statuses = await statusRepository.GetAll();
-            return Ok(new
-            {
-                Results = statuses
-            });
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var statuses = await statusRepository.GetAll();
+        //    return Ok(new
+        //    {
+        //        Results = statuses
+        //    });
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] StatusViewModel statusViewModel)
-        {
-            Status status = new Status() { Name = statusViewModel.Name };
+        //[HttpPost]
+        //public async Task<IActionResult> Create([FromForm] StatusViewModel statusViewModel)
+        //{
+        //    Status status = new Status() { Name = statusViewModel.Name };
 
-            var result = await statusRepository.Add(status);
+        //    var result = await statusRepository.Add(status);
 
-            if (result != null)
-            {
-                return Ok(new
-                {
-                    Results = status
-                });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-                });
-            }
-        }
+        //    if (result != null)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Results = status
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
+        //        });
+        //    }
+        //}
     }
 }

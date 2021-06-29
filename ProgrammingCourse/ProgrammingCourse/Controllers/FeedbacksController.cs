@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
@@ -14,17 +15,19 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class FeedbacksController : ControllerBase
     {
-        private FeedbackRepository feedbackRepository;
+        private readonly FeedbackRepository feedbackRepository;
+        private readonly IMapper mapper;
 
-        public FeedbacksController(FeedbackRepository feedbackRepo)
+        public FeedbacksController(FeedbackRepository feedbackRepository, IMapper mapper)
         {
-            feedbackRepository = feedbackRepo;
+            this.feedbackRepository = feedbackRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var feedback = await feedbackRepository.Get(id);
+            var feedback = await feedbackRepository.GetById(id);
 
             if (feedback != null)
             {
@@ -37,7 +40,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
                 });
             }
         }
@@ -53,34 +56,37 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] FeedbackViewModel feedbackViewModel)
+        public async Task<IActionResult> Add([FromBody] FeedbackViewModel feedbackViewModel)
         {
-            bool isExistedFeedbackByUserIdAndCourseId = await feedbackRepository.IsExistedFeedbackByStudentIdAndCourseId(feedbackViewModel.UserId, feedbackViewModel.CourseId);
-
-            if(isExistedFeedbackByUserIdAndCourseId == true)
+            try
             {
-                return BadRequest(new
+                bool isExistedFeedbackByUserIdAndCourseId = await feedbackRepository.IsExistedFeedbackByStudentIdAndCourseId(feedbackViewModel.UserId, feedbackViewModel.CourseId);
+
+                if (isExistedFeedbackByUserIdAndCourseId == true)
                 {
-                    Errors = new { Code = "ExistedFeedback", Description = "Feedback has already existed!" } 
-                });
-            }
+                    return BadRequest(new
+                    {
+                        Errors = new { Code = "ExistedFeedback", Description = "Feedback has already existed!" }
+                    });
+                }
 
-            Feedback feedback = new Feedback() { Rate = feedbackViewModel.Rate, Review = feedbackViewModel.Review, CourseId = feedbackViewModel.CourseId, UserId = feedbackViewModel.UserId };
+                Feedback feedbackMapped = mapper.Map<Feedback>(feedbackViewModel);
 
-            var result = await feedbackRepository.Add(feedback);
+                await feedbackRepository.Add(feedbackMapped);
 
-            if (result != null)
-            {
                 return Ok(new
                 {
-                    Results = result
+                    Results = feedbackMapped
                 });
+
             }
-            else
+            catch(Exception e)
             {
+                Console.WriteLine($"ErrorMesages: {e}");
+
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
                 });
             }
         }
@@ -89,58 +95,50 @@ namespace ProgrammingCourse.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromForm] FeedbackViewModel feedbackViewModel)
         {
-            var updatedFeedback = await feedbackRepository.Get(feedbackViewModel.Id);
-
-            if (updatedFeedback != null)
+            try
             {
-                updatedFeedback.Rate = feedbackViewModel.Rate;
-                updatedFeedback.Review = feedbackViewModel.Review;
-                updatedFeedback.CourseId = updatedFeedback.CourseId;
-                updatedFeedback.UserId = feedbackViewModel.UserId;
+                Feedback feedbackMapped = mapper.Map<Feedback>(feedbackViewModel);
 
-                var result = await feedbackRepository.Update(updatedFeedback);
+                await feedbackRepository.Update(feedbackMapped);
 
-                if (result != null)
+                return Ok(new
                 {
-                    return Ok(new
-                    {
-                        Results = result
-                    });
-                }
-                else
-                {
-                    return BadRequest(new
-                    {
-                        Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-                    });
-                }
+                    Results = feedbackMapped
+                });
+
             }
-            else
+            catch(Exception e)
             {
+                Console.WriteLine($"ErrorMesages: {e}");
+
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
                 });
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Remove(int id)
         {
-            var deletedFeedback = await feedbackRepository.Delete(id);
-
-            if (deletedFeedback != null)
+            try
             {
+                var removedFeedback = await feedbackRepository.GetById(id);
+
+                await feedbackRepository.Remove(removedFeedback);
+
                 return Ok(new
                 {
-                    Results = deletedFeedback
+                    Results = "deletedFeedback"
                 });
             }
-            else
+            catch(Exception e)
             {
+                Console.WriteLine($"ErrorMesages: {e}");
+
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" } 
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
                 });
             }
         }
@@ -151,6 +149,7 @@ namespace ProgrammingCourse.Controllers
         public async Task<IActionResult> IsExistedFeedbackByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
         {
             bool isExistedFeedbackByUserIdAndCourseId = await feedbackRepository.IsExistedFeedbackByStudentIdAndCourseId(studentId, courseId);
+
             return Ok(new
             {
                 Results = isExistedFeedbackByUserIdAndCourseId
@@ -158,15 +157,15 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        [HttpGet]
-        [Route("GetAllByCourseId")]
-        public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
-        {
-            var feedbacks = await feedbackRepository.GetAllByCourseId(courseId);
-            return Ok(new
-            {
-                Results = feedbacks
-            });
-        }
+        //[HttpGet]
+        //[Route("GetAllByCourseId")]
+        //public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
+        //{
+        //    var feedbacks = await feedbackRepository.GetAllByCourseId(courseId);
+        //    return Ok(new
+        //    {
+        //        Results = feedbacks
+        //    });
+        //}
     }
 }

@@ -15,13 +15,13 @@ namespace ProgrammingCourse.Models
         [Required]
         public string Name { get; set; }
 
-        [Required]  //
-        public int CategoryId { get; set; } //?
+        [Required]  
+        public int CategoryId { get; set; } 
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
 
-        //[Required]  //
+        //[Required]  
         public string LecturerId { get; set; }
 
         [ForeignKey("LecturerId")]
@@ -36,7 +36,7 @@ namespace ProgrammingCourse.Models
         public float Discount { get; set; }
 
         [Required]
-        public int View { get; set; }
+        public virtual IList<View> Views { get; set; }
 
         [Required]
         public string ShortDiscription { get; set; }
@@ -46,18 +46,18 @@ namespace ProgrammingCourse.Models
 
         public DateTime LastUpdated { get; set; }
 
-        [Required] //
-        public int StatusId { get; set; }   //?
+        [Required] 
+        public int StatusId { get; set; } 
 
         [ForeignKey("StatusId")]
         public Status Status { get; set; }
 
-        public IList<Lecture> Lectures { get; set; }
+        public virtual IList<Lecture> Lectures { get; set; }
 
-        public IList<Feedback> Feedbacks { get; set; }
+        public virtual IList<Feedback> Feedbacks { get; set; }
 
-        public IList<StudentCourse> StudentCourses { get; set; }
+        public virtual IList<StudentCourse> StudentCourses { get; set; }
 
-        public IList<WatchList> WatchLists { get; set; }
+        public virtual IList<WatchList> WatchLists { get; set; }
     }
 }

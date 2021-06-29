@@ -14,7 +14,7 @@ namespace ProgrammingCourse.Models
         [Required]
         public string Name { get; set; }
 
-        public IList<Category> Categories { get; set; }
+        public virtual IList<Category> Categories { get; set; }
 
     }
 }

@@ -25,7 +25,7 @@ namespace ProgrammingCourse.Middlewares
         }
 
 
-        public async Task Invoke(HttpContext httpContext, IOptions<JwtBearerTokenSettings> jwtTokenOptions, UserManager<User> userMgr, RefreshTokenRepository refreshTokenRepo)
+        public async Task Invoke(HttpContext httpContext, IOptions<JwtBearerTokenSettings> jwtTokenOptions, UserManager<User> userMgr, RefreshTokenRepository refreshTokenRepository)
         {
             string accessToken = httpContext.Request.Cookies["accessToken"];
             string refreshToken = httpContext.Request.Cookies["refreshToken"];
@@ -43,14 +43,14 @@ namespace ProgrammingCourse.Middlewares
                 if (expDate < DateTime.UtcNow)
                 {
                     var nameid = token.Claims.Where(c => c.Type == "nameid").FirstOrDefault();
-                    RefreshToken refresh = refreshTokenRepo.GetByUserIdAndToken(nameid.Value, refreshToken);
+                    RefreshToken refresh = refreshTokenRepository.GetByUserIdAndToken(nameid.Value, refreshToken);
                     User identityUser = await userMgr.FindByIdAsync(nameid.Value);
 
                     if (refresh != null)
                     {
                         if (refresh.ExpiryOn < DateTime.UtcNow || identityUser.IsLocked == true)
                         {
-                            await refreshTokenRepo.Delete(refresh.Id);
+                            await refreshTokenRepository.Remove(refresh.Id);
 
                             // Set Token Cookie
                             var cookieOptions = new CookieOptions
