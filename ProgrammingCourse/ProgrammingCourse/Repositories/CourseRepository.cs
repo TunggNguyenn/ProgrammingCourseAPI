@@ -13,6 +13,15 @@ namespace ProgrammingCourse.Repositories
         {
         }
 
+        //Override
+        public new async Task<Course> GetById(int id)
+        {
+            return await _context.Set<Course>()
+                .Include(c => c.Lectures).Include(c => c.Status).Include(c => c.Category)
+                .Include(c => c.Lecturer).Include(c => c.Feedbacks)
+                .FirstAsync(c => c.Id == id);
+        }
+
 
 
         public async Task<IList<Course>> GetByCategoryId(int categoryId)

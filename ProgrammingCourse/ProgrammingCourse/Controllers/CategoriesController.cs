@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProgrammingCourse.Controllers
+namespace ProgrammingCourse.Controllers0
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -14,28 +14,28 @@ namespace ProgrammingCourse.Repositories
         }
 
 
-        //public async Task<IList<dynamic>> GetAllByStudentId(string studentId)
-        //{
-        //    var studentCourses = await programmingCourseDbContext.StudentCourses
-        //        .Where<StudentCourse>(sc => sc.StudentId == studentId)
-        //        .Include(sc => sc.Student).Include(sc => sc.Course)
-        //        .Select(sc => new
-        //        {
-        //            Id = sc.Id,
-        //            StudentId = sc.Student.Id,
-        //            StudentUserName = sc.Student.UserName,
-        //            CourseId = sc.Course.Id,
-        //            CourseName = sc.Course.Name,
-        //            ImageUrl = sc.Course.ImageUrl,
-        //            Price = sc.Course.Price,
-        //            Discount = sc.Course.Discount,
-        //            ShortDiscription = sc.Course.ShortDiscription,
-        //            DetailDiscription = sc.Course.DetailDiscription,
-        //            LastUpdated = sc.Course.LastUpdated
-        //        })
-        //        .ToListAsync<dynamic>();
-        //    return studentCourses;
-        //}
+        public async Task<IList<dynamic>> GetAllByStudentId(string studentId)
+        {
+            var studentCourses = await _context.StudentCourses
+                .Where<StudentCourse>(sc => sc.StudentId == studentId)
+                .Include(sc => sc.Student).Include(sc => sc.Course)
+                .Select(sc => new
+                {
+                    Id = sc.Id,
+                    StudentId = sc.Student.Id,
+                    StudentUserName = sc.Student.UserName,
+                    CourseId = sc.Course.Id,
+                    CourseName = sc.Course.Name,
+                    ImageUrl = sc.Course.ImageUrl,
+                    Price = sc.Course.Price,
+                    Discount = sc.Course.Discount,
+                    ShortDiscription = sc.Course.ShortDiscription,
+                    DetailDiscription = sc.Course.DetailDiscription,
+                    LastUpdated = sc.Course.LastUpdated
+                })
+                .ToListAsync<dynamic>();
+            return studentCourses;
+        }
 
 
         //public async Task<IList<dynamic>> GetAllByCourseId(int courseId)

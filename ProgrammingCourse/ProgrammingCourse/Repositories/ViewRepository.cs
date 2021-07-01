@@ -1,4 +1,5 @@
-﻿using ProgrammingCourse.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ProgrammingCourse.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,14 @@ namespace ProgrammingCourse.Repositories
     {
         public ViewRepository(ProgrammingCourseDbContext context) : base(context)
         {
+        }
+
+        public async Task<View> GetByCouseIdAndDateTime(int courseId, DateTime dateTime)
+        {
+            return await _context.Set<View>()
+                .Where<View>(v => v.CourseId == courseId && v.DateTime.Day == dateTime.Day && v.DateTime.Month == dateTime.Month && v.DateTime.Year == dateTime.Year)
+                .FirstOrDefaultAsync();
+
         }
     }
 }

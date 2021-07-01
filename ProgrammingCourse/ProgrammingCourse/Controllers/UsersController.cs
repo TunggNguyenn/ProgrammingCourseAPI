@@ -87,6 +87,39 @@ namespace ProgrammingCourse.Controllers
             });
         }
 
+
+        //[HttpGet]
+        //[Route("GetAllStudents")]
+        //public async Task<IActionResult> GetAllStudents()
+        //{
+        //    var users = await userManager.Users.ToListAsync();
+
+        //    if (users.Count == 0)
+        //    {
+        //        return Ok(new
+        //        {
+        //            Results = new object[] { }
+        //        });
+        //    }
+
+        //    IList<object> objectUsers = new List<object>();
+
+        //    foreach (var user in users)
+        //    {
+        //        var role = await userManager.GetRolesAsync(user);
+        //        dynamic dynamicUsers = new ExpandoObject();
+        //        dynamicUsers.Info = user;
+        //        dynamicUsers.Role = role[0];
+
+        //        objectUsers.Add(dynamicUsers);
+        //    }
+
+        //    return Ok(new
+        //    {
+        //        Results = objectUsers
+        //    });
+        //}
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(string id)
         {

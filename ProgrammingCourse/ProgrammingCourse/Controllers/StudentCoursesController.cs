@@ -145,16 +145,16 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("GetAllByStudentId")]
-        //public async Task<IActionResult> GetAllByStudentId([FromQuery] string studentId)
-        //{
-        //    var studentCourses = await studentCourseRepository.GetAllByStudentId(studentId);
-        //    return Ok(new
-        //    {
-        //        Results = studentCourses
-        //    });
-        //}
+        [HttpGet]
+        [Route("GetAllByStudentId")]
+        public async Task<IActionResult> GetAllByStudentId([FromQuery] string studentId)
+        {
+            var studentCourses = await studentCourseRepository.GetAllByStudentId(studentId);
+            return Ok(new
+            {
+                Results = studentCourses
+            });
+        }
 
 
         //[HttpGet]

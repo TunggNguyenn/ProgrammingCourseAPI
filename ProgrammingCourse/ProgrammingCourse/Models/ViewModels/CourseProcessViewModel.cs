@@ -6,15 +6,21 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Models.ViewModels
 {
-    public class ViewViewModel
+    public class CourseProcessViewModel
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public DateTime DateTime { get; set; }
+        public string StudentId { get; set; }
 
-        [Required]  
+        [Required]
         public int CourseId { get; set; }
+
+        [Required]
+        public int LectureId { get; set; }
+
+        [Required]
+        public int time { get; set; }
     }
 }

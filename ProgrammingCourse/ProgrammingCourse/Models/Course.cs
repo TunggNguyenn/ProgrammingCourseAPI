@@ -59,5 +59,7 @@ namespace ProgrammingCourse.Models
         public virtual IList<StudentCourse> StudentCourses { get; set; }
 
         public virtual IList<WatchList> WatchLists { get; set; }
+
+        public virtual IList<CourseCart> CourseCarts { get; set; }
     }
 }

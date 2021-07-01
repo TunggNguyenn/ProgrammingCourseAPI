@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Models.ViewModels
 {
-    public class ViewViewModel
+    public class CartViewModel
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public DateTime DateTime { get; set; }
+        public string StudentId { get; set; }
 
-        [Required]  
-        public int CourseId { get; set; }
+        public virtual IList<CourseCart> CourseCarts { get; set; }
+
+        public DateTime LastUpdated { get; set; }
     }
 }
