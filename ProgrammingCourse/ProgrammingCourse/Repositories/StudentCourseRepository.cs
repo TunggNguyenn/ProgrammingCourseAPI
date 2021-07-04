@@ -38,6 +38,22 @@ namespace ProgrammingCourse.Repositories
         }
 
 
+        public async Task<IList<StudentCourse>> GetRegisteredStudentCoursesInMonthByCourseId(int courseId)
+        {
+            var studentCourses = await _context.Set<StudentCourse>()
+                .Where<StudentCourse>(sc => sc.CourseId == courseId && sc.DateTime.Month == DateTime.Now.Month && sc.DateTime.Year == DateTime.Now.Year)
+                .ToListAsync<StudentCourse>();
+            return studentCourses;
+        }
+
+
+        public async Task<int> GetRegisteredNumberByCourseId(int courseId)
+        {
+            var studentCourses = await _context.StudentCourses.Where<StudentCourse>(sc => sc.CourseId == courseId).ToListAsync();
+            return studentCourses.Count;
+        }
+
+
         //public async Task<IList<dynamic>> GetAllByCourseId(int courseId)
         //{
         //    var studentCourses = await programmingCourseDbContext.StudentCourses
@@ -60,11 +76,11 @@ namespace ProgrammingCourse.Repositories
 
         public async Task<bool> IsParticipatedByStudentIdAndCourseId(string studentId, int courseId)
         {
-            var studentCourses = await _context.StudentCourses
+            var studentCourse = await _context.StudentCourses
                             .Where<StudentCourse>(sc => sc.StudentId == studentId && sc.CourseId == courseId)
                             .FirstOrDefaultAsync();
 
-            if (studentCourses != null)
+            if (studentCourse != null)
             {
                 return true;
             }

@@ -15,6 +15,11 @@ namespace ProgrammingCourse.Repositories
         {
         }
 
+        public async Task<IList<Category>> GetByCategoryTypeId(int categoryTypeId)
+        {
+            return await _context.Set<Category>().Where(c => c.CategoryTypeId == categoryTypeId).ToListAsync();
+        }
+
 
         //public async Task<dynamic> GetMostRegisteredCategories()
         //{

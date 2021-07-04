@@ -88,37 +88,94 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("GetAllStudents")]
-        //public async Task<IActionResult> GetAllStudents()
-        //{
-        //    var users = await userManager.Users.ToListAsync();
+        [HttpGet]
+        [Route("GetStudentList")]
+        public async Task<IActionResult> GetStudentList([FromQuery] PaginationParameters paginationParameters)
+        {
+            var users = await userManager.Users.ToListAsync();
 
-        //    if (users.Count == 0)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = new object[] { }
-        //        });
-        //    }
+            if (users.Count == 0)
+            {
+                return Ok(new
+                {
+                    Results = new object[] { }
+                });
+            }
 
-        //    IList<object> objectUsers = new List<object>();
+            IList<object> objectUsers = new List<object>();
 
-        //    foreach (var user in users)
-        //    {
-        //        var role = await userManager.GetRolesAsync(user);
-        //        dynamic dynamicUsers = new ExpandoObject();
-        //        dynamicUsers.Info = user;
-        //        dynamicUsers.Role = role[0];
+            foreach (var user in users)
+            {
+                var role = await userManager.GetRolesAsync(user);
 
-        //        objectUsers.Add(dynamicUsers);
-        //    }
+                if(role[0] == "Student")
+                {
+                    dynamic dynamicUsers = new ExpandoObject();
+                    dynamicUsers.Info = user;
+                    dynamicUsers.Role = role[0];
 
-        //    return Ok(new
-        //    {
-        //        Results = objectUsers
-        //    });
-        //}
+                    objectUsers.Add(dynamicUsers);
+                }    
+            }
+
+            paginationParameters.TotalItems = objectUsers.Count;
+            paginationParameters.TotalPages = Convert.ToInt32(Math.Ceiling((double)objectUsers.Count / paginationParameters.PageSize));
+            paginationParameters.PageNumber = (paginationParameters.PageNumber > paginationParameters.TotalPages) ? paginationParameters.TotalPages : paginationParameters.PageNumber;
+
+            return Ok(new
+            {
+                Results = new 
+                {
+                    Students = objectUsers.Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize).Take(paginationParameters.PageSize),
+                    PaginationStatus = paginationParameters
+                }
+            });
+        }
+
+
+        [HttpGet]
+        [Route("GetLecturerList")]
+        public async Task<IActionResult> GetLecturerList([FromQuery] PaginationParameters paginationParameters)
+        {
+            var users = await userManager.Users.ToListAsync();
+
+            if (users.Count == 0)
+            {
+                return Ok(new
+                {
+                    Results = (object[])null
+                });
+            }
+
+            IList<object> objectUsers = new List<object>();
+
+            foreach (var user in users)
+            {
+                var role = await userManager.GetRolesAsync(user);
+
+                if (role[0] == "Lecturer")
+                {
+                    dynamic dynamicUsers = new ExpandoObject();
+                    dynamicUsers.Info = user;
+                    dynamicUsers.Role = role[0];
+
+                    objectUsers.Add(dynamicUsers);
+                }
+            }
+
+            paginationParameters.TotalItems = objectUsers.Count;
+            paginationParameters.TotalPages = Convert.ToInt32(Math.Ceiling((double)objectUsers.Count / paginationParameters.PageSize));
+            paginationParameters.PageNumber = (paginationParameters.PageNumber > paginationParameters.TotalPages) ? paginationParameters.TotalPages : paginationParameters.PageNumber;
+
+            return Ok(new
+            {
+                Results = new
+                {
+                    Lecturers = objectUsers.Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize).Take(paginationParameters.PageSize),
+                    PaginationStatus = paginationParameters
+                }
+            });
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(string id)

@@ -14,6 +14,7 @@ using ProgrammingCourse.Configurations;
 using ProgrammingCourse.Middlewares;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Services;
 using System;
 using System.IO;
 using System.Text;
@@ -61,6 +62,12 @@ namespace ProgrammingCourse
             services.AddScoped<StudentCourseRepository>();
             services.AddScoped<FeedbackRepository>();
             services.AddScoped<ViewRepository>();
+            services.AddScoped<UserRepository>();
+
+            services.AddScoped<CategoryTypeService>();
+            services.AddScoped<CategoryService>();
+            services.AddScoped<CourseService>();
+
 
 
             //configure strongly typed settings objects

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,21 +15,21 @@ namespace ProgrammingCourse.Controllers0
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly CategoryRepository categoryRepository;
-        private readonly CourseRepository courseRepository;
+        private readonly CategoryService categoryService;
+        private readonly CourseService courseService;
         private readonly IMapper mapper;
 
-        public CategoriesController(CategoryRepository categoryRepository, CourseRepository courseRepository, IMapper mapper)
+        public CategoriesController(CategoryService categoryService, CourseService courseService, IMapper mapper)
         {
-            this.categoryRepository = categoryRepository;
-            this.courseRepository = courseRepository;
+            this.categoryService = categoryService;
+            this.courseService = courseService;
             this.mapper = mapper;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var category = await categoryRepository.GetById(id);
+            var category = await categoryService.GetById(id);
 
             if (category != null)
             {
@@ -49,7 +50,7 @@ namespace ProgrammingCourse.Controllers0
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categories = await categoryRepository.GetAll();
+            var categories = await categoryService.GetAll();
 
             return Ok(new
             {
@@ -64,7 +65,7 @@ namespace ProgrammingCourse.Controllers0
             {
                 Category categoryMapped = mapper.Map<Category>(categoryViewModel);
 
-                await categoryRepository.Add(categoryMapped);
+                await categoryService.Add(categoryMapped);
 
                 return Ok(new
                 {
@@ -91,7 +92,7 @@ namespace ProgrammingCourse.Controllers0
             {
                 Category categoryMapped = mapper.Map<Category>(categoryViewModel);
 
-                await categoryRepository.Update(categoryMapped);
+                await categoryService.Update(categoryMapped);
 
                 return Ok(new
                 {
@@ -114,7 +115,7 @@ namespace ProgrammingCourse.Controllers0
         {
             try
             {
-                var courses = await courseRepository.GetByCategoryId(id);
+                var courses = await courseService.GetByCategoryId(id);
 
                 if (courses.Count > 0)
                 {
@@ -124,9 +125,9 @@ namespace ProgrammingCourse.Controllers0
                     });
                 }
 
-                var removedCategory = await categoryRepository.GetById(id);
+                var removedCategory = await categoryService.GetById(id);
 
-                await categoryRepository.Remove(removedCategory);
+                await categoryService.Remove(removedCategory);
 
                 return Ok(new
                 {

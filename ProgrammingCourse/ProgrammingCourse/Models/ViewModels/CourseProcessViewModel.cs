@@ -21,6 +21,6 @@ namespace ProgrammingCourse.Models.ViewModels
         public int LectureId { get; set; }
 
         [Required]
-        public int time { get; set; }
+        public int Time { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,19 +16,19 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
-        private readonly CourseRepository courseRepository;
+        private readonly CourseService courseService;
         private readonly IMapper mapper;
 
-        public CoursesController(CourseRepository courseRepository, IMapper mapper)
+        public CoursesController(CourseService courseService, IMapper mapper)
         {
-            this.courseRepository = courseRepository;
+            this.courseService = courseService;
             this.mapper = mapper;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var course = await courseRepository.GetById(id);
+            var course = await courseService.GetById(id);
 
             if (course != null)
             {
@@ -48,7 +49,7 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var courses = await courseRepository.GetAll();
+            var courses = await courseService.GetAll();
             return Ok(new
             {
                 Results = courses
@@ -56,14 +57,27 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CourseViewModel courseViewModel)
+        public async Task<IActionResult> Add([FromBody]  CourseWithLecturesViewModel courseWithLecturesViewModel)
         {
             try
             {
-                Course courseMapped = mapper.Map<Course>(courseViewModel);
+                Course courseMapped = mapper.Map<Course>(courseWithLecturesViewModel.CourseViewModel);
                 courseMapped.LastUpdated = DateTime.Now;
 
-                await courseRepository.Add(courseMapped);
+                IList<Lecture> lecturesMapped = new List<Lecture>();
+
+                foreach (LectureViewModel l in courseWithLecturesViewModel.LectureViewModels)
+                {
+                    {
+                        Lecture lectureMapped = mapper.Map<Lecture>(l);
+
+                        lecturesMapped.Add(lectureMapped);
+                    }
+                }
+
+                courseMapped.Lectures = lecturesMapped;
+
+                await courseService.Add(courseMapped);
 
                 return Ok(new
                 {
@@ -84,14 +98,28 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] CourseViewModel courseViewModel)
+        public async Task<IActionResult> Update([FromBody] CourseWithLecturesViewModel courseWithLecturesViewModel)
         {
             try
             {
-                Course courseMapped = mapper.Map<Course>(courseViewModel);
+                Course courseMapped = mapper.Map<Course>(courseWithLecturesViewModel.CourseViewModel);
                 courseMapped.LastUpdated = DateTime.Now;
 
-                await courseRepository.Update(courseMapped);
+                IList<Lecture> lecturesMapped = new List<Lecture>();
+
+                foreach (LectureViewModel l in courseWithLecturesViewModel.LectureViewModels)
+                {
+                    {
+                        Lecture lectureMapped = mapper.Map<Lecture>(l);
+
+                        lecturesMapped.Add(lectureMapped);
+                    }
+                }
+
+                courseMapped.Lectures = lecturesMapped;
+
+
+                await courseService.Update(courseMapped);
 
                 return Ok(new
                 {
@@ -115,9 +143,9 @@ namespace ProgrammingCourse.Controllers
         {
             try
             {
-                var removedCourse = await courseRepository.GetById(id);
+                var removedCourse = await courseService.GetById(id);
 
-                await courseRepository.Remove(removedCourse);
+                await courseService.Remove(removedCourse);
 
                 return Ok(new
                 {

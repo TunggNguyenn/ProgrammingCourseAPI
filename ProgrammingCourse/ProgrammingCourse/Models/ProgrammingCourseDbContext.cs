@@ -24,5 +24,10 @@ namespace ProgrammingCourse.Models
         public DbSet<StudentCourse> StudentCourses { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+
+        public DbSet<View> Views { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CourseCart> CourseCarts { get; set; }
+        public DbSet<CourseProcess> CourseProcesses { get; set; }
     }
 }

@@ -27,6 +27,30 @@ namespace ProgrammingCourse.Repositories
             return false;
         }
 
+        public async Task<double> GetRatingByCourseId(int courseId)
+        {
+            var feedbacks = await _context.Feedbacks.Where<Feedback>(f => f.CourseId == courseId).ToListAsync();
+
+            double rating = 0.0f;
+            foreach(var f in feedbacks)
+            {
+                rating += f.Rate;
+            }
+
+            return (double)rating / (feedbacks.Count == 0 ? 1 : feedbacks.Count);
+        }
+
+        public async Task<IList<Feedback>> GetByCourseId(int courseId)
+        {
+            return await _context.Feedbacks.Where<Feedback>(f => f.CourseId == courseId).ToListAsync();
+        }
+
+        public async Task<int> GetReviewerNumberByCourseId(int courseId)
+        {
+            var feedbacks = await _context.Feedbacks.Where<Feedback>(f => f.CourseId == courseId).ToListAsync();
+            return feedbacks.Count;
+        }
+
 
         //public async Task<IList<dynamic>> GetAllByCourseId(int courseId)
         //{

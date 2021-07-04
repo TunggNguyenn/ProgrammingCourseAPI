@@ -13,6 +13,13 @@ namespace ProgrammingCourse.Repositories
         {
         }
 
+        public async Task<List<Course>> GetAllInfo()
+        {
+            return await _context.Set<Course>()
+                .Include(c => c.Status).Include(c => c.Lecturer)
+                .ToListAsync<Course>();
+        }
+
         //Override
         public new async Task<Course> GetById(int id)
         {
@@ -29,6 +36,16 @@ namespace ProgrammingCourse.Repositories
             var courses = await _context.Courses.Where<Course>(c => c.CategoryId == categoryId).ToListAsync();
             return courses;
         }
+
+        public async Task<IList<Course>> GetByCategoryTypeId(int categoryTypeId)
+        {
+            var courses = await _context.Courses
+                .Include(c => c.Category)
+                .Where<Course>(c => c.Category.CategoryTypeId == categoryTypeId)
+                .ToListAsync();
+            return courses;
+        }
+
 
 
         //public async Task<dynamic> GetOutStandingCourses()
@@ -196,15 +213,15 @@ namespace ProgrammingCourse.Repositories
         //}
 
 
-        //public async Task<Course> FindCourse(string keywords)
-        //{
-        //    var course = await programmingCourseDbContext.Courses
-        //        .Where<Course>(c => c.Name.Contains(keywords))
-        //        .Include(c => c.Lectures).Include(c => c.Feedbacks).Include(c => c.Lecturer).Include(c => c.Status).Include(c => c.StudentCourses).Include(c => c.Category)
-        //        .ThenInclude(c => c.CategoryType)
-        //        .FirstOrDefaultAsync();
-        //    return course;
-        //}
+        public async Task<Course> FindCourse(string keywords)
+        {
+            var course = await _context.Set<Course>()
+                .Where<Course>(c => c.Name.Contains(keywords))
+                .Include(c => c.Lectures).Include(c => c.Feedbacks).Include(c => c.Lecturer).Include(c => c.Status).Include(c => c.StudentCourses).Include(c => c.Category)
+                .ThenInclude(c => c.CategoryType)
+                .FirstOrDefaultAsync();
+            return course;
+        }
 
 
         //public async Task<dynamic> GetBestSellerCoursesByCategoryTypeId(int categoryTypeId, int pageSize, int pageOffset)

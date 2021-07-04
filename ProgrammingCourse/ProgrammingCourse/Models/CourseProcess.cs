@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Models
 {
@@ -12,7 +9,7 @@ namespace ProgrammingCourse.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        //[Required]
         public string StudentId { get; set; }
 
         [ForeignKey("StudentId")]
@@ -31,6 +28,6 @@ namespace ProgrammingCourse.Models
         public Lecture Lecture { get; set; }
 
         [Required]
-        public int time { get; set; }
+        public int Time { get; set; }
     }
 }

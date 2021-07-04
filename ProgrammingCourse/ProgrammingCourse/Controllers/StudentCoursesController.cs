@@ -179,5 +179,54 @@ namespace ProgrammingCourse.Controllers
         //        Results = isParticipatedByStudentIdAndCourseId
         //    });
         //}
+
+
+        [HttpPost]
+        [Route("AddWithMultipleCourses")]
+        public async Task<IActionResult> AddWithMultipleCourses([FromBody] List<StudentCourseViewModel> studentCourseViewModels)
+        {
+            try
+            {
+                List<StudentCourse> studentCourses = new List<StudentCourse>();
+
+                for (int i = 0; i < studentCourseViewModels.Count; i++)
+                {
+                    bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentCourseViewModels[i].StudentId, studentCourseViewModels[i].CourseId);
+
+                    if (isParticipatedByStudentIdAndCourseId == true)
+                    {
+                        return BadRequest(new
+                        {
+                            Errors = new { Code = "ParticipatedCourse", Description = "The student has already participated the course!" }
+                        });
+                    }
+
+
+                    StudentCourse studentCourseMapped = mapper.Map<StudentCourse>(studentCourseViewModels[i]);
+                    studentCourseMapped.DateTime = DateTime.Now;
+
+                    //await studentCourseRepository.Add(studentCourseMapped);
+
+                    studentCourses.Add(studentCourseMapped);
+                }
+
+                await studentCourseRepository.AddRange(studentCourses);
+
+                return Ok(new
+                {
+                    Results = studentCourses
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
     }
 }

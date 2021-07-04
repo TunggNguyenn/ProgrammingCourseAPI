@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,16 @@ namespace ProgrammingCourse.Controllers
     [ApiController]
     public class CategoryTypesController : ControllerBase
     {
-        private readonly CategoryTypeRepository categoryTypeRepository;
+        private readonly CategoryTypeService categoryTypeService;
+        private readonly CategoryService categoryService;
+        private readonly CourseService courseService;
         private readonly IMapper mapper;
 
-        public CategoryTypesController(CategoryTypeRepository categoryTypeRepository, IMapper mapper)
+        public CategoryTypesController(CategoryTypeService categoryTypeService, CategoryService categoryService, CourseService courseService, IMapper mapper)
         {
-            this.categoryTypeRepository = categoryTypeRepository;
+            this.categoryTypeService = categoryTypeService;
+            this.categoryService = categoryService;
+            this.courseService = courseService;
             this.mapper = mapper;
         }
 
@@ -28,7 +33,7 @@ namespace ProgrammingCourse.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var categoryType = await categoryTypeRepository.GetById(id);
+            var categoryType = await categoryTypeService.GetById(id);
 
             if (categoryType != null)
             {
@@ -46,10 +51,35 @@ namespace ProgrammingCourse.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("GetFormattedCategoryTypeById")]
+        public async Task<IActionResult> GetFormattedCategoryTypeById([FromQuery] int id)
+        {
+            var formattedCategoryType = await categoryTypeService.GetFormattedCategoryTypeById(id);
+
+
+            if (formattedCategoryType != null)
+            {
+                return Ok(new
+                {
+                    Results = formattedCategoryType
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categoryTypes = await categoryTypeRepository.GetAll();
+            var categoryTypes = await categoryTypeService.GetAll();
 
             return Ok(new
             {
@@ -64,7 +94,7 @@ namespace ProgrammingCourse.Controllers
             {
                 CategoryType categoryTypeMapped = mapper.Map<CategoryType>(categoryTypeViewModel);
 
-                await categoryTypeRepository.Add(categoryTypeMapped);
+                await categoryTypeService.Add(categoryTypeMapped);
 
                 return Ok(new
                 {

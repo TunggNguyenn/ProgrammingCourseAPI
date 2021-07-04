@@ -16,7 +16,7 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public int CategoryTypeId { get; set; }
 
-        
+
         [Required]
         public string ImageUrl { get; set; }
 
