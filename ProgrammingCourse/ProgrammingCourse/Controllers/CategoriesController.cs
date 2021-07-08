@@ -27,9 +27,9 @@ namespace ProgrammingCourse.Controllers0
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetWithAllInfoById(int id)
         {
-            var category = await categoryService.GetById(id);
+            var category = await categoryService.GetWithAllInfoById(id);
 
             if (category != null)
             {
@@ -146,16 +146,16 @@ namespace ProgrammingCourse.Controllers0
         }
 
 
-        //[HttpGet()]
-        //[Route("MostRegisteredCategories")]
-        //public async Task<IActionResult> MostRegisteredCategories()
-        //{
-        //    var mostRegisteredCategories = await categoryRepository.GetMostRegisteredCategories();
+        [HttpGet()]
+        [Route("MostRegisteredCategories")]
+        public async Task<IActionResult> MostRegisteredCategories()
+        {
+            var mostRegisteredCategories = await categoryService.GetMostRegisteredCategories();
 
-        //    return Ok(new
-        //    {
-        //        Results = mostRegisteredCategories
-        //    });
-        //}
+            return Ok(new
+            {
+                Results = mostRegisteredCategories
+            });
+        }
     }
 }

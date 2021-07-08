@@ -40,9 +40,12 @@ namespace ProgrammingCourse.Repositories
             return (double)rating / (feedbacks.Count == 0 ? 1 : feedbacks.Count);
         }
 
-        public async Task<IList<Feedback>> GetByCourseId(int courseId)
+        public async Task<List<Feedback>> GetFeedbackListByCourseId(int courseId)
         {
-            return await _context.Feedbacks.Where<Feedback>(f => f.CourseId == courseId).ToListAsync();
+            return await _context.Feedbacks
+                .Where<Feedback>(f => f.CourseId == courseId)
+                .Include(f => f.User)
+                .ToListAsync();
         }
 
         public async Task<int> GetReviewerNumberByCourseId(int courseId)
@@ -50,24 +53,5 @@ namespace ProgrammingCourse.Repositories
             var feedbacks = await _context.Feedbacks.Where<Feedback>(f => f.CourseId == courseId).ToListAsync();
             return feedbacks.Count;
         }
-
-
-        //public async Task<IList<dynamic>> GetAllByCourseId(int courseId)
-        //{
-        //    var feedbacks = await programmingCourseDbContext.Feedbacks
-        //        .Where<Feedback>(f => f.CourseId == courseId)
-        //        .Include(f => f.User)
-        //        .Select(f => new
-        //        {
-        //            Id = f.Id,
-        //            Rate = f.Rate,
-        //            Review = f.Review,
-        //            UserId = f.User.Id,
-        //            UserName = f.User.UserName,
-        //            UserAvatarUrl = f.User.AvatarUrl
-        //        })
-        //        .ToListAsync<dynamic>();
-        //    return feedbacks;
-        //}
     }
 }

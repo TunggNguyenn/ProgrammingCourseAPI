@@ -12,5 +12,10 @@ namespace ProgrammingCourse.Repositories
         public CategoryTypeRepository(ProgrammingCourseDbContext context) : base(context)
         {
         }
+
+        public async Task<CategoryType> GetWithAllInfoById(int id)
+        {
+            return await _context.Set<CategoryType>().Where(c => c.Id == id).Include(c => c.Categories).FirstOrDefaultAsync();
+        }
     }
 }

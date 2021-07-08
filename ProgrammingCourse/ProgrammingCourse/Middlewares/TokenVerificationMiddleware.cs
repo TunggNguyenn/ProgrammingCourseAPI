@@ -56,6 +56,8 @@ namespace ProgrammingCourse.Middlewares
                             var cookieOptions = new CookieOptions
                             {
                                 HttpOnly = true,
+                                Secure = true,
+                                SameSite = SameSiteMode.None,
                                 Expires = DateTime.UtcNow.AddDays(-1)
                             };
                             httpContext.Response.Cookies.Append("accessToken", "", cookieOptions);
@@ -88,7 +90,9 @@ namespace ProgrammingCourse.Middlewares
                             // Set Access Token Cookie
                             var accessTokenCookieOptions = new CookieOptions
                             {
-                                HttpOnly = true
+                                HttpOnly = true,
+                                Secure = true,
+                                SameSite = SameSiteMode.None
                                 //Expires = DateTime.UtcNow.AddDays(7)
                             };
                             httpContext.Response.Cookies.Append("accessToken", tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor)), accessTokenCookieOptions);

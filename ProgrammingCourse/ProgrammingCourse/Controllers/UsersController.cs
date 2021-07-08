@@ -178,7 +178,7 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Remove(string id)
+        public async Task<IActionResult> Remove([FromBody] string id)
         {
             var user = await userManager.Users.Where<User>(c => c.Id == id).FirstOrDefaultAsync();
 
@@ -212,7 +212,7 @@ namespace ProgrammingCourse.Controllers
 
         [HttpGet]
         [Route("LockUser")]
-        public async Task<IActionResult> Lock([Required][FromForm] string id)
+        public async Task<IActionResult> Lock([FromBody] string id)
         {
             var lockedUser = await userManager.Users.Where<User>(c => c.Id == id).FirstOrDefaultAsync();
 
@@ -239,7 +239,7 @@ namespace ProgrammingCourse.Controllers
 
         [HttpGet]
         [Route("UnlockUser")]
-        public async Task<IActionResult> Unlock([Required][FromForm] string id)
+        public async Task<IActionResult> Unlock([FromBody] string id)
         {
             var unlockedUser = await userManager.Users.Where<User>(c => c.Id == id).FirstOrDefaultAsync();
 
@@ -265,14 +265,14 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([Required][FromForm] string userId, [Required][FromForm] string newUserName, [Required][FromForm] string newAvatarUrl, [Required][FromForm] string newEmail)
+        public async Task<IActionResult> Update([FromBody] UpdateUserViewModel updateUserViewModel)
         {
-            var updatedUser = await userManager.Users.Where<User>(c => c.Id == userId).FirstOrDefaultAsync();
+            var updatedUser = await userManager.Users.Where<User>(c => c.Id == updateUserViewModel.UserId).FirstOrDefaultAsync();
 
             if (updatedUser != null)
             {
                 //Check whether email is existed
-                bool isExisted = await EmailChecker.Check(newEmail);
+                bool isExisted = await EmailChecker.Check(updateUserViewModel.NewEmail);
                 if (isExisted == false)
                 {
                     return BadRequest(new
@@ -281,9 +281,9 @@ namespace ProgrammingCourse.Controllers
                     });
                 }
 
-                updatedUser.UserName = newUserName;
-                updatedUser.AvatarUrl = newAvatarUrl;
-                updatedUser.Email = newEmail;
+                updatedUser.UserName = updateUserViewModel.NewUserName;
+                updatedUser.AvatarUrl = updateUserViewModel.NewAvatarUrl;
+                updatedUser.Email = updateUserViewModel.NewEmail;
 
                 var result = await userManager.UpdateAsync(updatedUser);
 
@@ -314,18 +314,18 @@ namespace ProgrammingCourse.Controllers
 
         [HttpPut]
         [Route("ChangeRole")]
-        public async Task<IActionResult> ChangeRole([FromForm] string userId, [FromForm] string roleName)
+        public async Task<IActionResult> ChangeRole([FromBody] ChangeRoleViewModel changeRoleViewModel)
         {
-            var user = await userManager.Users.Where<User>(c => c.Id == userId).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where<User>(c => c.Id == changeRoleViewModel.UserId).FirstOrDefaultAsync();
 
             //Check IsRole existed
-            IdentityRole isRoleExisted = await roleManager.FindByNameAsync(roleName);
+            IdentityRole isRoleExisted = await roleManager.FindByNameAsync(changeRoleViewModel.RoleName);
 
             if (isRoleExisted == null)
             {
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidRole", Description = $"Role {roleName} is invalid!" }
+                    Errors = new { Code = "InvalidRole", Description = $"Role {changeRoleViewModel.RoleName} is invalid!" }
                 });
             }
 
@@ -334,7 +334,7 @@ namespace ProgrammingCourse.Controllers
                 var currentRoleList = await userManager.GetRolesAsync(user);
 
                 await userManager.RemoveFromRoleAsync(user, currentRoleList[0]);
-                await userManager.AddToRoleAsync(user, roleName);
+                await userManager.AddToRoleAsync(user, changeRoleViewModel.RoleName);
 
                 return Ok(new
                 {

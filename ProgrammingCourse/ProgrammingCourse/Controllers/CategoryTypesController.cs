@@ -17,23 +17,19 @@ namespace ProgrammingCourse.Controllers
     public class CategoryTypesController : ControllerBase
     {
         private readonly CategoryTypeService categoryTypeService;
-        private readonly CategoryService categoryService;
-        private readonly CourseService courseService;
         private readonly IMapper mapper;
 
-        public CategoryTypesController(CategoryTypeService categoryTypeService, CategoryService categoryService, CourseService courseService, IMapper mapper)
+        public CategoryTypesController(CategoryTypeService categoryTypeService, IMapper mapper)
         {
             this.categoryTypeService = categoryTypeService;
-            this.categoryService = categoryService;
-            this.courseService = courseService;
             this.mapper = mapper;
         }
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetWithAllInfoById(int id)
         {
-            var categoryType = await categoryTypeService.GetById(id);
+            var categoryType = await categoryTypeService.GetWithAllInfoById(id);
 
             if (categoryType != null)
             {

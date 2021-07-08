@@ -24,9 +24,9 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var refreshToken = refreshTokenRepository.GetById(id);
+            var refreshToken = await refreshTokenRepository.GetById(id);
 
             if (refreshToken != null)
             {
@@ -45,12 +45,12 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var refreshToken = refreshTokenRepository.GetAll();
+            var refreshTokens = await refreshTokenRepository.GetAll();
             return Ok(new
             {
-                Results = refreshToken
+                Results = refreshTokens
             });
         }
 

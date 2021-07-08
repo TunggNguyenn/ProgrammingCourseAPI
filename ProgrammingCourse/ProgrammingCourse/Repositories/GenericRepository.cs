@@ -27,13 +27,13 @@ namespace ProgrammingCourse.Repositories
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task AddRange(IEnumerable<T> entities)
+        public async Task AddRange(List<T> entities)
         {
             await _context.Set<T>().AddRangeAsync(entities);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<List<T>> GetAll()
         {
             return await _context.Set<T>().ToListAsync<T>();
         }
@@ -44,7 +44,7 @@ namespace ProgrammingCourse.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveRange(IEnumerable<T> entities)
+        public async Task RemoveRange(List<T> entities)
         {
             _context.Set<T>().RemoveRange(entities);
             await _context.SaveChangesAsync();
@@ -56,7 +56,7 @@ namespace ProgrammingCourse.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateRange(IEnumerable<T> entities)
+        public async Task UpdateRange(List<T> entities)
         {
             _context.Set<T>().UpdateRange(entities);
             await _context.SaveChangesAsync();

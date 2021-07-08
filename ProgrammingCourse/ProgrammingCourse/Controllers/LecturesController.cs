@@ -133,15 +133,15 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("GetAllByCourseId")]
-        //public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
-        //{
-        //    var lectures = await lectureRepository.GetAllByCourseId(courseId);
-        //    return Ok(new
-        //    {
-        //        Results = lectures
-        //    });
-        //}
+        [HttpGet]
+        [Route("GetLectureListByCourseId")]
+        public async Task<IActionResult> GetLectureListByCourseId([FromQuery] int courseId)
+        {
+            var lectures = await lectureRepository.GetLectureListByCourseId(courseId);
+            return Ok(new
+            {
+                Results = lectures
+            });
+        }
     }
 }

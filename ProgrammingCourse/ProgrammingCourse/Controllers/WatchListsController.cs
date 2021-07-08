@@ -144,27 +144,27 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("GetAllByStudentId")]
-        //public async Task<IActionResult> GetAllByStudentId([FromQuery] string studentId)
-        //{
-        //    var watchLists = await watchListRepository.GetAllByStudentId(studentId);
-        //    return Ok(new
-        //    {
-        //        Results = watchLists
-        //    });
-        //}
+        [HttpGet]
+        [Route("GetWatchListListByStudentId")]
+        public async Task<IActionResult> GetWatchListListByStudentId([FromQuery] string studentId)
+        {
+            var watchLists = await watchListRepository.GetWatchListListByStudentId(studentId);
+            return Ok(new
+            {
+                Results = watchLists
+            });
+        }
 
 
-        //[HttpGet]
-        //[Route("IsExistedWatchListByStudentIdAndCourseId")]
-        //public async Task<IActionResult> IsExistedWatchListByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
-        //{
-        //    bool isExistedWatchListByStudentIdAndCourseId = await watchListRepository.IsExistedWatchListByStudentIdAndCourseId(studentId, courseId);
-        //    return Ok(new
-        //    {
-        //        Results = isExistedWatchListByStudentIdAndCourseId
-        //    });
-        //}
+        [HttpGet]
+        [Route("IsExistedWatchListByStudentIdAndCourseId")]
+        public async Task<IActionResult> IsExistedWatchListByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
+        {
+            bool isExistedWatchListByStudentIdAndCourseId = await watchListRepository.IsExistedWatchListByStudentIdAndCourseId(studentId, courseId);
+            return Ok(new
+            {
+                Results = isExistedWatchListByStudentIdAndCourseId
+            });
+        }
     }
 }

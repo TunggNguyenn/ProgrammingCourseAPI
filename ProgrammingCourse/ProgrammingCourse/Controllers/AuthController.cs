@@ -131,7 +131,10 @@ namespace ProgrammingCourse.Controllers
                     return BadRequest(
                         new
                         {
-                            Errors = new { Code = "NotVerifiedAccount", Description = "This account has not been verified yet!" } 
+                            Errors = new { 
+                                Email = identityUser.Email,
+                                Code = "NotVerifiedAccount", 
+                                Description = "This account has not been verified yet!" } 
                         });
                 }
 
@@ -152,7 +155,7 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("ResendOTP")]
-        public async Task<IActionResult> ResendOTP([FromForm] string email)
+        public async Task<IActionResult> ResendOTP([FromBody] string email)
         {
             var identityUser = await userManager.FindByEmailAsync(email);
             if (identityUser != null)
@@ -193,12 +196,12 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("VerifyTwoStepVerification")]
-        public async Task<IActionResult> VerifyTwoStepVerification([FromForm] string email, [FromForm] int OTPCode)
+        public async Task<IActionResult> VerifyTwoStepVerification([FromBody] VerifyTwoStepVerificationViewModel verifyTwoStepVerificationViewModel)
         {
-            var identityUser = await userManager.FindByEmailAsync(email);
+            var identityUser = await userManager.FindByEmailAsync(verifyTwoStepVerificationViewModel.Email);
             if (identityUser != null)
             {
-                if (identityUser.OTPCode == OTPCode)
+                if (identityUser.OTPCode == verifyTwoStepVerificationViewModel.OTPCode)
                 {
                     identityUser.IsTwoStepConfirmation = true;
 
@@ -206,7 +209,7 @@ namespace ProgrammingCourse.Controllers
 
                     if (result.Succeeded)
                     {
-                        Email.SendEmailSuccessfulVerification(email);
+                        Email.SendEmailSuccessfulVerification(verifyTwoStepVerificationViewModel.Email);
 
                         return Ok(new
                         {
@@ -270,7 +273,9 @@ namespace ProgrammingCourse.Controllers
             // Set Access Token Cookie
             var accessTokenCookieOptions = new CookieOptions
             {
-                HttpOnly = true
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
                 //Expires = DateTime.UtcNow.AddDays(7)
             };
             HttpContext.Response.Cookies.Append("accessToken", accessToken, accessTokenCookieOptions);
@@ -282,7 +287,9 @@ namespace ProgrammingCourse.Controllers
             // Set Refresh Token Cookie
             var refreshTokenCookieOptions = new CookieOptions
             {
-                HttpOnly = true
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
                 //Expires = DateTime.UtcNow.AddDays(7)
             };
             HttpContext.Response.Cookies.Append("refreshToken", refreshToken, refreshTokenCookieOptions);
@@ -374,6 +381,8 @@ namespace ProgrammingCourse.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(-1)
             };
 
@@ -397,9 +406,9 @@ namespace ProgrammingCourse.Controllers
 
         [HttpPost]
         [Route("ChangePassword")]
-        public async Task<IActionResult> ChangePassword([FromForm] string userId, [FromForm] string oldPassword, [FromForm] string newPassword, [FromForm] string confirmPassword)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel changePasswordViewModel)
         {
-            if(newPassword != confirmPassword)
+            if(changePasswordViewModel.NewPassword != changePasswordViewModel.ConfirmPassword)
             {
                 return BadRequest(new
                 {
@@ -407,12 +416,12 @@ namespace ProgrammingCourse.Controllers
                 });
             }
 
-            User user = await userManager.FindByIdAsync(userId);
+            User user = await userManager.FindByIdAsync(changePasswordViewModel.UserId);
 
             if (user != null)
             {
 
-                IdentityResult result = await userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+                IdentityResult result = await userManager.ChangePasswordAsync(user, changePasswordViewModel.OldPassword, changePasswordViewModel.NewPassword);
 
                 if (result.Succeeded)
                 {
@@ -443,7 +452,7 @@ namespace ProgrammingCourse.Controllers
 
         [HttpPost]
         [Route("LoginGoogle")]
-        public IActionResult LoginGoogle([FromForm] string email)
+        public IActionResult LoginGoogle([FromBody] string email)
         {
             return Ok(new
             {
@@ -481,6 +490,8 @@ namespace ProgrammingCourse.Controllers
                             var cookieOptions = new CookieOptions
                             {
                                 HttpOnly = true,
+                                Secure = true,
+                                SameSite = SameSiteMode.None,
                                 Expires = DateTime.UtcNow.AddDays(-1)
                             };
                             HttpContext.Response.Cookies.Append("accessToken", "", cookieOptions);
@@ -518,14 +529,20 @@ namespace ProgrammingCourse.Controllers
                             // Set Access Token Cookie
                             var accessTokenCookieOptions = new CookieOptions
                             {
-                                HttpOnly = true
+                                HttpOnly = true,
+                                Secure = true,
+                                SameSite = SameSiteMode.None
                                 //Expires = DateTime.UtcNow.AddDays(7)
                             };
                             HttpContext.Response.Cookies.Append("accessToken", tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor)), accessTokenCookieOptions);
 
                             return Ok(new
                             {
-                                Results = identityUser 
+                                Results = new
+                                {
+                                    Info = identityUser,
+                                    Role = role
+                                } 
                             });
                         }
                     }

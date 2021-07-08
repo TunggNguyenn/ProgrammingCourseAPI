@@ -15,12 +15,12 @@ namespace ProgrammingCourse.Repositories
 
 
 
-        //public async Task<IList<Lecture>> GetAllByCourseId(int courseId)
-        //{
-        //    var lectures = await programmingCourseDbContext.Lectures
-        //        .Where<Lecture>(l => l.CourseId == courseId)
-        //        .ToListAsync<Lecture>();
-        //    return lectures;
-        //}
+        public async Task<IList<Lecture>> GetLectureListByCourseId(int courseId)
+        {
+            var lectures = await _context.Set<Lecture>()
+                .Where<Lecture>(l => l.CourseId == courseId)
+                .ToListAsync<Lecture>();
+            return lectures;
+        }
     }
 }

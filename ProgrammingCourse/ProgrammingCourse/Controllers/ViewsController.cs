@@ -89,7 +89,6 @@ namespace ProgrammingCourse.Controllers
             try
             {
                 View viewMapped = mapper.Map<View>(viewViewModel);
-                viewMapped.Number += 1;
 
                 await viewRepository.Update(viewMapped);
 
@@ -109,6 +108,7 @@ namespace ProgrammingCourse.Controllers
                 });
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(int id)

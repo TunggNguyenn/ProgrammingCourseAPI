@@ -26,9 +26,9 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GeWithAllInfotById(int id)
         {
-            var course = await courseService.GetById(id);
+            var course = await courseService.GeWithAllInfoById(id);
 
             if (course != null)
             {
@@ -164,49 +164,62 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet()]
-        //[Route("OutstandingCourses")]
-        //public async Task<IActionResult> OutstandingCourses()
-        //{
-        //    var outstandingCourses = await courseRepository.GetOutStandingCourses();
+        [HttpGet]
+        [Route("Get10BestSellerCoursesInMonthByCategoryTypeId")]
+        public async Task<IActionResult> Get10BestSellerCoursesInMonthByCategoryTypeId(int categoryTypeId)
+        {
+            var bestSellerCourses = await courseService.Get10BestSellerCoursesInMonthByCategoryTypeId(categoryTypeId);
 
-        //    return Ok(new
-        //    {
-        //        Results = outstandingCourses
-        //    });
-        //}
-
-        //[HttpGet()]
-        //[Route("MostViewedCourses")]
-        //public async Task<IActionResult> MostViewedCourses()
-        //{
-        //    var mostViewedCourses = await courseRepository.GetMostViewedCourses();
-
-        //    return Ok(new
-        //    {
-        //        Results = mostViewedCourses
-        //    });
-        //}
+            return Ok(new
+            {
+                Results = bestSellerCourses
+            });
+        }
 
 
-        //[HttpGet()]
-        //[Route("NewestCourses")]
-        //public async Task<IActionResult> NewestCourses()
-        //{
-        //    var newestCourses = await courseRepository.GetNewestCourses();
+        [HttpGet()]
+        [Route("OutstandingCourses")]
+        public async Task<IActionResult> OutstandingCourses()
+        {
+            var outstandingCourses = await courseService.GetOutstandingCourses();
 
-        //    return Ok(new
-        //    {
-        //        Results = newestCourses
-        //    });
-        //}
+            return Ok(new
+            {
+                Results = outstandingCourses
+            });
+        }
+
+        [HttpGet()]
+        [Route("MostViewedCourses")]
+        public async Task<IActionResult> MostViewedCourses()
+        {
+            var mostViewedCourses = await courseService.GetMostViewedCourses();
+
+            return Ok(new
+            {
+                Results = mostViewedCourses
+            });
+        }
+
+
+        [HttpGet()]
+        [Route("NewestCourses")]
+        public async Task<IActionResult> NewestCourses()
+        {
+            var newestCourses = await courseService.GetNewestCourses();
+
+            return Ok(new
+            {
+                Results = newestCourses
+            });
+        }
 
 
         //[HttpGet()]
         //[Route("BestSellerCoursesByCategoryId")]
         //public async Task<IActionResult> BestSellerCoursesByCategoryId([FromQuery] int courseId, [FromQuery] int categoryId)
         //{
-        //    var bestSellerCourses = await courseRepository.GetBestSellerCoursesByCategoryId(courseId, categoryId);
+        //    var bestSellerCourses = await courseService.GetBestSellerCoursesByCategoryId(courseId, categoryId);
 
         //    return Ok(new
         //    {
@@ -292,49 +305,52 @@ namespace ProgrammingCourse.Controllers
         //}
 
 
-        ////For testing
-        //[HttpPost]
-        //[Route("CreateRange")]
-        //public async Task<IActionResult> CreateRange([FromBody] IList<CourseViewModel> courseViewModel)
-        //{
-        //    IList<Course> courses = new List<Course>();
+        //For testing
+        [HttpPost]
+        [Route("AddRange")]
+        public async Task<IActionResult> AddRange([FromBody] List<CourseViewModel> courseViewModel)
+        {
+            try
+            {
+                List<Course> courses = new List<Course>();
 
-        //    foreach(var c in courseViewModel)
-        //    {
-        //        Course course = new Course()
-        //        {
-        //            Name = c.Name,
-        //            CategoryId = c.CategoryId,
-        //            LecturerId = c.LecturerId,
-        //            ImageUrl = c.ImageUrl,
-        //            Price = c.Price,
-        //            Discount = c.Discount,
-        //            ShortDiscription = c.ShortDiscription,
-        //            DetailDiscription = c.DetailDiscription,
-        //            LastUpdated = DateTime.Now,
-        //            StatusId = c.StatusId
-        //        };
+                foreach (var c in courseViewModel)
+                {
+                    Course course = new Course()
+                    {
+                        Name = c.Name,
+                        CategoryId = c.CategoryId,
+                        LecturerId = c.LecturerId,
+                        ImageUrl = c.ImageUrl,
+                        Price = c.Price,
+                        Discount = c.Discount,
+                        ShortDiscription = c.ShortDiscription,
+                        DetailDiscription = c.DetailDiscription,
+                        LastUpdated = DateTime.Now,
+                        StatusId = c.StatusId
+                    };
 
-        //        courses.Add(course);
-        //    }
+                    courses.Add(course);
+                }
 
 
-        //    var result = await courseRepository.AddRange(courses);
+                await courseService.AddRange(courses);
 
-        //    if (result != null)
-        //    {
-        //        return Ok(new
-        //        {
-        //            Results = result
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
-        //        });
-        //    }
-        //}
+                return Ok(new
+                {
+                    Results = courses
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                });
+            }
+        }
     }
 }

@@ -93,7 +93,7 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromForm] FeedbackViewModel feedbackViewModel)
+        public async Task<IActionResult> Update([FromBody] FeedbackViewModel feedbackViewModel)
         {
             try
             {
@@ -157,15 +157,15 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("GetAllByCourseId")]
-        //public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
-        //{
-        //    var feedbacks = await feedbackRepository.GetAllByCourseId(courseId);
-        //    return Ok(new
-        //    {
-        //        Results = feedbacks
-        //    });
-        //}
+        [HttpGet]
+        [Route("GetFeedbackListByCourseId")]
+        public async Task<IActionResult> GetFeedbackListByCourseId([FromQuery] int courseId)
+        {
+            var feedbacks = await feedbackRepository.GetFeedbackListByCourseId(courseId);
+            return Ok(new
+            {
+                Results = feedbacks
+            });
+        }
     }
 }

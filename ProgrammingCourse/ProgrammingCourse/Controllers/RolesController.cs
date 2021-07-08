@@ -43,11 +43,11 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             return Ok(new
             {
-                Results = roleManager.Roles.ToList()
+                Results = await roleManager.Roles.ToListAsync()
             });
         }
 

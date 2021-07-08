@@ -146,10 +146,10 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpGet]
-        [Route("GetAllByStudentId")]
-        public async Task<IActionResult> GetAllByStudentId([FromQuery] string studentId)
+        [Route("GetStudentCourseListByStudentId")]
+        public async Task<IActionResult> GetStudentCourseListByStudentId([FromQuery] string studentId)
         {
-            var studentCourses = await studentCourseRepository.GetAllByStudentId(studentId);
+            var studentCourses = await studentCourseRepository.GetStudentCourseListByStudentId(studentId);
             return Ok(new
             {
                 Results = studentCourses
@@ -157,28 +157,29 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("GetAllByCourseId")]
-        //public async Task<IActionResult> GetAllByCourseId([FromQuery] int courseId)
-        //{
-        //    var studentCourses = await studentCourseRepository.GetAllByCourseId(courseId);
-        //    return Ok(new
-        //    {
-        //        Results = studentCourses
-        //    });
-        //}
+
+        [HttpGet]
+        [Route("GetStudentCourseListByCourseId")]
+        public async Task<IActionResult> GetStudentCourseListByCourseId([FromQuery] int courseId)
+        {
+            var studentCourses = await studentCourseRepository.GetStudentCourseListByCourseId(courseId);
+            return Ok(new
+            {
+                Results = studentCourses
+            });
+        }
 
 
-        //[HttpGet]
-        //[Route("IsParticipatedByStudentIdAndCourseId")]
-        //public async Task<IActionResult> IsParticipatedByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
-        //{
-        //    bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentId, courseId);
-        //    return Ok(new
-        //    {
-        //        Results = isParticipatedByStudentIdAndCourseId
-        //    });
-        //}
+        [HttpGet]
+        [Route("IsParticipatedByStudentIdAndCourseId")]
+        public async Task<IActionResult> IsParticipatedByStudentIdAndCourseId([FromQuery] string studentId, [FromQuery] int courseId)
+        {
+            bool isParticipatedByStudentIdAndCourseId = await studentCourseRepository.IsParticipatedByStudentIdAndCourseId(studentId, courseId);
+            return Ok(new
+            {
+                Results = isParticipatedByStudentIdAndCourseId
+            });
+        }
 
 
         [HttpPost]

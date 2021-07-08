@@ -15,10 +15,14 @@ namespace ProgrammingCourse.Services
         private readonly StudentCourseRepository studentCourseRepository;
         private readonly CategoryRepository categoryRepository;
         private readonly FeedbackRepository feedbackRepository;
+        private readonly CourseRepository courseRepository;
+        private readonly ViewRepository viewRepository;
+        private readonly UserRepository userRepository;
 
-        public CategoryTypeService(CourseService courseService, CategoryTypeRepository categoryTypeRepository, 
-            StudentCourseRepository studentCourseRepository, CategoryRepository categoryRepository, 
-            FeedbackRepository feedbackRepository)
+        public CategoryTypeService(CourseService courseService, CategoryTypeRepository categoryTypeRepository,
+            StudentCourseRepository studentCourseRepository, CategoryRepository categoryRepository,
+            FeedbackRepository feedbackRepository, CourseRepository courseRepository,
+            ViewRepository viewRepository, UserRepository userRepository)
         {
             this.courseService = courseService;
 
@@ -26,11 +30,19 @@ namespace ProgrammingCourse.Services
             this.studentCourseRepository = studentCourseRepository;
             this.categoryRepository = categoryRepository;
             this.feedbackRepository = feedbackRepository;
+            this.courseRepository = courseRepository;
+            this.viewRepository = viewRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task<CategoryType> GetById(int id)
         {
             return await categoryTypeRepository.GetById(id);
+        }
+
+        public async Task<CategoryType> GetWithAllInfoById(int id)
+        {
+            return await categoryTypeRepository.GetWithAllInfoById(id);
         }
 
         public async Task Add(CategoryType categoryType)
@@ -39,7 +51,7 @@ namespace ProgrammingCourse.Services
         }
 
 
-        public async Task<IEnumerable<CategoryType>> GetAll()
+        public async Task<List<CategoryType>> GetAll()
         {
             return await categoryTypeRepository.GetAll();
         }
@@ -55,54 +67,26 @@ namespace ProgrammingCourse.Services
         }
 
 
-        public async Task<dynamic> GetFormattedCategoryTypeById(int id)
+        public async Task<object> GetFormattedCategoryTypeById(int id)
         {
-            var categoryType = await GetById(id);
-            var categories = await categoryRepository.GetByCategoryTypeId(id);
-            var bestSellerCourses = await courseService.Get10BestSellerCourses();
-            var newestCourses = await courseService.Get10NewestCourses();
-            var mostViewedCourses = await courseService.Get10MostViewedCourses();
+            var categoryType = await categoryTypeRepository.GetWithAllInfoById(id);
 
-            IList<dynamic> dynamicBestSellerCourses = new List<dynamic>();
-            for (int i = 0; i < bestSellerCourses.Count; i++)
+            var bestSellerCourses = await studentCourseRepository.Get10BestSellerCourseIDsInMonth();
+            var newestCourses = await courseRepository.Get10NewestCourseIds();
+            var mostViewedCourses = await viewRepository.Get10MostViewedCourseIdsInMonth();
+
+
+            IList<dynamic> dynamicCategoryList = new List<dynamic>();
+
+            for (int i = 0; i < categoryType.Categories.Count; i++)
             {
-                dynamic course = new ExpandoObject();
-                course.Id = bestSellerCourses[i].Id;
-                course.Tag = "BestSeller";
-                course.Price = bestSellerCourses[i].Price;
-                course.Name = bestSellerCourses[i].Name;
-                course.ImageUrl = bestSellerCourses[i].ImageUrl;
-                course.LastUpdated = bestSellerCourses[i].LastUpdated;
-                course.StatusId = bestSellerCourses[i].StatusId;
-                //course.Status = bestSellerCourses[i].Status;
-                course.Discount = bestSellerCourses[i].Discount;
-                course.ShortDiscription = bestSellerCourses[i].ShortDiscription;
-                course.DetailDiscription = bestSellerCourses[i].DetailDiscription;
-                course.CategoryId = bestSellerCourses[i].CategoryId;
-                course.LecturerId = bestSellerCourses[i].LecturerId;
-                //course.Lecturer = bestSellerCourses[i].Lecturer;
-                course.Rating = await feedbackRepository.GetRatingByCourseId(bestSellerCourses[i].Id);
-                course.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(bestSellerCourses[i].Id);
-                course.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(bestSellerCourses[i].Id);
+                var courses = await courseRepository.GetByCategoryId(categoryType.Categories[i].Id);
 
-                dynamicBestSellerCourses.Add(course);
-            }
+                categoryType.Categories[i].Courses = null;  //?
 
-            IList<dynamic> dynamicCategories = new List<dynamic>();
+                IList<dynamic> dynamicCourseList = new List<dynamic>();
 
-            for (int i = 0; i < categories.Count; i++)
-            {
-                dynamic dynamicCategory = new ExpandoObject();
-                dynamicCategory.Id = categories[i].Id;
-                dynamicCategory.Name = categories[i].Name;
-                dynamicCategory.Label = categories[i].Label;
-                dynamicCategory.ImageUrl = categories[i].ImageUrl;
-
-                var courses = await courseService.GetByCategoryId(categories[i].Id);
-
-                IList<dynamic> dynamicCourses = new List<dynamic>();
-
-                for(int c = 0; c < courses.Count; c++)
+                for (int c = 0; c < courses.Count; c++)
                 {
                     dynamic course = new ExpandoObject();
                     course.Id = courses[c].Id;
@@ -111,13 +95,12 @@ namespace ProgrammingCourse.Services
                     course.ImageUrl = courses[c].ImageUrl;
                     course.LastUpdated = courses[c].LastUpdated;
                     course.StatusId = courses[c].StatusId;
-                    //course.Status = courses[c].Status;
+                    course.Status = courses[c].Status;
                     course.Discount = courses[c].Discount;
-                    course.ShortDiscription = courses[c].ShortDiscription;
-                    course.DetailDiscription = courses[c].DetailDiscription;
-                    course.CategoryId = courses[c].CategoryId;
+                    //course.ShortDiscription = courses[c].ShortDiscription;
+                    //course.DetailDiscription = courses[c].DetailDiscription;
                     course.LecturerId = courses[c].LecturerId;
-                    //course.Lecturer = courses[c].Lecturer;
+                    course.Lecturer = await userRepository.GetById(courses[c].LecturerId);
                     course.Rating = await feedbackRepository.GetRatingByCourseId(courses[c].Id);
                     course.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(courses[c].Id);
                     course.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(courses[c].Id);
@@ -125,7 +108,7 @@ namespace ProgrammingCourse.Services
                     bool flag = false;
                     for (int b = 0; b < bestSellerCourses.Count; b++)
                     {
-                        if(bestSellerCourses[b].Id == courses[c].Id)
+                        if (bestSellerCourses[b].CourseId == courses[c].Id)
                         {
                             course.Tag = "BestSeller";
                             flag = true;
@@ -133,15 +116,15 @@ namespace ProgrammingCourse.Services
                         }
                     }
 
-                    if(flag == true)
+                    if (flag == true)
                     {
-                        dynamicCourses.Add(course);
+                        dynamicCourseList.Add(course);
                         continue;
                     }
 
                     for (int n = 0; n < newestCourses.Count; n++)
                     {
-                        if (newestCourses[n].Id == courses[c].Id)
+                        if (newestCourses[n].CourseId == courses[c].Id)
                         {
                             course.Tag = "Newest";
                             flag = true;
@@ -151,13 +134,13 @@ namespace ProgrammingCourse.Services
 
                     if (flag == true)
                     {
-                        dynamicCourses.Add(course);
+                        dynamicCourseList.Add(course);
                         continue;
                     }
 
                     for (int m = 0; m < mostViewedCourses.Count; m++)
                     {
-                        if (mostViewedCourses[m].Id == courses[c].Id)
+                        if (mostViewedCourses[m].CourseId == courses[c].Id)
                         {
                             course.Tag = "Trending";
                             flag = true;
@@ -165,20 +148,17 @@ namespace ProgrammingCourse.Services
                         }
                     }
 
-                    dynamicCourses.Add(course);
+                    dynamicCourseList.Add(course);
                 }
 
-                dynamicCategory.Courses = dynamicCourses;
 
-                dynamicCategories.Add(dynamicCategory);
+                dynamicCategoryList.Add(dynamicCourseList);
             }
 
-            return new 
-            { 
-                Id = categoryType.Id,
-                Name = categoryType.Name,
-                Categories = dynamicCategories,
-                BestSeller = dynamicBestSellerCourses
+            return new
+            {
+                categoryType = categoryType,
+                dynamicCategoryList = dynamicCategoryList
             };
         }
     }

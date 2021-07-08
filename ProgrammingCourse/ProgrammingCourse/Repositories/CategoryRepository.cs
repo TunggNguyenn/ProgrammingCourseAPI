@@ -15,30 +15,39 @@ namespace ProgrammingCourse.Repositories
         {
         }
 
-        public async Task<IList<Category>> GetByCategoryTypeId(int categoryTypeId)
+        public async Task<Category> GetWithAllInfoById(int id)
         {
-            return await _context.Set<Category>().Where(c => c.CategoryTypeId == categoryTypeId).ToListAsync();
+            return await _context.Set<Category>().Where(c => c.Id == id).Include(c => c.CategoryType).Include(c => c.Courses).FirstOrDefaultAsync();
         }
 
-
-        //public async Task<dynamic> GetMostRegisteredCategories()
+        //public async Task<List<Category>> GetByCategoryTypeId(int categoryTypeId)
         //{
-        //    var categories = await context.StudentCourses
-        //        .Include(s => s.Course).ThenInclude(s => s.Category)
-        //        .GroupBy(s => new
-        //        {
-        //            CategoryId = s.Course.Category.Id,
-        //            CategoryName = s.Course.Category.Name
-        //        })
-        //        .Select(s => new
-        //        {
-        //            CategoryId = s.Key.CategoryId,
-        //            CategoryName = s.Key.CategoryName,
-        //            TotalRegisteredUserNumber = s.Count()
-        //        })
-        //        .OrderByDescending(s => s.TotalRegisteredUserNumber)
-        //        .ToListAsync<dynamic>();
-        //    return categories;
+        //    return await _context.Set<Category>().Where(c => c.CategoryTypeId == categoryTypeId).ToListAsync();
         //}
+
+
+        public async Task<dynamic> GetMostRegisteredCategories()
+        {
+            var categories = await _context.StudentCourses
+                .Include(s => s.Course).ThenInclude(s => s.Category)
+                .GroupBy(s => new
+                {
+                    CategoryId = s.Course.Category.Id,
+                    CategoryName = s.Course.Category.Name,
+                    ImageUrl = s.Course.Category.ImageUrl,
+                    Label = s.Course.Category.Label
+                })
+                .Select(s => new
+                {
+                    CategoryId = s.Key.CategoryId,
+                    CategoryName = s.Key.CategoryName,
+                    ImageUrl = s.Key.ImageUrl,
+                    Label = s.Key.Label,
+                    TotalRegisteredUserNumber = s.Count()
+                })
+                .OrderByDescending(s => s.TotalRegisteredUserNumber)
+                .ToListAsync<dynamic>();
+            return categories;
+        }
     }
 }

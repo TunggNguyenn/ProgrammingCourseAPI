@@ -26,7 +26,12 @@ namespace ProgrammingCourse.Services
             return await categoryRepository.GetById(id);
         }
 
-        public async Task<IEnumerable<Category>> GetAll()
+        public async Task<Category> GetWithAllInfoById(int id)
+        {
+            return await categoryRepository.GetWithAllInfoById(id);
+        }
+
+        public async Task<List<Category>> GetAll()
         {
             return await categoryRepository.GetAll();
         }
@@ -42,10 +47,15 @@ namespace ProgrammingCourse.Services
             await categoryRepository.Update(category);
         }
 
-
-        public async Task<IList<Category>> GetByCategoryTypeId(int categoryTypeId)
+        public async Task<dynamic> GetMostRegisteredCategories()
         {
-            return await categoryRepository.GetByCategoryTypeId(categoryTypeId);
+            return await categoryRepository.GetMostRegisteredCategories();
         }
+
+
+        //public async Task<List<Category>> GetByCategoryTypeId(int categoryTypeId)
+        //{
+        //    return await categoryRepository.GetByCategoryTypeId(categoryTypeId);
+        //}
     }
 }

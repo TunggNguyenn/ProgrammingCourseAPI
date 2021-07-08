@@ -153,9 +153,10 @@ namespace ProgrammingCourse
             app.UseCors(builder =>
             {
                 builder
-                .AllowAnyOrigin()
+                .SetIsOriginAllowed(origin => true)
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                .AllowCredentials();
             });
 
             app.UseHttpsRedirection();

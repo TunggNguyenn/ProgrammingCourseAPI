@@ -7,13 +7,13 @@ namespace ProgrammingCourse.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<IEnumerable<T>> GetAll();
+        Task<List<T>> GetAll();
         Task<T> GetById(int id);
         Task Add(T entity);
-        Task AddRange(IEnumerable<T> entities);
+        Task AddRange(List<T> entities);
         Task Remove(T entity);
-        Task RemoveRange(IEnumerable<T> entities);
+        Task RemoveRange(List<T> entities);
         Task Update(T entity);
-        Task UpdateRange(IEnumerable<T> entities);
+        Task UpdateRange(List<T> entities);
     }
 }
