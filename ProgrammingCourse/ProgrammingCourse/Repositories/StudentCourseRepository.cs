@@ -38,14 +38,6 @@ namespace ProgrammingCourse.Repositories
         }
 
 
-        //public async Task<List<StudentCourse>> GetRegisteredStudentCoursesInMonthByCourseId(int courseId)
-        //{
-        //    var studentCourses = await _context.Set<StudentCourse>()
-        //        .Where<StudentCourse>(sc => sc.CourseId == courseId && sc.DateTime.Month == DateTime.Now.Month && sc.DateTime.Year == DateTime.Now.Year)
-        //        .ToListAsync<StudentCourse>();
-        //    return studentCourses;
-        //}
-
         public async Task<List<dynamic>> Get10BestSellerCourseIDsInMonth()
         {
             var studentCourses = await _context.Set<StudentCourse>()
@@ -120,5 +112,15 @@ namespace ProgrammingCourse.Repositories
 
             return false;
         }
+
+
+        //public async Task<List<StudentCourse>> GetRegisteredStudentCoursesInMonthByCourseId(int courseId)
+        //{
+        //    var studentCourses = await _context.Set<StudentCourse>()
+        //        .Where<StudentCourse>(sc => sc.CourseId == courseId && sc.DateTime.Month == DateTime.Now.Month && sc.DateTime.Year == DateTime.Now.Year)
+        //        .ToListAsync<StudentCourse>();
+        //    return studentCourses;
+        //}
+
     }
 }

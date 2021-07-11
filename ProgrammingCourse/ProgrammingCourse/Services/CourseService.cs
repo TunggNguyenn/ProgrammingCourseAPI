@@ -221,6 +221,42 @@ namespace ProgrammingCourse.Services
         }
 
 
+        public async Task<dynamic> GetBestSellerCoursesByCategoryId(int courseId, int categoryId)
+        {
+            var courseIds = await courseRepository.GetBestSellerCoursesByCategoryId(courseId, categoryId);
+
+            IList<dynamic> bestSellerCourses = new List<dynamic>();
+
+            for (int i = 0; i < courseIds.Count; i++)
+            {
+                var course = await courseRepository.GetById(courseIds[i].CourseId);
+
+                dynamic dynamicCourse = new ExpandoObject();
+                dynamicCourse.Id = course.Id;
+                dynamicCourse.Price = course.Price;
+                dynamicCourse.Name = course.Name;
+                dynamicCourse.ImageUrl = course.ImageUrl;
+                dynamicCourse.LastUpdated = course.LastUpdated;
+                dynamicCourse.StatusId = course.StatusId;
+                dynamicCourse.Status = course.Status;
+                dynamicCourse.Discount = course.Discount;
+                dynamicCourse.LecturerId = course.LecturerId;
+                dynamicCourse.Lecturer = await userRepository.GetById(course.LecturerId);
+                dynamicCourse.Rating = await feedbackRepository.GetRatingByCourseId(course.Id);
+                dynamicCourse.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
+                dynamicCourse.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+
+                bestSellerCourses.Add(dynamicCourse);
+            }
+
+            return bestSellerCourses;
+        }
+
+        public async Task<IList<dynamic>> GetCourseListByLecturerId(string lecturerId)
+        {
+            return await courseRepository.GetCourseListByLecturerId(lecturerId);
+        }
+
 
         //public async Task<IList<Course>> Get10CoursesByCategoryId(int categoryId)
         //{

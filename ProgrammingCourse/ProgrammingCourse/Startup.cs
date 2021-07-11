@@ -63,6 +63,9 @@ namespace ProgrammingCourse
             services.AddScoped<FeedbackRepository>();
             services.AddScoped<ViewRepository>();
             services.AddScoped<UserRepository>();
+            services.AddScoped<CartRepository>();
+            services.AddScoped<CourseCartRepository>();
+            services.AddScoped<CourseProcessRepository>();
 
             services.AddScoped<CategoryTypeService>();
             services.AddScoped<CategoryService>();

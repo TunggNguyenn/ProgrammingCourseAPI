@@ -24,14 +24,6 @@ namespace ProgrammingCourse.Repositories
         }
 
 
-        //public async Task<int> GetViewNumberInMonthByCourseId(int courseId)
-        //{
-        //    var view = await _context.Set<View>()
-        //        .Where<View>(v => v.CourseId == courseId && v.DateTime.Month == DateTime.Now.Month && v.DateTime.Year == DateTime.Now.Year)
-        //        .FirstOrDefaultAsync();
-        //    return view == null ? 0 : view.Number;
-        //}
-
         public async Task<List<dynamic>> Get10MostViewedCourseIdsInMonth()
         {
             var courses = await _context.Set<View>()
@@ -55,5 +47,13 @@ namespace ProgrammingCourse.Repositories
                 .Where<View>(v => v.CourseId == courseId)
                 .SumAsync(v => v.Number);
         }
+
+        //public async Task<int> GetViewNumberInMonthByCourseId(int courseId)
+        //{
+        //    var view = await _context.Set<View>()
+        //        .Where<View>(v => v.CourseId == courseId && v.DateTime.Month == DateTime.Now.Month && v.DateTime.Year == DateTime.Now.Year)
+        //        .FirstOrDefaultAsync();
+        //    return view == null ? 0 : view.Number;
+        //}
     }
 }

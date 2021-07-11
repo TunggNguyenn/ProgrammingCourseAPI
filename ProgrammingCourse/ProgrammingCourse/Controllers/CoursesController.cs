@@ -26,7 +26,7 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GeWithAllInfotById(int id)
+        public async Task<IActionResult> GeWithAllInfoById(int id)
         {
             var course = await courseService.GeWithAllInfoById(id);
 
@@ -44,6 +44,26 @@ namespace ProgrammingCourse.Controllers
                     Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
                 });
             }
+        }
+
+        [HttpGet]
+        [Route("GetCourseListByPaginationParameters")]
+        public async Task<IActionResult> GetCourseListByPaginationParameters([FromQuery] PaginationParameters paginationParameters)
+        {
+            var courses = await courseService.GetAll();
+
+            paginationParameters.TotalItems = courses.Count;
+            paginationParameters.TotalPages = Convert.ToInt32(Math.Ceiling((double)courses.Count / paginationParameters.PageSize));
+            paginationParameters.PageNumber = (paginationParameters.PageNumber > paginationParameters.TotalPages) ? paginationParameters.TotalPages : paginationParameters.PageNumber;
+
+            return Ok(new
+            {
+                Results = new
+                {
+                    Courses = courses.Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize).Take(paginationParameters.PageSize),
+                    PaginationStatus = paginationParameters
+                }
+            });
         }
 
         [HttpGet]
@@ -215,94 +235,70 @@ namespace ProgrammingCourse.Controllers
         }
 
 
-        //[HttpGet()]
-        //[Route("BestSellerCoursesByCategoryId")]
-        //public async Task<IActionResult> BestSellerCoursesByCategoryId([FromQuery] int courseId, [FromQuery] int categoryId)
-        //{
-        //    var bestSellerCourses = await courseService.GetBestSellerCoursesByCategoryId(courseId, categoryId);
+        [HttpGet()]
+        [Route("BestSellerCoursesByCategoryId")]
+        public async Task<IActionResult> BestSellerCoursesByCategoryId([FromQuery] int courseId, [FromQuery] int categoryId)
+        {
+            var bestSellerCourses = await courseService.GetBestSellerCoursesByCategoryId(courseId, categoryId);
 
-        //    return Ok(new
-        //    {
-        //        Results = bestSellerCourses
-        //    });
-        //}
-
-
-        //[HttpPut]
-        //[Route("ChangeStatus")]
-        //public async Task<IActionResult> ChangeStatus([FromForm] int courseId, [FromForm] int statusId)
-        //{
-        //    var updatedCourse = await courseRepository.Get(courseId);
-
-        //    if (updatedCourse != null)
-        //    {
-        //        updatedCourse.StatusId = statusId;
-
-        //        var result = await courseRepository.Update(updatedCourse);
-
-        //        if (result != null)
-        //        {
-        //            return Ok(new
-        //            {
-
-        //                Results = result
-        //            });
-        //        }
-        //        else
-        //        {
-        //            return BadRequest(new
-        //            {
-        //                Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //            });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" } 
-        //        });
-        //    }
-        //}
+            return Ok(new
+            {
+                Results = bestSellerCourses
+            });
+        }
 
 
+        [HttpPut]
+        [Route("ChangeStatus")]
+        public async Task<IActionResult> ChangeStatus([FromBody] ChangeStatusViewModel changeStatusViewModel)
+        {
+            try
+            {
+                var updatedCourse = await courseService.GetById(changeStatusViewModel.CourseId);
 
-        //[HttpGet]
-        //[Route("GetAllByLecturerId")]
-        //public async Task<IActionResult> GetAllByLecturerId([FromQuery] string lecturerId)
-        //{
-        //    var courses = await courseRepository.GetAllByLecturerId(lecturerId);
-        //    return Ok(new
-        //    {
-        //        Results = courses
-        //    });
-        //}
+                if (updatedCourse != null)
+                {
+                    updatedCourse.StatusId = changeStatusViewModel.StatusId;
+
+                    await courseService.Update(updatedCourse);
+
+                    return Ok(new
+                    {
+                        Results = updatedCourse
+                    });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                    });
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
+
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
 
 
-        //[HttpGet()]
-        //[Route("BestSellerCoursesByCategoryTypeId")]
-        //public async Task<IActionResult> BestSellerCoursesByCategoryTypeId([FromQuery] int categoryTypeId, [FromQuery] int pageSize, [FromQuery] int pageOffset)
-        //{
-        //    var bestSellerCourses = await courseRepository.GetBestSellerCoursesByCategoryTypeId(categoryTypeId, pageSize, pageOffset);
 
-        //    return Ok(new
-        //    {
-        //        Results = bestSellerCourses
-        //    });
-        //}
+        [HttpGet]
+        [Route("GetCourseListByLecturerId")]
+        public async Task<IActionResult> GetCourseListByLecturerId([FromQuery] string lecturerId)
+        {
+            var courses = await courseService.GetCourseListByLecturerId(lecturerId);
+            return Ok(new
+            {
+                Results = courses
+            });
+        }
 
-
-        //[HttpGet()]
-        //[Route("OutstandingCoursesByCategoryId")]
-        //public async Task<IActionResult> OutstandingCoursesByCategoryId([FromQuery] int categoryId, [FromQuery] int pageSize, [FromQuery] int pageOffset)
-        //{
-        //    var outstandingCourses = await courseRepository.GetOutStandingCoursesByCategoryId(categoryId, pageSize, pageOffset);
-
-        //    return Ok(new
-        //    {
-        //        Results = outstandingCourses
-        //    });
-        //}
 
 
         //For testing

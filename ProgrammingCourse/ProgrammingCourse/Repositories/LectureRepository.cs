@@ -22,5 +22,15 @@ namespace ProgrammingCourse.Repositories
                 .ToListAsync<Lecture>();
             return lectures;
         }
+
+        public async Task<double> GetCompletionRateByCourseIdAndLectureId(int courseId, int lectureId)
+        {
+            var lectureNumber = await _context.Set<Lecture>().Where(l => l.CourseId == courseId).CountAsync();
+
+            var lecture = await _context.Set<Lecture>().Where(l => l.Id == lectureId).FirstOrDefaultAsync();
+
+            double completionRate = (double)lecture.Section / lectureNumber;
+            return completionRate;
+        }
     }
 }

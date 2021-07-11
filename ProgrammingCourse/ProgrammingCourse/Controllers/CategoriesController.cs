@@ -48,6 +48,28 @@ namespace ProgrammingCourse.Controllers0
         }
 
         [HttpGet]
+        [Route("GetWithAllInfoByName")]
+        public async Task<IActionResult> GetWithAllInfoByName([FromQuery] string name)
+        {
+            var category = await categoryService.GetWithAllInfoByName(name);
+
+            if (category != null)
+            {
+                return Ok(new
+                {
+                    Results = category
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var categories = await categoryService.GetAll();

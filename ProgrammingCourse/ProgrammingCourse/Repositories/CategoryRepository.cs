@@ -20,10 +20,11 @@ namespace ProgrammingCourse.Repositories
             return await _context.Set<Category>().Where(c => c.Id == id).Include(c => c.CategoryType).Include(c => c.Courses).FirstOrDefaultAsync();
         }
 
-        //public async Task<List<Category>> GetByCategoryTypeId(int categoryTypeId)
-        //{
-        //    return await _context.Set<Category>().Where(c => c.CategoryTypeId == categoryTypeId).ToListAsync();
-        //}
+
+        public async Task<Category> GetWithAllInfoByName(string name)
+        {
+            return await _context.Set<Category>().Where(c => c.Name == name).Include(c => c.CategoryType).Include(c => c.Courses).FirstOrDefaultAsync();
+        }
 
 
         public async Task<dynamic> GetMostRegisteredCategories()
@@ -49,5 +50,10 @@ namespace ProgrammingCourse.Repositories
                 .ToListAsync<dynamic>();
             return categories;
         }
+
+        //public async Task<List<Category>> GetByCategoryTypeId(int categoryTypeId)
+        //{
+        //    return await _context.Set<Category>().Where(c => c.CategoryTypeId == categoryTypeId).ToListAsync();
+        //}
     }
 }

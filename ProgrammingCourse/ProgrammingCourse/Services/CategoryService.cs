@@ -31,6 +31,11 @@ namespace ProgrammingCourse.Services
             return await categoryRepository.GetWithAllInfoById(id);
         }
 
+        public async Task<Category> GetWithAllInfoByName(string name)
+        {
+            return await categoryRepository.GetWithAllInfoByName(name);
+        }
+
         public async Task<List<Category>> GetAll()
         {
             return await categoryRepository.GetAll();
@@ -51,11 +56,5 @@ namespace ProgrammingCourse.Services
         {
             return await categoryRepository.GetMostRegisteredCategories();
         }
-
-
-        //public async Task<List<Category>> GetByCategoryTypeId(int categoryTypeId)
-        //{
-        //    return await categoryRepository.GetByCategoryTypeId(categoryTypeId);
-        //}
     }
 }

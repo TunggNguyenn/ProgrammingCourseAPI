@@ -8,14 +8,10 @@ namespace ProgrammingCourse.Models.ViewModels
 {
     public class CartViewModel
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
         public string StudentId { get; set; }
 
-        public virtual IList<CourseCart> CourseCarts { get; set; }
-
-        public DateTime LastUpdated { get; set; }
+        [Required]
+        public List<int> CourseIds { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace ProgrammingCourse.Controllers
     public class WebHookController : ControllerBase
     {
         private const string VERIFY_TOKEN = "nttung";
-        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBAJP5GZBf1z7FvzFmBlyDgJ5wtKXeJ5SsFU0KxVXHvcIoFBv6Cu58zZCAbLOW9BZANZB01v8Dh34RW4r8b8wJYDelqJYRRY3Ii8jXCewZCGYinO7Xy1cqDKEJVvrQ0g75a99vRdYDXQVnPjByb7wJorlgkf69hFq1PfBN9KkVC";
+        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBAJPYKyRNLwzPj5nec70mR0a4BMLBsMxZAi9ZA4LCvQZBeceII3HG3q4ZC5veGsQbMLusOGJefDc9nLUD6uQynnFaPfyEibhce9wk4TKlFQltZBvTZCR7wpSwlphZBZBL97bQfqhJDkM1kN4LtJRSsqmPZCKEIyCdaVhxr4pY0kwCT";
 
         private CategoryRepository categoryRepository;
         private CourseRepository courseRepository;
@@ -447,7 +447,7 @@ namespace ProgrammingCourse.Controllers
         {
             object response = new { text = "" };
 
-            var category = await categoryRepository.GetById(categoryId);
+            var category = await categoryRepository.GetWithAllInfoById(categoryId);
             object[] elements = new object[category.Courses.Count];
 
             for (int i = 0; i < category.Courses.Count; i++)
