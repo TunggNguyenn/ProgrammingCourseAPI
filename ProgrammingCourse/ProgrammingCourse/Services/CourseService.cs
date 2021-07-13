@@ -17,10 +17,12 @@ namespace ProgrammingCourse.Services
         private readonly UserRepository userRepository;
         private readonly ViewRepository viewRepository;
         private readonly StudentCourseRepository studentCourseRepository;
+        private readonly LectureRepository lectureRepository;
 
         public CourseService(CourseRepository courseRepository, FeedbackRepository feedbackRepository, 
             CategoryRepository categoryRepository, UserRepository userRepository,
-             ViewRepository viewRepository, StudentCourseRepository studentCourseRepository)
+             ViewRepository viewRepository, StudentCourseRepository studentCourseRepository,
+             LectureRepository lectureRepository)
         {
             this.courseRepository = courseRepository;
             this.feedbackRepository = feedbackRepository;
@@ -28,6 +30,7 @@ namespace ProgrammingCourse.Services
             this.userRepository = userRepository;
             this.viewRepository = viewRepository;
             this.studentCourseRepository = studentCourseRepository;
+            this.lectureRepository = lectureRepository;
         }
 
 
@@ -36,28 +39,39 @@ namespace ProgrammingCourse.Services
             return await courseRepository.GetById(id);
         }
 
+        public async Task<List<int>> GetCourseIdList()
+        {
+            return await courseRepository.GetCourseIdList();
+        }
+
         public async Task<dynamic> GeWithAllInfoById(int id)
         {
-            var course = await courseRepository.GetWithAllInfoById(id);
+            var course = await courseRepository.GetById(id);
 
             if (course == null)
             {
                 return null;
             }
 
-            course.Lecturer = null;   //?
-
-            var rating = await feedbackRepository.GetRatingByCourseId(course.Id);
-            var viewNumber = await viewRepository.GetViewNumberByCourseId(course.Id);
-            var lecturer = await userRepository.GetById(course.LecturerId);
 
             dynamic dynamicCourse = new ExpandoObject();
-            dynamicCourse.Course = course;
-            dynamicCourse.Rating = rating;
-            dynamicCourse.ViewNumber = viewNumber;
-            dynamicCourse.lecturer = lecturer;
-
-
+            dynamicCourse.id = course.Id;
+            dynamicCourse.price = course.Price;
+            dynamicCourse.name = course.Name;
+            dynamicCourse.imageUrl = course.ImageUrl;
+            dynamicCourse.lastUpdated = course.LastUpdated;
+            dynamicCourse.statusId = course.StatusId;
+            //dynamicCourse.status = course.Status.Name;
+            dynamicCourse.discount = course.Discount;
+            dynamicCourse.shortDiscription = course.ShortDiscription;
+            dynamicCourse.detailDiscription = course.DetailDiscription;
+            dynamicCourse.lecturerId = course.LecturerId;
+            dynamicCourse.lecturer = await userRepository.GetById(course.LecturerId);
+            dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
+            dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
+            dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+            dynamicCourse.viewNumber = await viewRepository.GetViewNumberByCourseId(course.Id);
+            dynamicCourse.lectures = await lectureRepository.GetLectureListByCourseId(course.Id);
 
             return dynamicCourse;
         }

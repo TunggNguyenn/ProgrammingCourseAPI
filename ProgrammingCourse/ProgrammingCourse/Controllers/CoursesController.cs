@@ -47,6 +47,18 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet]
+        [Route("GetCourseIdList")]
+        public async Task<IActionResult> GetCourseIdList()
+        {
+            var courseIdList = await courseService.GetCourseIdList();
+
+            return Ok(new
+            {
+                Results = courseIdList
+            });
+        }
+
+        [HttpGet]
         [Route("GetCourseListByPaginationParameters")]
         public async Task<IActionResult> GetCourseListByPaginationParameters([FromQuery] PaginationParameters paginationParameters)
         {

@@ -13,6 +13,13 @@ namespace ProgrammingCourse.Repositories
         {
         }
 
+        public async Task<List<int>> GetCourseIdList()
+        {
+            return await _context.Set<Course>()
+                .Select(c => c.Id).ToListAsync<int>();
+        }
+
+
         public async Task<Course> GetWithAllInfoById(int id)
         {
             return await _context.Set<Course>()

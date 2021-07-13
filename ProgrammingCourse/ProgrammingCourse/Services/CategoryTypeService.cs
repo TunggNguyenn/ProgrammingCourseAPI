@@ -89,28 +89,28 @@ namespace ProgrammingCourse.Services
                 for (int c = 0; c < courses.Count; c++)
                 {
                     dynamic course = new ExpandoObject();
-                    course.Id = courses[c].Id;
-                    course.Price = courses[c].Price;
-                    course.Name = courses[c].Name;
-                    course.ImageUrl = courses[c].ImageUrl;
-                    course.LastUpdated = courses[c].LastUpdated;
-                    course.StatusId = courses[c].StatusId;
-                    course.Status = courses[c].Status;
-                    course.Discount = courses[c].Discount;
+                    course.id = courses[c].Id;
+                    course.price = courses[c].Price;
+                    course.name = courses[c].Name;
+                    course.imageUrl = courses[c].ImageUrl;
+                    course.lastUpdated = courses[c].LastUpdated;
+                    course.statusId = courses[c].StatusId;
+                    course.status = courses[c].Status;
+                    course.discount = courses[c].Discount;
                     //course.ShortDiscription = courses[c].ShortDiscription;
                     //course.DetailDiscription = courses[c].DetailDiscription;
-                    course.LecturerId = courses[c].LecturerId;
-                    course.Lecturer = await userRepository.GetById(courses[c].LecturerId);
-                    course.Rating = await feedbackRepository.GetRatingByCourseId(courses[c].Id);
-                    course.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(courses[c].Id);
-                    course.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(courses[c].Id);
+                    course.lecturerId = courses[c].LecturerId;
+                    course.lecturer = await userRepository.GetById(courses[c].LecturerId);
+                    course.rating = await feedbackRepository.GetRatingByCourseId(courses[c].Id);
+                    course.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(courses[c].Id);
+                    course.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(courses[c].Id);
 
                     bool flag = false;
                     for (int b = 0; b < bestSellerCourses.Count; b++)
                     {
                         if (bestSellerCourses[b].CourseId == courses[c].Id)
                         {
-                            course.Tag = "BestSeller";
+                            course.tag = "BestSeller";
                             flag = true;
                             break;
                         }
@@ -126,7 +126,7 @@ namespace ProgrammingCourse.Services
                     {
                         if (newestCourses[n].CourseId == courses[c].Id)
                         {
-                            course.Tag = "Newest";
+                            course.tag = "Newest";
                             flag = true;
                             break;
                         }
@@ -142,7 +142,7 @@ namespace ProgrammingCourse.Services
                     {
                         if (mostViewedCourses[m].CourseId == courses[c].Id)
                         {
-                            course.Tag = "Trending";
+                            course.tag = "Trending";
                             flag = true;
                             break;
                         }

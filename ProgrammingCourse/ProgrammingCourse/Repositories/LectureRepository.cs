@@ -19,6 +19,15 @@ namespace ProgrammingCourse.Repositories
         {
             var lectures = await _context.Set<Lecture>()
                 .Where<Lecture>(l => l.CourseId == courseId)
+                .Select(l => new Lecture()
+                {
+                    Id = l.Id,
+                    Section = l.Section,
+                    Name = l.Name,
+                    VideoUrl = l.VideoUrl,
+                    Discription = l.Discription,
+                    Duration = l.Duration
+                })
                 .ToListAsync<Lecture>();
             return lectures;
         }
