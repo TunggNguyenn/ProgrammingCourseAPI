@@ -26,9 +26,9 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GeWithAllInfoById(int id)
+        public async Task<IActionResult> GetWithAllInfoById(int id)
         {
-            var course = await courseService.GeWithAllInfoById(id);
+            var course = await courseService.GetWithAllInfoById(id);
 
             if (course != null)
             {
@@ -59,20 +59,16 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet]
-        [Route("GetCourseListByPaginationParameters")]
-        public async Task<IActionResult> GetCourseListByPaginationParameters([FromQuery] PaginationParameters paginationParameters)
+        [Route("GetCourseListByFilterAndPaginationParameters")]
+        public async Task<IActionResult> GetCourseListByFilterAndPaginationParameters([FromQuery] FilterParameters filterParameters, [FromQuery] PaginationParameters paginationParameters)
         {
-            var courses = await courseService.GetAll();
-
-            paginationParameters.TotalItems = courses.Count;
-            paginationParameters.TotalPages = Convert.ToInt32(Math.Ceiling((double)courses.Count / paginationParameters.PageSize));
-            paginationParameters.PageNumber = (paginationParameters.PageNumber > paginationParameters.TotalPages) ? paginationParameters.TotalPages : paginationParameters.PageNumber;
+            var courses = await courseService.GetCourseListByFilterAndPaginationParameters(filterParameters, paginationParameters);
 
             return Ok(new
             {
                 Results = new
                 {
-                    Courses = courses.Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize).Take(paginationParameters.PageSize),
+                    Courses = courses,
                     PaginationStatus = paginationParameters
                 }
             });

@@ -13,22 +13,21 @@ namespace ProgrammingCourse.Repositories
         {
         }
 
-        public async Task<Cart> GetByStudentId(string studentId)
+        public async Task<List<Cart>> GetCartListByStudentId(string studentId)
         {
-            return await _context.Set<Cart>().Where(c => c.StudentId == studentId).FirstOrDefaultAsync();
+            return await _context.Set<Cart>().Where(c => c.StudentId == studentId).ToListAsync();
         }
 
-        public async Task<Cart> GetWithCourseCartListByStudentId(string studentId)
+        public async Task<Cart> GetByCourseIdAndStudentId(int courseId, string studentId)
         {
-            var cart =  await _context.Set<Cart>().Where(c => c.StudentId == studentId).FirstOrDefaultAsync();
+            return await _context.Set<Cart>().Where(c => c.CourseId == courseId && c.StudentId == studentId).FirstOrDefaultAsync();
+        }
 
-            if(cart != null)
-            {
-                var courseCarts = await _context.Set<CourseCart>().Where(cc => cc.CartId == cart.Id).Include(cc => cc.Course).ToListAsync();
-                cart.CourseCarts = courseCarts;
-            }    
-
-            return cart;
+        public async Task<List<int>> GetCourseIdListByStudentId(string studentId)
+        {
+            return  await _context.Set<Cart>().Where(c => c.StudentId == studentId)
+                .Select(c => c.CourseId)
+                .ToListAsync();
         }
     }
 }

@@ -27,10 +27,11 @@ namespace ProgrammingCourse.Models
         [ForeignKey("CourseId")]
         public Course Course { get; set; }
 
-        [Required]
-        public string Discription { get; set; }
 
         [Required]
         public int Duration { get; set; }
+
+        [Required]
+        public bool IsPreview { get; set; }
     }
 }

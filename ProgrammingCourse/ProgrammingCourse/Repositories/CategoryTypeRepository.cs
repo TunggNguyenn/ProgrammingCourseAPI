@@ -17,5 +17,10 @@ namespace ProgrammingCourse.Repositories
         {
             return await _context.Set<CategoryType>().Where(c => c.Id == id).Include(c => c.Categories).FirstOrDefaultAsync();
         }
+
+        public async Task<List<CategoryType>> GetAllWithAllInfo()
+        {
+            return await _context.Set<CategoryType>().Include(c => c.Categories).ToListAsync();
+        }
     }
 }

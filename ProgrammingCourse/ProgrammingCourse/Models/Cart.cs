@@ -13,13 +13,15 @@ namespace ProgrammingCourse.Models
         public int Id { get; set; }
 
         [Required]
+        public int CourseId { get; set; }
+
+        [ForeignKey("CourseId")]
+        public Course Course { get; set; }
+
+        [Required]
         public string StudentId { get; set; }
 
         [ForeignKey("StudentId")]
         public User Student { get; set; }
-
-        public virtual IList<CourseCart> CourseCarts { get; set; }
-
-        public DateTime LastUpdated { get; set; }
     }
 }

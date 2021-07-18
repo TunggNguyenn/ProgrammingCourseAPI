@@ -27,7 +27,6 @@ namespace ProgrammingCourse.Models
 
         public DbSet<View> Views { get; set; }
         public DbSet<Cart> Carts { get; set; }
-        public DbSet<CourseCart> CourseCarts { get; set; }
         public DbSet<CourseProcess> CourseProcesses { get; set; }
     }
 }

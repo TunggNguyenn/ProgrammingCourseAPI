@@ -30,5 +30,7 @@ namespace ProgrammingCourse.Models
 
         [Required]
         public bool IsLocked { get; set; }
+
+        public string Description { get; set; }
     }
 }

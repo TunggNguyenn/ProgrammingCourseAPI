@@ -22,10 +22,13 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public int CourseId { get; set; }
 
-        [Required]
-        public string Discription { get; set; }
+        //[Required]
+        //public string Discription { get; set; }
 
         [Required]
         public int Duration { get; set; }
+
+        [Required]
+        public bool IsPreview { get; set; }
     }
 }

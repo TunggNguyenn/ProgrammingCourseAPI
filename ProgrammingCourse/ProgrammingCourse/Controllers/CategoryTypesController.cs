@@ -75,7 +75,7 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categoryTypes = await categoryTypeService.GetAll();
+            var categoryTypes = await categoryTypeService.GetAllWithAllInfo();
 
             return Ok(new
             {

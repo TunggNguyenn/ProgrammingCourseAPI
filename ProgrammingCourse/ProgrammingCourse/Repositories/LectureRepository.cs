@@ -25,8 +25,8 @@ namespace ProgrammingCourse.Repositories
                     Section = l.Section,
                     Name = l.Name,
                     VideoUrl = l.VideoUrl,
-                    Discription = l.Discription,
-                    Duration = l.Duration
+                    Duration = l.Duration,
+                    IsPreview = l.IsPreview
                 })
                 .ToListAsync<Lecture>();
             return lectures;

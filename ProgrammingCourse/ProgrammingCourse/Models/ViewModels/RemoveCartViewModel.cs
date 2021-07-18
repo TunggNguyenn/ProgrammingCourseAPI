@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Models.ViewModels
 {
-    public class CartViewModel
+    public class RemoveCartViewModel
     {
-        [Required]
-        public int CourseId { get; set; }
-
         [Required]
         public string StudentId { get; set; }
     }

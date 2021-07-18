@@ -178,7 +178,7 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Remove([FromBody] string id)
+        public async Task<IActionResult> Remove(string id)
         {
             var user = await userManager.Users.Where<User>(c => c.Id == id).FirstOrDefaultAsync();
 
@@ -212,7 +212,7 @@ namespace ProgrammingCourse.Controllers
 
         [HttpGet]
         [Route("LockUser")]
-        public async Task<IActionResult> Lock([FromBody] string id)
+        public async Task<IActionResult> Lock([FromQuery] string id)
         {
             var lockedUser = await userManager.Users.Where<User>(c => c.Id == id).FirstOrDefaultAsync();
 
@@ -239,7 +239,7 @@ namespace ProgrammingCourse.Controllers
 
         [HttpGet]
         [Route("UnlockUser")]
-        public async Task<IActionResult> Unlock([FromBody] string id)
+        public async Task<IActionResult> Unlock([FromQuery] string id)
         {
             var unlockedUser = await userManager.Users.Where<User>(c => c.Id == id).FirstOrDefaultAsync();
 
@@ -263,6 +263,7 @@ namespace ProgrammingCourse.Controllers
             }
         }
 
+       
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateUserViewModel updateUserViewModel)
@@ -271,19 +272,39 @@ namespace ProgrammingCourse.Controllers
 
             if (updatedUser != null)
             {
-                //Check whether email is existed
-                bool isExisted = await EmailChecker.Check(updateUserViewModel.NewEmail);
-                if (isExisted == false)
+
+                if(updateUserViewModel.NewUserName != null)
                 {
-                    return BadRequest(new
-                    {
-                        Errors = new { Code = "NotExistedEmailAddress", Description = "Email address is not existed!" }
-                    });
+                    updatedUser.UserName = updateUserViewModel.NewUserName;
                 }
 
-                updatedUser.UserName = updateUserViewModel.NewUserName;
-                updatedUser.AvatarUrl = updateUserViewModel.NewAvatarUrl;
-                updatedUser.Email = updateUserViewModel.NewEmail;
+                if(updateUserViewModel.NewAvatarUrl != null)
+                {
+                    updatedUser.AvatarUrl = updateUserViewModel.NewAvatarUrl;
+                }
+
+                if(updateUserViewModel.NewEmail != null)
+                {
+                    //Check whether email is existed
+                    bool isExisted = await EmailChecker.Check(updateUserViewModel.NewEmail);
+                    if (isExisted == false)
+                    {
+                        return BadRequest(new
+                        {
+                            Errors = new { Code = "NotExistedEmailAddress", Description = "Email address is not existed!" }
+                        });
+                    }
+                    else
+                    {
+                        updatedUser.Email = updateUserViewModel.NewEmail;
+                    }
+                }
+
+                if (updateUserViewModel.Description != null)
+                {
+                    updatedUser.Description = updateUserViewModel.Description;
+                }
+
 
                 var result = await userManager.UpdateAsync(updatedUser);
 

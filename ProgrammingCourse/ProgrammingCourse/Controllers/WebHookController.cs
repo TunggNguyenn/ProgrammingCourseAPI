@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,15 +20,15 @@ namespace ProgrammingCourse.Controllers
     public class WebHookController : ControllerBase
     {
         private const string VERIFY_TOKEN = "nttung";
-        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBAJPYKyRNLwzPj5nec70mR0a4BMLBsMxZAi9ZA4LCvQZBeceII3HG3q4ZC5veGsQbMLusOGJefDc9nLUD6uQynnFaPfyEibhce9wk4TKlFQltZBvTZCR7wpSwlphZBZBL97bQfqhJDkM1kN4LtJRSsqmPZCKEIyCdaVhxr4pY0kwCT";
+        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBAObZBjdjBdJFjIpNQJDnSytmMeLZAfHZC6l13ytzLakiLiAhdyw4w7XvI3EhsotRyItoXTZCxQ7tuNDDOuKWVxK9PoSPxujO5p1RWdRyAZAVBnZABam7LwRZCv46rdQN5sdTFl2MEH0ZARhzL6mZCYRmWZANPtYZBfsMKzSSQMjxZBa2";
 
-        private CategoryRepository categoryRepository;
-        private CourseRepository courseRepository;
+        private CategoryService categoryService;
+        private CourseService courseService;
 
-        public WebHookController(CategoryRepository categoryRepository, CourseRepository courseRepository)
+        public WebHookController(CategoryService categoryService, CourseService courseService)
         {
-            this.categoryRepository = categoryRepository;
-            this.courseRepository = courseRepository;
+            this.categoryService = categoryService;
+            this.courseService = courseService;
         }
 
         [HttpGet]
@@ -106,7 +107,7 @@ namespace ProgrammingCourse.Controllers
 
             if (keywords != "")
             {
-                var course = await courseRepository.FindCourse(keywords);
+                var course = await courseService.FindCourse(keywords);
 
                 if (course == null)
                 {
@@ -349,8 +350,7 @@ namespace ProgrammingCourse.Controllers
         {
             object response = new { text = "" };
 
-            var tempCategories = await categoryRepository.GetAll();
-            var categories = tempCategories.ToList();
+            var categories = await categoryService.GetAll();
             object[] elements = new object[categories.Count];
 
             for (int i = 0; i < categories.Count; i++)
@@ -447,7 +447,7 @@ namespace ProgrammingCourse.Controllers
         {
             object response = new { text = "" };
 
-            var category = await categoryRepository.GetWithAllInfoById(categoryId);
+            var category = await categoryService.GetWithAllInfoById(categoryId); //
             object[] elements = new object[category.Courses.Count];
 
             for (int i = 0; i < category.Courses.Count; i++)
@@ -501,17 +501,18 @@ namespace ProgrammingCourse.Controllers
         private async Task ShowDetails(string sender_psid, int courseId)
         {
             object response = new { text = "" };
-            var course = await courseRepository.GetById(courseId);
+            //var course = await courseRepository.GetById(courseId);
+            var course = await courseService.GetWithAllInfoById(courseId);
 
             response = new
             {
-                text = $"Course Name: {course.Name} \n" +
-                $"Price: {course.Price}$ (Discount: {course.Discount}) \n" +
-                $"Category Type: {course.Category.Name} \n" +
-                //$"View: {course.View} \n" +
-                $"Number of Lecture: {course.Lectures.Count} \n" +
-                //$"Number of Student: {course.StudentCourses.Count} \n" +
-                $"Short Discription: {course.ShortDiscription}"
+                text = $"Course Name: {course.name} \n" +
+                $"Price: {course.price}$ (Discount: {course.discount}) \n" +
+                $"Rating: {course.rating} \n" +
+                $"View: {course.viewNumber} \n" +
+                $"Number of Lecture: {course.lectures.Count} \n" +
+                $"Number of Registered Student: {course.registeredNumber} \n" +
+                $"Short Discription: {course.shortDiscription}"
             };
 
             await callSendAPI(sender_psid, response);
@@ -528,9 +529,9 @@ namespace ProgrammingCourse.Controllers
                         {
                             new
                             {
-                                title = course.Name,
-                                image_url = course.ImageUrl,
-                                subtitle = $"${course.Price} (Discount: {course.Discount})",
+                                title = course.name,
+                                image_url = course.imageUrl,
+                                subtitle = $"${course.price} (Discount: {course.discount})",
                                 buttons = new object[]
                                 {
                                     new

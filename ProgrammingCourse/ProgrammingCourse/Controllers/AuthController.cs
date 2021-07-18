@@ -67,7 +67,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidEmail", Description = $"Email {userViewModel.Email} has already taken!" } 
+                    Errors = new { Code = "InvalidEmail", Description = $"Email {userViewModel.Email} has already taken!" }
                 });
             }
 
@@ -84,11 +84,17 @@ namespace ProgrammingCourse.Controllers
                 if (result2.Succeeded)
                 {
                     Email.SendEmailOTP(identityUser.Email, OTPCOde);
+                    //return Ok(
+                    //    new
+                    //    {
+                    //        Results = new { Code = "Success", Description = $"User registeration is successful!" } 
+                    //    });
+
                     return Ok(
-                        new
-                        {
-                            Results = new { Code = "Success", Description = $"User registeration is successful!" } 
-                        });
+                    new
+                    {
+                        Results = new { RegisteredUser = identityUser }
+                    });
                 }
 
                 return BadRequest(
@@ -122,7 +128,7 @@ namespace ProgrammingCourse.Controllers
                     return Unauthorized(
                         new
                         {
-                            Errors = new { Code = "LockedAccount", Description = "This account has been locked!" } 
+                            Errors = new { Code = "LockedAccount", Description = "This account has been locked!" }
                         });
                 }
 
@@ -131,23 +137,25 @@ namespace ProgrammingCourse.Controllers
                     return BadRequest(
                         new
                         {
-                            Errors = new { 
+                            Errors = new
+                            {
                                 Email = identityUser.Email,
-                                Code = "NotVerifiedAccount", 
-                                Description = "This account has not been verified yet!" } 
+                                Code = "NotVerifiedAccount",
+                                Description = "This account has not been verified yet!"
+                            }
                         });
                 }
 
                 var token = await GenerateTokens(identityUser);
-                return Ok(new 
-                { 
+                return Ok(new
+                {
                     Results = token
                 });
             }
             return BadRequest(
                 new
                 {
-                    Errors = new { Code = "InvalidAccount", Description = "This account is invalid!" } 
+                    Errors = new { Code = "InvalidAccount", Description = "This account is invalid!" }
                 });
         }
 
@@ -155,9 +163,9 @@ namespace ProgrammingCourse.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("ResendOTP")]
-        public async Task<IActionResult> ResendOTP([FromBody] string email)
+        public async Task<IActionResult> ResendOTP([FromBody] ResendOTPViewModel resendOTPViewModel)
         {
-            var identityUser = await userManager.FindByEmailAsync(email);
+            var identityUser = await userManager.FindByEmailAsync(resendOTPViewModel.Email);
             if (identityUser != null)
             {
                 var random = new Random();
@@ -169,17 +177,18 @@ namespace ProgrammingCourse.Controllers
 
                 if (result.Succeeded)
                 {
-                    Email.SendEmailOTP(email, OTPCOde);
+                    Email.SendEmailOTP(resendOTPViewModel.Email, OTPCOde);
 
-                    return Ok(new {
-                        Results = new { Code = "Success", Description = $"Resend OTPCode Successfully!" } 
+                    return Ok(new
+                    {
+                        Results = new { Code = "Success", Description = $"Resend OTPCode Successfully!" }
                     });
                 }
                 else
                 {
                     return BadRequest(new
                     {
-                        Errors = new { Code = "Fail", Description = "Resend OTP Code unsuccessfully!" } 
+                        Errors = new { Code = "Fail", Description = "Resend OTP Code unsuccessfully!" }
                     });
                 }
             }
@@ -188,7 +197,7 @@ namespace ProgrammingCourse.Controllers
                 return BadRequest(
                     new
                     {
-                        Errors = new { Code = "InvalidEmail", Description = "Invalid Email!" } 
+                        Errors = new { Code = "InvalidEmail", Description = "Invalid Email!" }
                     });
             }
         }
@@ -213,14 +222,14 @@ namespace ProgrammingCourse.Controllers
 
                         return Ok(new
                         {
-                            Results = new { Code = "Success", Description = "Verify OTP Code successfully!" } 
+                            Results = new { Code = "Success", Description = "Verify OTP Code successfully!" }
                         });
                     }
                     else
                     {
                         return BadRequest(new
                         {
-                            Errors = new { Code = "Fail", Description = "Verify OTP Code unsuccessfully!" } 
+                            Errors = new { Code = "Fail", Description = "Verify OTP Code unsuccessfully!" }
                         });
                     }
                 }
@@ -228,7 +237,7 @@ namespace ProgrammingCourse.Controllers
                 {
                     return BadRequest(new
                     {
-                        Errors = new { Code = "InvalidOTPCode!", Description = "Invalid OTP Code!" } 
+                        Errors = new { Code = "InvalidOTPCode!", Description = "Invalid OTP Code!" }
                     });
                 }
 
@@ -238,7 +247,7 @@ namespace ProgrammingCourse.Controllers
                 return BadRequest(
                     new
                     {
-                        Errors = new { Code = "InvalidEmail!", Description = "Invalid Email!" } 
+                        Errors = new { Code = "InvalidEmail!", Description = "Invalid Email!" }
                     });
             }
         }
@@ -352,7 +361,7 @@ namespace ProgrammingCourse.Controllers
             string accessToken = HttpContext.Request.Cookies["accessToken"];
             string refreshToken = HttpContext.Request.Cookies["refreshToken"];
 
-            if(accessToken == null || refreshToken == null)
+            if (accessToken == null || refreshToken == null)
             {
                 return true;
             }
@@ -398,9 +407,9 @@ namespace ProgrammingCourse.Controllers
         {
             // Revoke Refresh Token 
             await RevokeRefreshToken();
-            return Ok(new 
+            return Ok(new
             {
-                Results = new { Code = "Success", Description = "Logged Out!" } 
+                Results = new { Code = "Success", Description = "Logged Out!" }
             });
         }
 
@@ -408,11 +417,11 @@ namespace ProgrammingCourse.Controllers
         [Route("ChangePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel changePasswordViewModel)
         {
-            if(changePasswordViewModel.NewPassword != changePasswordViewModel.ConfirmPassword)
+            if (changePasswordViewModel.NewPassword != changePasswordViewModel.ConfirmPassword)
             {
                 return BadRequest(new
                 {
-                    Errors = new { Code = "NotMatchNewPasswordAndConfirmPassword", Description = "New password and confirm password dont match!" } 
+                    Errors = new { Code = "NotMatchNewPasswordAndConfirmPassword", Description = "New password and confirm password dont match!" }
                 });
             }
 
@@ -428,12 +437,12 @@ namespace ProgrammingCourse.Controllers
 
                     return Ok(new
                     {
-                        Results = new { Code = "Success", Description = "Change password successfully!" } 
+                        Results = new { Code = "Success", Description = "Change password successfully!" }
                     });
                 }
                 else
                 {
-                    return Ok(new
+                    return BadRequest(new
                     {
                         Errors = result.Errors.ToArray()[0]
                     });
@@ -444,7 +453,7 @@ namespace ProgrammingCourse.Controllers
             {
                 return BadRequest(new
                 {
-                    Errors = new { Code = "InvalidUserId", Description = "UserId is invalid!" } 
+                    Errors = new { Code = "InvalidUserId", Description = "UserId is invalid!" }
                 });
             }
         }
@@ -456,7 +465,7 @@ namespace ProgrammingCourse.Controllers
         {
             return Ok(new
             {
-                Results = new { Code = "Success", Description = "Login is successful!" } 
+                Results = new { Code = "Success", Description = "Login is successful!" }
             });
         }
 
@@ -474,6 +483,10 @@ namespace ProgrammingCourse.Controllers
                 var expDate = token.ValidTo;
 
                 var nameid = token.Claims.Where(c => c.Type == "nameid").FirstOrDefault();
+                var unique_name = token.Claims.Where(c => c.Type == "unique_name").FirstOrDefault();
+                var email = token.Claims.Where(c => c.Type == "email").FirstOrDefault();
+                var role = token.Claims.Where(c => c.Type == "role").FirstOrDefault();
+
                 User identityUser = await userManager.FindByIdAsync(nameid.Value);
 
                 if (expDate < DateTime.UtcNow)
@@ -499,16 +512,13 @@ namespace ProgrammingCourse.Controllers
 
                             return Ok(new
                             {
-                                Results = new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" } 
+                                Results = new { Code = "NotLoggedIn", Description = "Not Logged In Yet!" }
                             });
                         }
                         else
                         {
                             var key = Encoding.UTF8.GetBytes(jwtBearerTokenSettings.SecretKey);
                             //var role = await userMgr.GetRolesAsync(identityUser);
-                            var unique_name = token.Claims.Where(c => c.Type == "unique_name").FirstOrDefault();
-                            var email = token.Claims.Where(c => c.Type == "email").FirstOrDefault();
-                            var role = token.Claims.Where(c => c.Type == "role").FirstOrDefault();
 
                             var tokenDescriptor = new SecurityTokenDescriptor
                             {
@@ -542,7 +552,7 @@ namespace ProgrammingCourse.Controllers
                                 {
                                     Info = identityUser,
                                     Role = role
-                                } 
+                                }
                             });
                         }
                     }
@@ -558,14 +568,15 @@ namespace ProgrammingCourse.Controllers
                 {
                     return Ok(new
                     {
-                        Results = identityUser
+                        Results = identityUser,
+                        Role = role
                     });
                 }
             }
 
             return BadRequest(new
             {
-                Errors = new { Code = "ExpiredToken", Description = "Token expired!" } 
+                Errors = new { Code = "ExpiredToken", Description = "Token expired!" }
             });
         }
     }

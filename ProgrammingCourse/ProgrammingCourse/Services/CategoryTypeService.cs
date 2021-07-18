@@ -45,6 +45,11 @@ namespace ProgrammingCourse.Services
             return await categoryTypeRepository.GetWithAllInfoById(id);
         }
 
+        public async Task<List<CategoryType>> GetAllWithAllInfo()
+        {
+            return await categoryTypeRepository.GetAllWithAllInfo();
+        }
+
         public async Task Add(CategoryType categoryType)
         {
             await categoryTypeRepository.Add(categoryType);

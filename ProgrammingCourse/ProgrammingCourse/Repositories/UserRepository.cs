@@ -36,7 +36,8 @@ namespace ProgrammingCourse.Repositories
                     Id = usr.Id,
                     AvatarUrl = usr.AvatarUrl,
                     UserName = usr.UserName,
-                    Email = usr.Email
+                    Email = usr.Email,
+                    Description = usr.Description
                 })
                 .FirstOrDefaultAsync();
         }

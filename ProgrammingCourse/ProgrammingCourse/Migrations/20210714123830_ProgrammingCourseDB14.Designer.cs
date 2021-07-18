@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgrammingCourse.Models;
 
 namespace ProgrammingCourse.Migrations
 {
     [DbContext(typeof(ProgrammingCourseDbContext))]
-    partial class ProgrammingCourseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210714123830_ProgrammingCourseDB14")]
+    partial class ProgrammingCourseDB14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,16 +159,14 @@ namespace ProgrammingCourse.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
 
                     b.HasIndex("StudentId");
 
@@ -270,6 +270,28 @@ namespace ProgrammingCourse.Migrations
                     b.ToTable("Courses");
                 });
 
+            modelBuilder.Entity("ProgrammingCourse.Models.CourseCart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("CourseCarts");
+                });
+
             modelBuilder.Entity("ProgrammingCourse.Models.CourseProcess", b =>
                 {
                     b.Property<int>("Id")
@@ -338,6 +360,10 @@ namespace ProgrammingCourse.Migrations
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Discription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
@@ -616,19 +642,11 @@ namespace ProgrammingCourse.Migrations
 
             modelBuilder.Entity("ProgrammingCourse.Models.Cart", b =>
                 {
-                    b.HasOne("ProgrammingCourse.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ProgrammingCourse.Models.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Course");
 
                     b.Navigation("Student");
                 });
@@ -667,6 +685,25 @@ namespace ProgrammingCourse.Migrations
                     b.Navigation("Lecturer");
 
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("ProgrammingCourse.Models.CourseCart", b =>
+                {
+                    b.HasOne("ProgrammingCourse.Models.Cart", "Cart")
+                        .WithMany("CourseCarts")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProgrammingCourse.Models.Course", "Course")
+                        .WithMany("CourseCarts")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("ProgrammingCourse.Models.CourseProcess", b =>
@@ -784,6 +821,11 @@ namespace ProgrammingCourse.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("ProgrammingCourse.Models.Cart", b =>
+                {
+                    b.Navigation("CourseCarts");
+                });
+
             modelBuilder.Entity("ProgrammingCourse.Models.Category", b =>
                 {
                     b.Navigation("Courses");
@@ -796,6 +838,8 @@ namespace ProgrammingCourse.Migrations
 
             modelBuilder.Entity("ProgrammingCourse.Models.Course", b =>
                 {
+                    b.Navigation("CourseCarts");
+
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Lectures");

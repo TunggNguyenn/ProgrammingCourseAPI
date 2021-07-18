@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace ProgrammingCourse.Models.ViewModels
 {
-    public class CartViewModel
+    public class ResendOTPViewModel
     {
         [Required]
-        public int CourseId { get; set; }
-
-        [Required]
-        public string StudentId { get; set; }
+        public string Email { get; set; }
     }
 }

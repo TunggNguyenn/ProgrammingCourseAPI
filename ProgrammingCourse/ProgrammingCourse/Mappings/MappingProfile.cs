@@ -22,6 +22,7 @@ namespace ProgrammingCourse.Mappings
             CreateMap<UserViewModel, User>().ReverseMap();
             CreateMap<ViewViewModel, View>().ReverseMap();
             CreateMap<WatchListViewModel, WatchList>().ReverseMap();
+            CreateMap<CartViewModel, Cart>().ReverseMap();
         }
     }
 }

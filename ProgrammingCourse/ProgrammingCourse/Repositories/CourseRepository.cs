@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgrammingCourse.Models;
+using ProgrammingCourse.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,17 @@ namespace ProgrammingCourse.Repositories
         {
         }
 
+        public async Task<List<Course>> GetCourseListByFilterAndPaginationParameters(FilterParameters filterParameters, PaginationParameters paginationParameters)
+        {
+            return await _context.Set<Course>()
+                .Include(c => c.Category)
+                .Where(c => (c.CategoryId == filterParameters.CategoryId || filterParameters.CategoryId == 0)
+                && (c.Category.CategoryTypeId == filterParameters.CategoryTypeId || filterParameters.CategoryTypeId == 0)
+                && (c.Price >= filterParameters.MinPrice && c.Price <= filterParameters.MaxPrice)
+                && (c.Name.Contains(filterParameters.Search) || c.Category.Name.Contains(filterParameters.Search)))
+                .ToListAsync();
+        }
+
         public async Task<List<int>> GetCourseIdList()
         {
             return await _context.Set<Course>()
@@ -24,8 +36,7 @@ namespace ProgrammingCourse.Repositories
         {
             return await _context.Set<Course>()
                 .Where(c => c.Id == id)
-                .Include(c => c.Lectures).Include(c => c.Status).Include(c => c.Category)
-                .Include(c => c.Lecturer).Include(c => c.Feedbacks).ThenInclude(c => c.User)
+                .Include(c => c.Status).Include(c => c.Category).ThenInclude(c => c.CategoryType)
                 .FirstOrDefaultAsync();
         }
 

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
 using ProgrammingCourse.Repositories;
+using ProgrammingCourse.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +17,14 @@ namespace ProgrammingCourse.Controllers
     public class CartsController : ControllerBase
     {
         private readonly CartRepository cartRepository;
-        private readonly CourseCartRepository courseCartRepository;
+        private readonly CourseService courseService;
+        private readonly IMapper mapper;
 
-        public CartsController(CartRepository cartRepository, CourseCartRepository courseCartRepository)
+        public CartsController(CartRepository cartRepository, CourseService courseService, IMapper mapper)
         {
             this.cartRepository = cartRepository;
-            this.courseCartRepository = courseCartRepository;
+            this.courseService = courseService;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -34,44 +38,37 @@ namespace ProgrammingCourse.Controllers
             });
         }
 
+
         [HttpGet]
-        [Route("GetByStudentId")]
-        public async Task<IActionResult> GetByStudentId([FromQuery] string studentId)
+        [Route("GetCourseListByStudentId")]
+        public async Task<IActionResult> GetCourseListByStudentId([FromQuery] string studentId)
         {
             try
             {
-                Cart cart = await cartRepository.GetByStudentId(studentId);
+                List<int> courseIdList = await cartRepository.GetCourseIdListByStudentId(studentId);
 
-                return Ok(new
+                if(courseIdList.Count == 0)
                 {
-                    Results = cart
-                });
-
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"ErrorMesages: {e}");
-
-                return BadRequest(new
+                    return Ok(new
+                    {
+                        Results = new object[] { }
+                    });
+                }
+                else
                 {
-                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
-                });
-            }
-        }
+                    List<dynamic> dynamicCourses = new List<dynamic>();
 
-        [HttpGet]
-        [Route("GetWithCourseCartListByStudentId")]
-        public async Task<IActionResult> GetWithCourseCartListByStudentId([FromQuery] string studentId)
-        {
-            try
-            {
-                Cart cart = await cartRepository.GetWithCourseCartListByStudentId(studentId);
+                    foreach(int courseId in courseIdList)
+                    {
+                        var dynamicCourse = await courseService.GetWithAllInfoById(courseId);
+                        dynamicCourses.Add(dynamicCourse);
+                    }
 
-                return Ok(new
-                {
-                    Results = cart
-                });
+                    return Ok(new
+                    {
+                        Results = dynamicCourses
+                    });
+                }
 
 
             }
@@ -87,50 +84,66 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CartViewModel cartViewModel)
+        [Route("AddCourseToCart")]
+        public async Task<IActionResult> AddCourseToCart([FromBody] CartViewModel cartViewModel)
         {
             try
             {
-                Cart cart = await cartRepository.GetByStudentId(cartViewModel.StudentId);
+                Cart cart = await cartRepository.GetByCourseIdAndStudentId(cartViewModel.CourseId, cartViewModel.StudentId);
 
                 if (cart == null)
                 {
-                    cart = new Cart()
-                    {
-                        StudentId = cartViewModel.StudentId,
-                        LastUpdated = DateTime.Now
-                    };
+                    Cart cartMapped = mapper.Map<Cart>(cartViewModel);
+                    await cartRepository.Add(cartMapped);
 
-                    await cartRepository.Add(cart);
+                    return Ok(new
+                    {
+                        Results = cartMapped
+                    });
                 }
                 else
                 {
-                    cart.LastUpdated = DateTime.Now;
-                    await cartRepository.Update(cart);
-                }
-
-                List<CourseCart> newCourseCarts = new List<CourseCart>();
-
-                foreach(int courseId in cartViewModel.CourseIds)
-                {
-                    CourseCart newCourseCart = new CourseCart()
+                    return BadRequest(new
                     {
-                        CourseId = courseId,
-                        CartId = cart.Id
-                    };
-
-                    newCourseCarts.Add(newCourseCart);
+                        Errors = new { Code = "CourseExistedInCart", Description = "Course has already existed in Cart!" }
+                    });
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ErrorMesages: {e}");
 
-
-                await courseCartRepository.AddRange(newCourseCarts);
-
-                return Ok(new
+                return BadRequest(new
                 {
-                    Results = cart
+                    Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
                 });
+            }
+        }
 
+        [HttpPost]
+        [Route("RemoveCourseFromCart")]
+        public async Task<IActionResult> RemoveCourseFromCart([FromBody] CartViewModel cartViewModel)
+        {
+            try
+            {
+                Cart cart = await cartRepository.GetByCourseIdAndStudentId(cartViewModel.CourseId, cartViewModel.StudentId);
 
+                if (cart != null)
+                {
+                    await cartRepository.Remove(cart);
+
+                    return Ok(new
+                    {
+                        Results = cart
+                    });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
+                    });
+                }
             }
             catch (Exception e)
             {
@@ -146,30 +159,21 @@ namespace ProgrammingCourse.Controllers
 
 
         [HttpDelete]
-        public async Task<IActionResult> Remove([FromBody] CartViewModel cartViewModel)
+        public async Task<IActionResult> Remove([FromBody] RemoveCartViewModel removeCartViewModel)
         {
             try
             {
-                Cart cart = await cartRepository.GetByStudentId(cartViewModel.StudentId);
+                List<Cart> cartList = await cartRepository.GetCartListByStudentId(removeCartViewModel.StudentId);
 
-                cart.LastUpdated = DateTime.Now;
-                await cartRepository.Update(cart);
-
-
-
-                var removedCourseCarts = await courseCartRepository.RemoveByCourseIdsAndCartId(cartViewModel.CourseIds, cart.Id);
-
-                if (removedCourseCarts != null)
+                if(cartList.Count != 0)
                 {
-                    cart.CourseCarts = removedCourseCarts;
+                    await cartRepository.RemoveRange(cartList);
                 }
+
 
                 return Ok(new
                 {
-                    Results = new
-                    {
-                        Cart = cart
-                    }
+                    Results = cartList
                 });
             }
             catch (Exception e)
