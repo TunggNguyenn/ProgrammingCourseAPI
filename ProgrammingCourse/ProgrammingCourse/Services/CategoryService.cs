@@ -39,6 +39,11 @@ namespace ProgrammingCourse.Services
             return await categoryRepository.GetById(id);
         }
 
+        public async Task<IList<dynamic>> GetCategoryListByCategoryTypeId(int categoryId)
+        {
+            return await categoryRepository.GetCategoryListByCategoryTypeId(categoryId);
+        }
+
         public async Task<Category> GetWithAllInfoById(int id)
         {
             return await categoryRepository.GetWithAllInfoById(id);

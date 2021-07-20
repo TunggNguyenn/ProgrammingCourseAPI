@@ -124,8 +124,8 @@ namespace ProgrammingCourse.Services
                 course.statusId = courses[c].StatusId;
                 course.status = courses[c].Status;
                 course.discount = courses[c].Discount;
-                course.ShortDiscription = courses[c].ShortDiscription;
-                course.DetailDiscription = courses[c].DetailDiscription;
+                course.shortDiscription = courses[c].ShortDiscription;
+                course.detailDiscription = courses[c].DetailDiscription;
                 course.lecturerId = courses[c].LecturerId;
                 course.lecturer = await userRepository.GetById(courses[c].LecturerId);
                 course.rating = rating;
@@ -208,19 +208,19 @@ namespace ProgrammingCourse.Services
                 var course = await courseRepository.GetById(courseIds[i].CourseId);
 
                 dynamic dynamicCourse = new ExpandoObject();
-                dynamicCourse.Id = course.Id;
-                dynamicCourse.Price = course.Price;
-                dynamicCourse.Name = course.Name;
-                dynamicCourse.ImageUrl = course.ImageUrl;
-                dynamicCourse.LastUpdated = course.LastUpdated;
-                dynamicCourse.StatusId = course.StatusId;
-                dynamicCourse.Status = course.Status;
-                dynamicCourse.Discount = course.Discount;
-                dynamicCourse.LecturerId = course.LecturerId;
-                dynamicCourse.Lecturer = await userRepository.GetById(course.LecturerId);
-                dynamicCourse.Rating = await feedbackRepository.GetRatingByCourseId(course.Id);
-                dynamicCourse.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
-                dynamicCourse.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.id = course.Id;
+                dynamicCourse.price = course.Price;
+                dynamicCourse.name = course.Name;
+                dynamicCourse.imageUrl = course.ImageUrl;
+                dynamicCourse.lastUpdated = course.LastUpdated;
+                dynamicCourse.statusId = course.StatusId;
+                dynamicCourse.status = course.Status;
+                dynamicCourse.discount = course.Discount;
+                dynamicCourse.lecturerId = course.LecturerId;
+                dynamicCourse.lecturer = await userRepository.GetById(course.LecturerId);
+                dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
+                dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
+                dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
 
                 bestSellerCourses.Add(dynamicCourse);
             }
@@ -245,19 +245,19 @@ namespace ProgrammingCourse.Services
                 var course = await courseRepository.GetById(courseIds[i].CourseId);
 
                 dynamic dynamicCourse = new ExpandoObject();
-                dynamicCourse.Id = course.Id;
-                dynamicCourse.Price = course.Price;
-                dynamicCourse.Name = course.Name;
-                dynamicCourse.ImageUrl = course.ImageUrl;
-                dynamicCourse.LastUpdated = course.LastUpdated;
-                dynamicCourse.StatusId = course.StatusId;
-                dynamicCourse.Status = course.Status;
-                dynamicCourse.Discount = course.Discount;
-                dynamicCourse.LecturerId = course.LecturerId;
-                dynamicCourse.Lecturer = await userRepository.GetById(course.LecturerId);
-                dynamicCourse.Rating = await feedbackRepository.GetRatingByCourseId(course.Id);
-                dynamicCourse.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
-                dynamicCourse.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.id = course.Id;
+                dynamicCourse.price = course.Price;
+                dynamicCourse.name = course.Name;
+                dynamicCourse.imageUrl = course.ImageUrl;
+                dynamicCourse.lastUpdated = course.LastUpdated;
+                dynamicCourse.statusId = course.StatusId;
+                dynamicCourse.status = course.Status;
+                dynamicCourse.discount = course.Discount;
+                dynamicCourse.lecturerId = course.LecturerId;
+                dynamicCourse.lecturer = await userRepository.GetById(course.LecturerId);
+                dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
+                dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
+                dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
 
                 outStandingCourses.Add(dynamicCourse);
             }
@@ -276,19 +276,19 @@ namespace ProgrammingCourse.Services
                 var course = await courseRepository.GetById(courseIds[i].CourseId);
 
                 dynamic dynamicCourse = new ExpandoObject();
-                dynamicCourse.Id = course.Id;
-                dynamicCourse.Price = course.Price;
-                dynamicCourse.Name = course.Name;
-                dynamicCourse.ImageUrl = course.ImageUrl;
-                dynamicCourse.LastUpdated = course.LastUpdated;
-                dynamicCourse.StatusId = course.StatusId;
-                dynamicCourse.Status = course.Status;
-                dynamicCourse.Discount = course.Discount;
-                dynamicCourse.LecturerId = course.LecturerId;
-                dynamicCourse.Lecturer = await userRepository.GetById(course.LecturerId);
-                dynamicCourse.Rating = await feedbackRepository.GetRatingByCourseId(course.Id);
-                dynamicCourse.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
-                dynamicCourse.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.id = course.Id;
+                dynamicCourse.price = course.Price;
+                dynamicCourse.name = course.Name;
+                dynamicCourse.imageUrl = course.ImageUrl;
+                dynamicCourse.lastUpdated = course.LastUpdated;
+                dynamicCourse.statusId = course.StatusId;
+                dynamicCourse.status = course.Status;
+                dynamicCourse.discount = course.Discount;
+                dynamicCourse.lecturerId = course.LecturerId;
+                dynamicCourse.lecturer = await userRepository.GetById(course.LecturerId);
+                dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
+                dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
+                dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
 
                 mostViewedCourses.Add(dynamicCourse);
             }
@@ -308,19 +308,19 @@ namespace ProgrammingCourse.Services
                 var course = await courseRepository.GetById(courseIds[i].CourseId);
 
                 dynamic dynamicCourse = new ExpandoObject();
-                dynamicCourse.Id = course.Id;
-                dynamicCourse.Price = course.Price;
-                dynamicCourse.Name = course.Name;
-                dynamicCourse.ImageUrl = course.ImageUrl;
-                dynamicCourse.LastUpdated = course.LastUpdated;
-                dynamicCourse.StatusId = course.StatusId;
-                dynamicCourse.Status = course.Status;
-                dynamicCourse.Discount = course.Discount;
-                dynamicCourse.LecturerId = course.LecturerId;
-                dynamicCourse.Lecturer = await userRepository.GetById(course.LecturerId);
-                dynamicCourse.Rating = await feedbackRepository.GetRatingByCourseId(course.Id);
-                dynamicCourse.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
-                dynamicCourse.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.id = course.Id;
+                dynamicCourse.price = course.Price;
+                dynamicCourse.name = course.Name;
+                dynamicCourse.imageUrl = course.ImageUrl;
+                dynamicCourse.lastUpdated = course.LastUpdated;
+                dynamicCourse.statusId = course.StatusId;
+                dynamicCourse.status = course.Status;
+                dynamicCourse.discount = course.Discount;
+                dynamicCourse.lecturerId = course.LecturerId;
+                dynamicCourse.lecturer = await userRepository.GetById(course.LecturerId);
+                dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
+                dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
+                dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
 
                 newestCourses.Add(dynamicCourse);
             }
@@ -340,19 +340,19 @@ namespace ProgrammingCourse.Services
                 var course = await courseRepository.GetById(courseIds[i].CourseId);
 
                 dynamic dynamicCourse = new ExpandoObject();
-                dynamicCourse.Id = course.Id;
-                dynamicCourse.Price = course.Price;
-                dynamicCourse.Name = course.Name;
-                dynamicCourse.ImageUrl = course.ImageUrl;
-                dynamicCourse.LastUpdated = course.LastUpdated;
-                dynamicCourse.StatusId = course.StatusId;
-                dynamicCourse.Status = course.Status;
-                dynamicCourse.Discount = course.Discount;
-                dynamicCourse.LecturerId = course.LecturerId;
-                dynamicCourse.Lecturer = await userRepository.GetById(course.LecturerId);
-                dynamicCourse.Rating = await feedbackRepository.GetRatingByCourseId(course.Id);
-                dynamicCourse.ReviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
-                dynamicCourse.RegisteredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.id = course.Id;
+                dynamicCourse.price = course.Price;
+                dynamicCourse.name = course.Name;
+                dynamicCourse.imageUrl = course.ImageUrl;
+                dynamicCourse.lastUpdated = course.LastUpdated;
+                dynamicCourse.statusId = course.StatusId;
+                dynamicCourse.status = course.Status;
+                dynamicCourse.discount = course.Discount;
+                dynamicCourse.lecturerId = course.LecturerId;
+                dynamicCourse.lecturer = await userRepository.GetById(course.LecturerId);
+                dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
+                dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
+                dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
 
                 bestSellerCourses.Add(dynamicCourse);
             }

@@ -70,6 +70,28 @@ namespace ProgrammingCourse.Controllers0
         }
 
         [HttpGet]
+        [Route("CategoryListByCategoryTypeId")]
+        public async Task<IActionResult> CategoryListByCategoryTypeId([FromQuery] int categoryId)
+        {
+            var categoryList = await categoryService.GetCategoryListByCategoryTypeId(categoryId);
+
+            if (categoryList.Count != 0)
+            {
+                return Ok(new
+                {
+                    Results = categoryList
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Errors = new { Code = "InvalidId", Description = "Invalid Id!" }
+                });
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var categories = await categoryService.GetAll();

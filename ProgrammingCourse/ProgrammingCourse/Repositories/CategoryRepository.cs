@@ -20,6 +20,23 @@ namespace ProgrammingCourse.Repositories
             return await _context.Set<Category>().Where(c => c.Id == id).Include(c => c.CategoryType).Include(c => c.Courses).FirstOrDefaultAsync();
         }
 
+        public async Task<IList<dynamic>> GetCategoryListByCategoryTypeId(int categoryId)
+        {
+            return await _context.Set<Category>()
+                .Where(c => c.CategoryTypeId == categoryId)
+                .Select(c => new
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Label = c.Label,
+                    ImageUrl = c.ImageUrl,
+                    CategoryTypeId = c.CategoryTypeId,
+                    CategoryTypeName = c.CategoryType.Name,
+                    CourseNumber = c.Courses.Count
+                })
+                .ToListAsync<dynamic>();
+        }
+
 
         public async Task<Category> GetWithAllInfoByName(string name)
         {

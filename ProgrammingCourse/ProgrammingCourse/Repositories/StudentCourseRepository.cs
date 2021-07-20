@@ -22,16 +22,21 @@ namespace ProgrammingCourse.Repositories
                 .Select(sc => new
                 {
                     Id = sc.Id,
-                    StudentId = sc.Student.Id,
-                    StudentUserName = sc.Student.UserName,
+                    //StudentId = sc.Student.Id,
+                    //StudentUserName = sc.Student.UserName,
                     CourseId = sc.Course.Id,
                     CourseName = sc.Course.Name,
-                    ImageUrl = sc.Course.ImageUrl,
-                    Price = sc.Course.Price,
-                    Discount = sc.Course.Discount,
-                    ShortDiscription = sc.Course.ShortDiscription,
-                    DetailDiscription = sc.Course.DetailDiscription,
-                    LastUpdated = sc.Course.LastUpdated
+                    LecturerName = sc.Course.Lecturer.UserName,
+                    LecturerAvatar = sc.Course.Lecturer.AvatarUrl,
+                    StatusId = sc.Course.StatusId,
+                    Status = sc.Course.Status.Name,
+                    LastUpdated = sc.Course.LastUpdated,
+                    Lectures = sc.Course.Lectures
+                    //ImageUrl = sc.Course.ImageUrl,
+                    //Price = sc.Course.Price,
+                    //Discount = sc.Course.Discount,
+                    //ShortDiscription = sc.Course.ShortDiscription,
+                    //DetailDiscription = sc.Course.DetailDiscription,
                 })
                 .ToListAsync<dynamic>();
             return studentCourses;
