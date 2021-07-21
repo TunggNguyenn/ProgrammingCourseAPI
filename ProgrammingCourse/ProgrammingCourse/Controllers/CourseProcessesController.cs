@@ -58,15 +58,15 @@ namespace ProgrammingCourse.Controllers
                 else
                 {
 
-                    double completionRate = await lectureRepository.GetCompletionRateByCourseIdAndLectureId(courseProcess.CourseId, courseProcess.LectureId);
+                    //double completionRate = await lectureRepository.GetCompletionRateByCourseIdAndLectureId(courseProcess.CourseId, courseProcess.LectureId);
 
 
                     return Ok(new
                     {
                         Results = new
                         {
-                            CourseProcess = courseProcess,
-                            CompletionRate = completionRate
+                            CourseProcess = courseProcess
+                            //CompletionRate = completionRate
                         }
                     });
                 }
@@ -98,7 +98,7 @@ namespace ProgrammingCourse.Controllers
                         StudentId = courseProcessViewModel.StudentId,
                         CourseId = courseProcessViewModel.CourseId,
                         LectureId = courseProcessViewModel.LectureId,
-                        Time = courseProcessViewModel.Time
+                        LastUpdated = DateTime.Now
                     };
 
                     await courseProcessRepository.Add(courseProcess);
@@ -106,7 +106,7 @@ namespace ProgrammingCourse.Controllers
                 else
                 {
                     courseProcess.LectureId = courseProcessViewModel.LectureId;
-                    courseProcess.Time = courseProcessViewModel.Time;
+                    courseProcess.LastUpdated = DateTime.Now;
 
                     await courseProcessRepository.Update(courseProcess);
                 }

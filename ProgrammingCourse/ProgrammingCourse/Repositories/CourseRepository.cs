@@ -16,7 +16,7 @@ namespace ProgrammingCourse.Repositories
 
         public async Task<List<Course>> GetCourseListByFilterAndPaginationParameters(FilterParameters filterParameters, PaginationParameters paginationParameters)
         {
-            return await _context.Set<Course>()
+            return  await _context.Set<Course>()
                 .Include(c => c.Category)
                 .Where(c => (c.CategoryId == filterParameters.CategoryId || filterParameters.CategoryId == 0)
                 && (c.Category.CategoryTypeId == filterParameters.CategoryTypeId || filterParameters.CategoryTypeId == 0)
@@ -121,7 +121,8 @@ namespace ProgrammingCourse.Repositories
                     StatusId = c.Status.Id,
                     StatusName = c.Status.Name,
                     RegisteredUserNumber = c.StudentCourses.Count,
-                    Feedbacks = c.Feedbacks
+                    Feedbacks = c.Feedbacks,
+                    Lectures = c.Lectures
                 })
                 .ToListAsync<dynamic>();
             return courses;

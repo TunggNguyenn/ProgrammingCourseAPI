@@ -46,6 +46,18 @@ namespace ProgrammingCourse.Controllers
         }
 
         [HttpGet]
+        [Route("FeedbackByStudentIdAndCourseId")]
+        public async Task<IActionResult> FeedbackByStudentIdAndCourseId(string studentId, int courseId)
+        {
+            var feedback = await feedbackRepository.GetFeedbackByStudentIdAndCourseId(studentId, courseId);
+
+            return Ok(new
+            {
+                Results = feedback
+            });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var feedbacks = await feedbackRepository.GetAll();

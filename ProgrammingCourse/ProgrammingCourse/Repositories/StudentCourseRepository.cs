@@ -31,8 +31,8 @@ namespace ProgrammingCourse.Repositories
                     StatusId = sc.Course.StatusId,
                     Status = sc.Course.Status.Name,
                     LastUpdated = sc.Course.LastUpdated,
-                    Lectures = sc.Course.Lectures
-                    //ImageUrl = sc.Course.ImageUrl,
+                    ImageUrl = sc.Course.ImageUrl
+                    //Lectures = sc.Course.Lectures,
                     //Price = sc.Course.Price,
                     //Discount = sc.Course.Discount,
                     //ShortDiscription = sc.Course.ShortDiscription,

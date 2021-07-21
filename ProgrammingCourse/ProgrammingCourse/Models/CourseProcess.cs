@@ -28,6 +28,6 @@ namespace ProgrammingCourse.Models
         public Lecture Lecture { get; set; }
 
         [Required]
-        public int Time { get; set; }
+        public DateTime LastUpdated { get; set; }
     }
 }

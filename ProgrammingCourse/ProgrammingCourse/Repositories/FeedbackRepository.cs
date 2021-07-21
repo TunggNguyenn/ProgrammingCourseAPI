@@ -27,6 +27,11 @@ namespace ProgrammingCourse.Repositories
             return false;
         }
 
+        public async Task<Feedback> GetFeedbackByStudentIdAndCourseId(string userId, int courseId)
+        {
+            return await _context.Feedbacks.Where<Feedback>(f => f.UserId == userId && f.CourseId == courseId).FirstOrDefaultAsync();
+        }
+
         public async Task<double> GetRatingByCourseId(int courseId)
         {
             var feedbacks = await _context.Feedbacks.Where<Feedback>(f => f.CourseId == courseId).ToListAsync();

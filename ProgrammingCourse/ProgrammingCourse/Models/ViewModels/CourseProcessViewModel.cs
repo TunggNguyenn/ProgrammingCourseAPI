@@ -20,7 +20,7 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public int LectureId { get; set; }
 
-        [Required]
-        public int Time { get; set; }
+        //[Required]
+        public DateTime LastUpdated { get; set; }
     }
 }
