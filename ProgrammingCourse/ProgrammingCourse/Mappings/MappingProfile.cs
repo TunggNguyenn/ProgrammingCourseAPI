@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ProgrammingCourse.Models;
 using ProgrammingCourse.Models.ViewModels;
+using ProgrammingCourse.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,11 @@ namespace ProgrammingCourse.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<CategoryViewModel, Category>().ReverseMap();
+            CreateMap<CategoryViewModel, Category>()
+                .ForMember(dest => dest.ImageUrl, source => source.MapFrom(source => source.ImageUrl == null ? UploadImageToCloudinary.Upload(source.Image) : source.ImageUrl));
+
+            CreateMap<Category, CategoryViewModel>();
+
             CreateMap<CategoryTypeViewModel, CategoryType>().ReverseMap();
             CreateMap<CourseViewModel, Course>().ReverseMap();
             CreateMap<FeedbackViewModel, Feedback>().ReverseMap();

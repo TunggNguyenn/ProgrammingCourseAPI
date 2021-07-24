@@ -103,7 +103,7 @@ namespace ProgrammingCourse.Controllers0
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> Add([FromForm] CategoryViewModel categoryViewModel)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace ProgrammingCourse.Controllers0
 
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> Update([FromForm] CategoryViewModel categoryViewModel)
         {
             try
             {

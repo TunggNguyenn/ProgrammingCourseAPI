@@ -17,11 +17,13 @@ namespace ProgrammingCourse.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly CourseService courseService;
+        private readonly LectureRepository lectureRepository;
         private readonly IMapper mapper;
 
-        public CoursesController(CourseService courseService, IMapper mapper)
+        public CoursesController(CourseService courseService, LectureRepository lectureRepository, IMapper mapper)
         {
             this.courseService = courseService;
+            this.lectureRepository = lectureRepository;
             this.mapper = mapper;
         }
 
@@ -149,6 +151,13 @@ namespace ProgrammingCourse.Controllers
 
                 await courseService.Update(courseMapped);
 
+                List<Lecture> removedLectureList = await GetRemovedLectureList(courseWithLecturesViewModel.CourseViewModel.Id, courseMapped.Lectures);
+
+                if (removedLectureList.Count > 0)
+                {
+                    await lectureRepository.RemoveRange(removedLectureList);
+                }
+
                 return Ok(new
                 {
 
@@ -164,6 +173,33 @@ namespace ProgrammingCourse.Controllers
                     Errors = new { Code = "InvalidInputParameters", Description = "Invalid Input Parameters!" }
                 });
             }
+        }
+
+        private async Task<List<Lecture>> GetRemovedLectureList(int courseId, IList<Lecture> updatedLectureList)
+        {
+            var lectureList = await lectureRepository.GetLectureListByCourseId(courseId);
+
+            List<Lecture> removedLectureList = new List<Lecture>();
+
+            foreach(var lecture in lectureList)
+            {
+                bool flag = false;
+                foreach (var updatedLecture in updatedLectureList)
+                {
+                    if (lecture.Id == updatedLecture.Id)
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if(flag == false)
+                {
+                    removedLectureList.Add(new Lecture { Id = lecture.Id });
+                }
+            }
+
+            return removedLectureList;
         }
 
         [HttpDelete("{id}")]

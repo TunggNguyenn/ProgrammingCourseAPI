@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,9 +17,11 @@ namespace ProgrammingCourse.Models.ViewModels
         [Required]
         public int CategoryTypeId { get; set; }
 
+        //[Required]
+        public string ImageUrl { get; set; } 
 
-        [Required]
-        public string ImageUrl { get; set; }
+        //[Required]
+        public IFormFile Image { get; set; }
 
 
         [Required]

@@ -92,6 +92,7 @@ namespace ProgrammingCourse.Services
             await courseRepository.AddRange(courses);
         }
 
+
         public async Task<List<Course>> GetAll()
         {
             return await courseRepository.GetAll();
@@ -259,6 +260,7 @@ namespace ProgrammingCourse.Services
                 dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
                 dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
                 dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.tag = "Trending";
 
                 outStandingCourses.Add(dynamicCourse);
             }
@@ -290,6 +292,7 @@ namespace ProgrammingCourse.Services
                 dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
                 dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
                 dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.tag = "BestSeller";
 
                 mostViewedCourses.Add(dynamicCourse);
             }
@@ -322,6 +325,7 @@ namespace ProgrammingCourse.Services
                 dynamicCourse.rating = await feedbackRepository.GetRatingByCourseId(course.Id);
                 dynamicCourse.reviewerNumber = await feedbackRepository.GetReviewerNumberByCourseId(course.Id);
                 dynamicCourse.registeredNumber = await studentCourseRepository.GetRegisteredNumberByCourseId(course.Id);
+                dynamicCourse.tag = "Newest";
 
                 newestCourses.Add(dynamicCourse);
             }
