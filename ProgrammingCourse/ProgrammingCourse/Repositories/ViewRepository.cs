@@ -24,10 +24,11 @@ namespace ProgrammingCourse.Repositories
         }
 
 
-        public async Task<List<dynamic>> Get10MostViewedCourseIdsInMonth()
+        public async Task<List<dynamic>> Get10MostViewedCourseIds() //InMonth
         {
             var courses = await _context.Set<View>()
-                .Where<View>(v => v.DateTime.Month == DateTime.Now.Month && v.DateTime.Year == DateTime.Now.Year)
+                //.Where<View>(v => v.DateTime.Month == DateTime.Now.Month && v.DateTime.Year == DateTime.Now.Year)
+                .AsNoTracking()
                 .GroupBy(v => v.CourseId)
                 .Select(v => new
                 {

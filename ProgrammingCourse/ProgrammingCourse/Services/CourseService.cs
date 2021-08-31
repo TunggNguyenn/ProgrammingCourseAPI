@@ -104,7 +104,7 @@ namespace ProgrammingCourse.Services
 
             var bestSellerCourses = await studentCourseRepository.Get10BestSellerCourseIDsInMonth();
             var newestCourses = await courseRepository.Get10NewestCourseIds();
-            var mostViewedCourses = await viewRepository.Get10MostViewedCourseIdsInMonth();
+            var mostViewedCourses = await viewRepository.Get10MostViewedCourseIds();    //InMonth
 
             List<dynamic> dynamicCourseList = new List<dynamic>();
 
@@ -270,7 +270,7 @@ namespace ProgrammingCourse.Services
 
         public async Task<dynamic> GetMostViewedCourses()
         {
-            var courseIds = await viewRepository.Get10MostViewedCourseIdsInMonth();
+            var courseIds = await viewRepository.Get10MostViewedCourseIds();    //InMonth
 
             IList<dynamic> mostViewedCourses = new List<dynamic>();
 
@@ -381,5 +381,10 @@ namespace ProgrammingCourse.Services
         //    var courses = await courseRepository.GetByCategoryId(categoryId);
         //    return courses.Take(10).ToList();
         //}
+
+        public async Task<List<Course>> GetAllWithLecturerAndRepository()
+        {
+            return await courseRepository.GetAllWithLecturerAndRepository();
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace ProgrammingCourse.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var courses = await courseService.GetAll();
+            var courses = await courseService.GetAllWithLecturerAndRepository();
             return Ok(new
             {
                 Results = courses

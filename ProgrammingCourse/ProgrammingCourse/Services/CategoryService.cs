@@ -53,7 +53,7 @@ namespace ProgrammingCourse.Services
         {
             var bestSellerCourses = await studentCourseRepository.Get10BestSellerCourseIDsInMonth();
             var newestCourses = await courseRepository.Get10NewestCourseIds();
-            var mostViewedCourses = await viewRepository.Get10MostViewedCourseIdsInMonth();
+            var mostViewedCourses = await viewRepository.Get10MostViewedCourseIds();    //InMonth
 
             var category = await categoryRepository.GetWithAllInfoByName(name);
 

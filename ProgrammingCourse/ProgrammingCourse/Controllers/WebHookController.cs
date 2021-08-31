@@ -20,7 +20,7 @@ namespace ProgrammingCourse.Controllers
     public class WebHookController : ControllerBase
     {
         private const string VERIFY_TOKEN = "nttung";
-        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBAHn9Cdd8FGU4ij0PiJoM2qmbPZBs6BPAaWbFNjmZAOBbEZCZAmSpZBeMRPIvNSIE85uIPOTGuqMWrJsXRGYwUW5T82jC6GhRgGfV7NXy7BOXxvakoXQIhQOUpUAoMEMBJv6tO97V9mhdXTMVwiazPSKTb0YOrFRytxcmFOdGe";
+        private const string PAGE_ACCESS_TOKEN = "EAAqn5V1o3dkBAL5ZAGZCHhSDTwhiZBwJZCtUataYW7d2O8ZClzkcjiw5ibL1FfQKNMSv2qoMOffzZAsuj6aBCvYhZCoFgWM4amrWp5csNjAVkj1ClYxzhlvvQ3bONYzCxDRwZAVKZA9ZBbGM93T2lzlFlWmh5KkimBsQRvbC5fICCrIJbvEy2K1LlB";
 
         private CategoryService categoryService;
         private CourseService courseService;
@@ -364,7 +364,7 @@ namespace ProgrammingCourse.Controllers
                         new
                         {
                             type = "web_url",
-                            url = "https://webnc-az3r.vercel.app/",
+                            url = $"https://webnc-az3r.vercel.app/web/{categories[i].Label}",
                             title = "View on Website"
                         },
                         new
@@ -462,7 +462,7 @@ namespace ProgrammingCourse.Controllers
                         new
                         {
                             type = "web_url",
-                            url = "https://webnc-az3r.vercel.app/",
+                            url = $"https://webnc-az3r.vercel.app/course/{category.Courses[i].Id}",
                             title = "View on Website"
                         },
                         new
@@ -537,7 +537,7 @@ namespace ProgrammingCourse.Controllers
                                     new
                                     {
                                         type = "web_url",
-                                        url = "https://webnc-az3r.vercel.app/",
+                                        url = $"https://webnc-az3r.vercel.app/course/{course.id}",
                                         title = "View on Website"
                                     },
                                     new

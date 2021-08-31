@@ -78,7 +78,7 @@ namespace ProgrammingCourse.Services
 
             var bestSellerCourses = await studentCourseRepository.Get10BestSellerCourseIDsInMonth();
             var newestCourses = await courseRepository.Get10NewestCourseIds();
-            var mostViewedCourses = await viewRepository.Get10MostViewedCourseIdsInMonth();
+            var mostViewedCourses = await viewRepository.Get10MostViewedCourseIds();    //InMonth
 
 
             IList<dynamic> dynamicCategoryList = new List<dynamic>();

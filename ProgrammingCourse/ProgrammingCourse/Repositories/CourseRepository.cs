@@ -66,6 +66,7 @@ namespace ProgrammingCourse.Repositories
         public async Task<dynamic> GetOutStandingCourseIds()
         {
             var courses = await _context.Set<Course>()
+                .AsNoTracking()
                 .Include(c => c.Feedbacks).Include(c => c.Lecturer).Include(c => c.Status).Include(c => c.StudentCourses).Include(c => c.Category)
                 .ThenInclude(c => c.CategoryType)
                 .OrderByDescending(c => c.StudentCourses.Count).OrderByDescending(c => c.Id)
@@ -147,5 +148,15 @@ namespace ProgrammingCourse.Repositories
         //        .ToListAsync();
         //    return courses;
         //}
+
+        public async Task<List<Course>> GetAllWithLecturerAndRepository()
+        {
+            return await _context.Set<Course>()
+                .AsNoTracking()
+                .Include(c => c.Lecturer)
+                .Include(c => c.Category)
+                .Include(c => c.Status)
+                .ToListAsync();
+        }
     }
 }
